@@ -4,149 +4,54 @@ import { AntDesign, FontAwesome6, Ionicons, MaterialIcons, Octicons } from '@exp
 import Square from "../../components/Square";
 
 export default function Inicio({ navigation }) {
+    // Nota: He movido la lista de items aquí para que el código esté más organizado,
+    // como lo hicimos para la animación. Si no lo tenías así, puedes adaptarlo.
+    const adminItems = [
+        { title: "Agendamientos", IconComponent: MaterialIcons, iconName: "event", screen: "AgendamientosStack", color: '#e0f2f7' },
+        { title: "Categorias", IconComponent: AntDesign, iconName: "windows", screen: "CategoriasStack", color: '#fffde7' },
+        { title: "Detalle Ordenes", IconComponent: MaterialIcons, iconName: "details", screen: "DetalleOrdenesStack", color: '#e8f5e9' },
+        { title: "Direcciones", IconComponent: MaterialIcons, iconName: "directions", screen: "DireccionesStack", color: '#fce4ec' },
+        { title: "Especialidades", IconComponent: AntDesign, iconName: "solution1", screen: "EspecialidadesStack", color: '#f3e5f5' },
+        { title: "Excepción Horarios", IconComponent: AntDesign, iconName: "exception1", screen: "ExcepcionHorariosStack", color: '#e0f7fa' },
+        { title: "Horarios Sucursales", IconComponent: MaterialIcons, iconName: "schedule", screen: "HorarioSucursalesStack", color: '#fff3e0' },
+        { title: "Musica Preferenciales", IconComponent: MaterialIcons, iconName: "my-library-music", screen: "MusicaPreferencialesStack", color: '#e0f2f7' },
+        { title: "Ordenes", IconComponent: MaterialIcons, iconName: "receipt-long", screen: "OrdenesStack", color: '#fffde7' },
+        { title: "Personales", IconComponent: Ionicons, iconName: "people", screen: "PersonalesStack", color: '#e8f5e9' },
+        { title: "Productos", IconComponent: AntDesign, iconName: "shoppingcart", screen: "ProductosStack", color: '#fce4ec' },
+        { title: "Promociones", IconComponent: AntDesign, iconName: "notification", screen: "PromocionesStack", color: '#f3e5f5' },
+        { title: "Recordatorios", IconComponent: MaterialIcons, iconName: "notifications", screen: "RecordatoriosStack", color: '#e0f7fa' },
+        { title: "Servicios", IconComponent: MaterialIcons, iconName: "miscellaneous-services", screen: "ServiciosStack", color: '#fff3e0' },
+        { title: "Servicios Sucursales", IconComponent: MaterialIcons, iconName: "house", screen: "ServicioSucursalesStack", color: '#e0f2f7' },
+        { title: "Sucursales", IconComponent: MaterialIcons, iconName: "business", screen: "SucursalesStack", color: '#fffde7' },
+        { title: "Transacción Pagos", IconComponent: MaterialIcons, iconName: "credit-card", screen: "TransaccionPagosStack", color: '#e8f5e9' },
+        { title: "Usuarios", IconComponent: Octicons, iconName: "people", screen: "UsuariosStack", color: '#fce4ec' },
+    ];
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
                 <View style={styles.headerContainer}>
-
                     <View style={styles.logoContainer}>
                         <Image
                             style={styles.logo}
                             source={require('../../assets/BarberMusicSpaNoFondo.png')}
                         />
                     </View>
-
                     <Text style={styles.headerTitle}>Panel de Administrador</Text>
-                    <Text style={styles.headerSubtitle}>BarberMusic&Spa</Text>
+                    <Text style={styles.headerSubtitle}>BarberMusic & Spa</Text>
                 </View>
 
                 <View style={styles.gridContainer}>
-                    <Square
-                        title="Agendamientos"
-                        IconComponent={MaterialIcons}
-                        iconName="event"
-                        onPress={() => navigation.navigate("AgendamientosStack")}
-                        style={{ backgroundColor: '#e0f2f7' }}
-                    />
-                    <Square
-                        title="Categorias"
-                        IconComponent={AntDesign}
-                        iconName="windows"
-                        onPress={() => navigation.navigate("CategoriasStack")}
-                        style={{ backgroundColor: '#fffde7' }}
-                    />
-                    <Square
-                        title="Detalle Ordenes"
-                        IconComponent={MaterialIcons}
-                        iconName="details"
-                        onPress={() => navigation.navigate("DetalleOrdenesStack")}
-                        style={{ backgroundColor: '#e8f5e9' }}
-                    />
-                    <Square
-                        title="Direcciones"
-                        IconComponent={MaterialIcons}
-                        iconName="directions"
-                        onPress={() => navigation.navigate("DireccionesStack")}
-                        style={{ backgroundColor: '#fce4ec' }}
-                    />
-                    <Square
-                        title="Especialidades"
-                        IconComponent={AntDesign}
-                        iconName="solution1"
-                        onPress={() => navigation.navigate("EspecialidadesStack")}
-                        style={{ backgroundColor: '#f3e5f5' }}
-                    />
-                    <Square
-                        title="Excepción Horarios"
-                        IconComponent={AntDesign}
-                        iconName="exception1"
-                        onPress={() => navigation.navigate("ExcepcionHorariosStack")}
-                        style={{ backgroundColor: '#e0f7fa' }}
-                    />
-                    <Square
-                        title="Horarios Sucursales"
-                        IconComponent={MaterialIcons}
-                        iconName="schedule"
-                        onPress={() => navigation.navigate("HorarioSucursalesStack")}
-                        style={{ backgroundColor: '#fff3e0' }}
-                    />
-                    <Square
-                        title="Musica Preferenciales"
-                        IconComponent={MaterialIcons}
-                        iconName="my-library-music"
-                        onPress={() => navigation.navigate("MusicaPreferencialesStack")}
-                        style={{ backgroundColor: '#e0f2f7' }}
-                    />
-                    <Square
-                        title="Ordenes"
-                        IconComponent={MaterialIcons}
-                        iconName="receipt-long"
-                        onPress={() => navigation.navigate("OrdenesStack")}
-                        style={{ backgroundColor: '#fffde7' }}
-                    />
-                    <Square
-                        title="Personales"
-                        IconComponent={Ionicons}
-                        iconName="people"
-                        onPress={() => navigation.navigate("PersonalesStack")}
-                        style={{ backgroundColor: '#e8f5e9' }}
-                    />
-                    <Square
-                        title="Productos"
-                        IconComponent={AntDesign}
-                        iconName="shoppingcart"
-                        onPress={() => navigation.navigate("ProductosStack")}
-                        style={{ backgroundColor: '#fce4ec' }}
-                    />
-                    <Square
-                        title="Promociones"
-                        IconComponent={AntDesign}
-                        iconName="notification"
-                        onPress={() => navigation.navigate("PromocionesStack")}
-                        style={{ backgroundColor: '#f3e5f5' }}
-                    />
-                    <Square
-                        title="Recordatorios"
-                        IconComponent={MaterialIcons}
-                        iconName="notifications"
-                        onPress={() => navigation.navigate("RecordatoriosStack")}
-                        style={{ backgroundColor: '#e0f7fa' }}
-                    />
-                    <Square
-                        title="Servicios"
-                        IconComponent={MaterialIcons}
-                        iconName="miscellaneous-services"
-                        onPress={() => navigation.navigate("ServiciosStack")}
-                        style={{ backgroundColor: '#fff3e0' }}
-                    />
-                    <Square
-                        title="Servicios Sucursales"
-                        IconComponent={MaterialIcons}
-                        iconName="house"
-                        onPress={() => navigation.navigate("ServicioSucursalesStack")}
-                        style={{ backgroundColor: '#e0f2f7' }}
-                    />
-                    <Square
-                        title="Sucursales"
-                        IconComponent={MaterialIcons}
-                        iconName="business"
-                        onPress={() => navigation.navigate("SucursalesStack")}
-                        style={{ backgroundColor: '#fffde7' }}
-                    />
-                    <Square
-                        title="Transacción Pagos"
-                        IconComponent={MaterialIcons}
-                        iconName="credit-card"
-                        onPress={() => navigation.navigate("TransaccionPagosStack")}
-                        style={{ backgroundColor: '#e8f5e9' }}
-                    />
-                    <Square
-                        title="Usuarios"
-                        IconComponent={Octicons}
-                        iconName="people"
-                        onPress={() => navigation.navigate("UsuariosStack")}
-                        style={{ backgroundColor: '#fce4ec' }}
-                    />
+                    {adminItems.map((item, index) => (
+                        <Square
+                            key={item.title}
+                            title={item.title}
+                            IconComponent={item.IconComponent}
+                            iconName={item.iconName}
+                            onPress={() => navigation.navigate(item.screen)}
+                            style={{ backgroundColor: item.color }}
+                        />
+                    ))}
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -160,7 +65,10 @@ const styles = StyleSheet.create({
     },
     scrollViewContent: {
         flexGrow: 1,
-        paddingVertical: 20,
+        paddingTop: 20,
+        // --- CAMBIO AQUÍ ---
+        // Se añade espacio inferior para que el scroll no quede detrás de la barra de navegación
+        paddingBottom: 120, 
     },
     headerContainer: {
         alignItems: 'center',
@@ -190,18 +98,16 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#2c3e50',
         textAlign: 'center',
-        // --- EFECTO DE SOMBRA ---
-        textShadowColor: 'rgba(0, 0, 0, 0.2)', // Color de la sombra
-        textShadowOffset: { width: 0, height: 2 }, // Desplazamiento
-        textShadowRadius: 3, // Difuminado de la sombra
+        textShadowColor: 'rgba(0, 0, 0, 0.2)',
+        textShadowOffset: { width: 0, height: 2 },
+        textShadowRadius: 3,
     },
     headerSubtitle: {
         fontSize: 20,
         fontWeight: '600',
         color: '#2c3e50',
         marginTop: 4,
-        // --- EFECTO DE SOMBRA ---
-        textShadowColor: 'rgba(0, 0, 0, 0.2)', // Mismo efecto para consistencia
+        textShadowColor: 'rgba(0, 0, 0, 0.2)',
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 3,
     },
