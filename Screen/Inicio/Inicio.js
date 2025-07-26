@@ -25,6 +25,8 @@ export default function Inicio({ navigation }) {
         { title: "Sucursales", IconComponent: MaterialIcons, iconName: "business", screen: "SucursalesStack", color: '#fffde7' },
         { title: "Transacción Pagos", IconComponent: MaterialIcons, iconName: "credit-card", screen: "TransaccionPagosStack", color: '#e8f5e9' },
         { title: "Usuarios", IconComponent: Octicons, iconName: "people", screen: "UsuariosStack", color: '#fce4ec' },
+        { title: "Reseñas", IconComponent: Octicons, iconName: "people", screen: "ReseñasStack", color: '#fce4ec' },
+
     ];
 
     return (

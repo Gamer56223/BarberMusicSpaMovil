@@ -1,9 +1,200 @@
-import {View, Text } from "react-native"
+// import React, { useState, useEffect } from "react";
+// import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
+// import { Ionicons } from '@expo/vector-icons';
+// import { Picker } from "@react-native-picker/picker";
+// import { crearExcepcionHorarioSucursal } from "../../Src/Servicios/ExcepcionHorarioSucursalService"; // Asume que tienes este servicio
+// import { listarSucursales } from "../../Src/Servicios/SucursalService"; // Ya tenemos este servicio de Agendamiento
+// import styles from "../../Styles/AgregarExcepcionHorarioSucursalStyles"; // Asume que tienes un archivo de estilos similar
 
-export default function AgregarExcepcionHorarioSucursal (){
-    return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <Text>Agregar Excepción Horario Sucursal</Text>
-        </View>
-    );
-}
+// export default function AgregarExcepcionHorarioSucursal({ navigation }) {
+//     const [sucursalId, setSucursalId] = useState("");
+//     const [fecha, setFecha] = useState(""); // Formato 'YYYY-MM-DD'
+//     const [estaCerrado, setEstaCerrado] = useState(false);
+//     const [horaApertura, setHoraApertura] = useState(""); // Formato 'HH:MM:SS'
+//     const [horaCierre, setHoraCierre] = useState(""); // Formato 'HH:MM:SS'
+//     const [descripcion, setDescripcion] = useState("");
+
+//     const [sucursales, setSucursales] = useState([]);
+//     const [loading, setLoading] = useState(false);
+//     const [loadingData, setLoadingData] = useState(true);
+
+//     const getAlertMessage = (msg, defaultMsg) => {
+//         if (typeof msg === 'string') {
+//             return msg;
+//         }
+//         if (msg && typeof msg === 'object') {
+//             if (msg.errors) {
+//                 const messages = Object.values(msg.errors).flat();
+//                 return messages.join('\n');
+//             }
+//             if (msg.message) {
+//                 if (typeof msg.message === 'string') {
+//                     return msg.message;
+//                 }
+//                 return JSON.stringify(msg.message);
+//             }
+//             return JSON.stringify(msg);
+//         }
+//         return defaultMsg;
+//     };
+
+//     useEffect(() => {
+//         const cargarSucursales = async () => {
+//             setLoadingData(true);
+//             try {
+//                 const result = await listarSucursales();
+//                 if (result.success) {
+//                     setSucursales(result.data);
+//                     if (result.data.length > 0) {
+//                         setSucursalId(result.data[0].id.toString());
+//                     } else {
+//                         setSucursalId("");
+//                     }
+//                 } else {
+//                     Alert.alert(
+//                         "Error al cargar sucursales",
+//                         result.message || "No se pudieron cargar las sucursales."
+//                     );
+//                 }
+//             } catch (error) {
+//                 console.error("Error al cargar sucursales:", error);
+//                 Alert.alert("Error", "Ocurrió un error inesperado al cargar las sucursales.");
+//             } finally {
+//                 setLoadingData(false);
+//             }
+//         };
+//         cargarSucursales();
+//     }, []);
+
+//     const handleGuardar = async () => {
+//         if (!sucursalId || !fecha) {
+//             Alert.alert("Campos requeridos", "Por favor, seleccione una sucursal y la fecha.");
+//             return;
+//         }
+
+//         if (!estaCerrado && (!horaApertura || !horaCierre)) {
+//             Alert.alert("Horario requerido", "Si la sucursal no está completamente cerrada, por favor, ingrese la hora de apertura y cierre.");
+//             return;
+//         }
+
+//         setLoading(true);
+//         try {
+//             const result = await crearExcepcionHorarioSucursal({
+//                 sucursal_id: parseInt(sucursalId),
+//                 fecha: fecha,
+//                 esta_cerrado: estaCerrado,
+//                 hora_apertura: estaCerrado ? null : horaApertura, // Enviar null si está cerrado
+//                 hora_cierre: estaCerrado ? null : horaCierre,     // Enviar null si está cerrado
+//                 descripcion: descripcion,
+//             });
+
+//             if (result.success) {
+//                 Alert.alert("Éxito", "Excepción de horario creada correctamente");
+//                 navigation.goBack();
+//             } else {
+//                 Alert.alert("Error", getAlertMessage(result.message, "No se pudo crear la excepción de horario"));
+//             }
+//         } catch (error) {
+//             console.error("Error al crear excepción de horario:", error);
+//             Alert.alert("Error", getAlertMessage(error.message, "Ocurrió un error inesperado al crear la excepción de horario."));
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     return (
+//         <KeyboardAvoidingView
+//             style={styles.keyboardAvoidingView}
+//             behavior={Platform.OS === "ios" ? "padding" : "height"}
+//         >
+//             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+//                 <ScrollView contentContainerStyle={styles.scrollContainer}>
+//                     <View style={styles.container}>
+//                         <Text style={styles.title}>Nueva Excepción de Horario</Text>
+
+//                         {loadingData ? (
+//                             <ActivityIndicator size="large" color="#1976D2" style={styles.pickerLoading} />
+//                         ) : (
+//                             <>
+//                                 <Text style={styles.pickerLabel}>Sucursal:</Text>
+//                                 <View style={styles.pickerContainer}>
+//                                     <Picker
+//                                         selectedValue={sucursalId}
+//                                         onValueChange={(itemValue) => setSucursalId(itemValue)}
+//                                         style={styles.picker}
+//                                         itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+//                                     >
+//                                         <Picker.Item label="-- Seleccione una Sucursal --" value="" />
+//                                         {sucursales.map((suc) => (
+//                                             <Picker.Item key={suc.id.toString()} label={suc.nombre} value={suc.id.toString()} />
+//                                         ))}
+//                                     </Picker>
+//                                 </View>
+//                             </>
+//                         )}
+
+//                         <TextInput
+//                             style={styles.input}
+//                             placeholder="Fecha (YYYY-MM-DD)"
+//                             placeholderTextColor="#888"
+//                             value={fecha}
+//                             onChangeText={setFecha}
+//                         />
+
+//                         <View style={styles.switchContainer}>
+//                             <Text style={styles.switchLabel}>¿Está Cerrado Todo el Día?</Text>
+//                             <Switch
+//                                 onValueChange={setEstaCerrado}
+//                                 value={estaCerrado}
+//                             />
+//                         </View>
+
+//                         {!estaCerrado && (
+//                             <>
+//                                 <TextInput
+//                                     style={styles.input}
+//                                     placeholder="Hora de Apertura (HH:MM:SS)"
+//                                     placeholderTextColor="#888"
+//                                     value={horaApertura}
+//                                     onChangeText={setHoraApertura}
+//                                 />
+//                                 <TextInput
+//                                     style={styles.input}
+//                                     placeholder="Hora de Cierre (HH:MM:SS)"
+//                                     placeholderTextColor="#888"
+//                                     value={horaCierre}
+//                                     onChangeText={setHoraCierre}
+//                                 />
+//                             </>
+//                         )}
+                        
+//                         <TextInput
+//                             style={styles.inputMultiline}
+//                             placeholder="Descripción de la Excepción (Opcional)"
+//                             placeholderTextColor="#888"
+//                             value={descripcion}
+//                             onChangeText={setDescripcion}
+//                             multiline
+//                             numberOfLines={3}
+//                         />
+
+//                         <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading || loadingData}>
+//                             {loading ? (
+//                                 <ActivityIndicator color="#fff" />
+//                             ) : (
+//                                 <View style={styles.botonContent}>
+//                                     <Ionicons name="add-circle-outline" size={22} color="#fff" style={styles.botonIcon} />
+//                                     <Text style={styles.textoBoton}>Crear Excepción</Text>
+//                                 </View>
+//                             )}
+//                         </TouchableOpacity>
+//                         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+//                             <Ionicons name="arrow-back-circle-outline" size={24} color="#555" />
+//                             <Text style={styles.backButtonText}>Volver</Text>
+//                         </TouchableOpacity>
+//                     </View>
+//                 </ScrollView>
+//             </TouchableWithoutFeedback>
+//         </KeyboardAvoidingView>
+//     );
+// }
