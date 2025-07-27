@@ -3,7 +3,7 @@ import { Entypo, AntDesign, Feather } from '@expo/vector-icons';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import InicioStack from "./Stacks/InicioStack";
 import PerfilStack from "./Stacks/PerfilStack";
-import ConfiguracionStack from "./Stacks/ConfiguracionStack";
+import GestionesStack from './Stacks/GestionStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -49,14 +49,15 @@ export default function NavegacionPrincipal() {
                 }} 
             />
             <Tab.Screen 
-                name="Configuracion" 
-                component={ConfiguracionStack} 
+                name="Gestion" 
+                component={GestionesStack} 
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <Feather name="settings" size={size} color={color} />
+                        <Entypo name="user" size={size} color={color} />
                     )
                 }} 
             />
+
         </Tab.Navigator>
     );
 }

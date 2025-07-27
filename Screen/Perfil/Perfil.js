@@ -21,9 +21,13 @@ export default function PantallaPerfil({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
+                {/* Espacio para alinear el título si no hay botón a la izquierda */}
                 <View style={{ width: 40 }} /> 
                 <Text style={styles.headerTitle}>Mi Perfil</Text>
-                <View style={{ width: 40 }} /> 
+                {/* Botón de Configuración */}
+                <TouchableOpacity onPress={() => navigation.navigate('Configuracion')} style={styles.settingsIcon}>
+                    <Ionicons name="settings-outline" size={26} color="#2c3e50" />
+                </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -59,6 +63,15 @@ export default function PantallaPerfil({ navigation }) {
                         <Text style={styles.actionButtonText}>Editar Perfil</Text>
                     </TouchableOpacity>
 
+                    {/* Botón "Mis Recordatorios" reintroducido */}
+                    <TouchableOpacity 
+                        style={styles.remindersButton} 
+                        onPress={() => navigation.navigate('ListarRecordatorios')}
+                    >
+                        <Ionicons name="notifications-outline" size={22} color="#FFF" />
+                        <Text style={styles.actionButtonText}>Mis Recordatorios</Text>
+                    </TouchableOpacity>
+
                     <TouchableOpacity style={styles.backActionButton} onPress={() => navigation.goBack()}>
                         <Ionicons name="arrow-back-outline" size={22} color="#FFF" />
                         <Text style={styles.actionButtonText}>Regresar</Text>
@@ -83,17 +96,18 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        // --- CAMBIO AQUÍ ---
-        // Aumentamos el padding superior para que no choque con el notch
+        justifyContent: 'space-between', // Ajustado para alinear el título y el icono
         paddingTop: 40,
         paddingBottom: 15,
-        backgroundColor: '#F0F4F8',
+        paddingHorizontal: 20, // Añadido padding horizontal para los elementos del header
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#2c3e50',
+    },
+    settingsIcon: {
+        // Estilo para el botón de configuración (puedes añadirle margen si lo necesitas)
     },
     scrollContainer: {
         paddingBottom: 120, 
@@ -185,6 +199,21 @@ const styles = StyleSheet.create({
         marginBottom: 15, 
         elevation: 4,
         shadowColor: "#3498db",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+    },
+    // Estilo del botón de recordatorios (reintroducido)
+    remindersButton: { 
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#27ae60',
+        paddingVertical: 15,
+        borderRadius: 16,
+        marginBottom: 15,
+        elevation: 4,
+        shadowColor: "#27ae60",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,

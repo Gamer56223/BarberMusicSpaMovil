@@ -23,6 +23,7 @@ import ServicioSucursalesStack from "./ServicioSucursalStack";
 import SucursalesStack from "./SucursalStack";
 import TransaccionPagosStack from "./TransaccionPagoStack";
 import UsuariosStack from "./UsuarioStack";
+import ReseñaStack from "./ReseñaStack";
 
 const Stack = createStackNavigator();
 
@@ -125,6 +126,11 @@ export default function InicioStack () {
             <Stack.Screen
                 name="UsuariosFlow" 
                 component={UsuariosStack}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="ReseñasFlow" 
+                component={ReseñaStack}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

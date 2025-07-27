@@ -1,17 +1,17 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Configuracion from "../../../Screen/Configuracion/Configuracion"; 
+import Gestion from "../../../Screen/Gestion/Gestion"; 
 
 const Stack = createStackNavigator();
 
-export default function ConfiguracionesStack () {
+export default function GestionesStack () {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name= "ConfiguracionPantalla" 
-                component={Configuracion} 
+                name= "GestionPantalla" 
+                component={Gestion} 
                 options={{
-                    title: "Configuraciones",
+                    title: "Gestiones",
                     headerStyle: { // <-- Agregado para el color de encabezado
                         backgroundColor: '#6A5ACD', // Un color púrpura/lavanda para Configuración
                     },
