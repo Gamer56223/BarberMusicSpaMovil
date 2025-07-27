@@ -1,14 +1,41 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import { logoutUser } from '../../Src/Servicios/AuthService';
 
-export default function PantallaPerfil({ navigation }) {
+export default function PantallaPerfil({ navigation, updateUserToken }) {
 
     const usuario = {
         nombre: 'Carlos',
         apellido: 'Rivas',
         telefono: '301 234 5678',
         role: 'Administrador',
+    };
+
+    const handleLogout = () => {
+        Alert.alert(
+            "Cerrar Sesión",
+            "¿Estás seguro de que quieres cerrar tu sesión?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Sí, Cerrar Sesión",
+                    onPress: async () => {
+                        try {
+                            await logoutUser();
+                        } catch (error) {
+                            console.error("El logout en el servidor falló, pero se cerrará la sesión localmente:", error);
+                        } finally {
+                            updateUserToken(null);
+                        }
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
     };
 
     const profileInfo = [
@@ -21,10 +48,8 @@ export default function PantallaPerfil({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                {/* Espacio para alinear el título si no hay botón a la izquierda */}
-                <View style={{ width: 40 }} /> 
+                <View style={{ width: 40 }} />
                 <Text style={styles.headerTitle}>Mi Perfil</Text>
-                {/* Botón de Configuración */}
                 <TouchableOpacity onPress={() => navigation.navigate('Configuracion')} style={styles.settingsIcon}>
                     <Ionicons name="settings-outline" size={26} color="#2c3e50" />
                 </TouchableOpacity>
@@ -55,29 +80,21 @@ export default function PantallaPerfil({ navigation }) {
                 </View>
 
                 <View style={styles.actionSection}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={styles.editButton}
                         onPress={() => navigation.navigate('EditarPerfil', { usuario: usuario })}
                     >
                         <Ionicons name="create-outline" size={22} color="#FFF" />
                         <Text style={styles.actionButtonText}>Editar Perfil</Text>
                     </TouchableOpacity>
-
-                    {/* Botón "Mis Recordatorios" reintroducido */}
-                    <TouchableOpacity 
-                        style={styles.remindersButton} 
+                    <TouchableOpacity
+                        style={styles.remindersButton}
                         onPress={() => navigation.navigate('ListarRecordatorios')}
                     >
                         <Ionicons name="notifications-outline" size={22} color="#FFF" />
                         <Text style={styles.actionButtonText}>Mis Recordatorios</Text>
                     </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.backActionButton} onPress={() => navigation.goBack()}>
-                        <Ionicons name="arrow-back-outline" size={22} color="#FFF" />
-                        <Text style={styles.actionButtonText}>Regresar</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.logoutButton}>
+                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                         <Ionicons name="log-out-outline" size={22} color="#FFF" />
                         <Text style={styles.actionButtonText}>Cerrar Sesión</Text>
                     </TouchableOpacity>
@@ -96,21 +113,19 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between', // Ajustado para alinear el título y el icono
+        justifyContent: 'space-between',
         paddingTop: 40,
         paddingBottom: 15,
-        paddingHorizontal: 20, // Añadido padding horizontal para los elementos del header
+        paddingHorizontal: 20,
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#2c3e50',
     },
-    settingsIcon: {
-        // Estilo para el botón de configuración (puedes añadirle margen si lo necesitas)
-    },
+    settingsIcon: {},
     scrollContainer: {
-        paddingBottom: 120, 
+        paddingBottom: 120,
     },
     profileHeader: {
         alignItems: 'center',
@@ -196,15 +211,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#3498db',
         paddingVertical: 15,
         borderRadius: 16,
-        marginBottom: 15, 
+        marginBottom: 15,
         elevation: 4,
         shadowColor: "#3498db",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
     },
-    // Estilo del botón de recordatorios (reintroducido)
-    remindersButton: { 
+    remindersButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -214,20 +228,6 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         elevation: 4,
         shadowColor: "#27ae60",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-    },
-    backActionButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#7f8c8d',
-        paddingVertical: 15,
-        borderRadius: 16,
-        marginBottom: 15,
-        elevation: 4,
-        shadowColor: "#7f8c8d",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,

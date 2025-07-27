@@ -1,13 +1,17 @@
-import { NavigationContainer } from "@react-navigation/native";
-import AuthNavegacion from "./AuthNavegacion";
-import NavegacionPrincipal from "./NavegacionPrincipal"
+// Src/Navegation/AppNavegacion.js (Código Corregido)
 
-export default function AppNavegacion() {
-    const Autenticado = true; 
+import React from "react";
+// Se asume que este es tu navegador con las pestañas o el stack principal de la app
+import NavegacionPrincipal from "./NavegacionPrincipal"; 
 
-    return (
-        <NavigationContainer>
-            {Autenticado ? <NavegacionPrincipal/> : <AuthNavegacion/>}
-        </NavigationContainer>
-    );
+/**
+ * AppNavegacion: Este componente ya no contiene lógica de estado.
+ * Simplemente renderiza la navegación principal de la aplicación.
+ * Recibe `updateUserToken` para poder pasarlo a otras pantallas (ej. un botón de logout en el perfil).
+ */
+export default function AppNavegacion({ updateUserToken }) {
+    // Ya no hay <NavigationContainer> aquí.
+    // Ya no hay lógica de isLoading o userToken.
+    // App.js ya se encargó de eso.
+    return <NavegacionPrincipal updateUserToken={updateUserToken} />;
 }

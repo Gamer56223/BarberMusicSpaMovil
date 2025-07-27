@@ -18,8 +18,6 @@ const ManagementRow = ({ iconName, label, onPress }) => (
 
 export default function PantallaGestion({ navigation }) {
 
-    // Ya no necesitamos los estados para los interruptores
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -28,7 +26,7 @@ export default function PantallaGestion({ navigation }) {
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 
-                {/* --- SECCIÓN DE OPERACIONES PRINCIPALES --- */}
+                {/* --- SECCIÓN ÚNICA: OPERACIONES PRINCIPALES --- */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Operaciones Principales</Text>
                     <View style={styles.settingsCard}>
@@ -42,54 +40,15 @@ export default function PantallaGestion({ navigation }) {
                             label="Gestionar Órdenes" 
                             onPress={() => navigation.navigate('ListarOrdenes')} 
                         />
-                         <ManagementRow 
+                        <ManagementRow 
                             iconName="star-outline" 
-                            label="Gestionar Reseñas" 
+                            label="Gestionar Reseñas" // Reseñas reintroducidas
                             onPress={() => navigation.navigate('ListarResenas')} 
                         />
-                         <ManagementRow 
-                            iconName="card-outline" 
-                            label="Gestionar Transacciones" 
-                            onPress={() => navigation.navigate('ListarTransaccionesPago')} 
-                        />
-                    </View>
-                </View>
-
-                {/* --- SECCIÓN DE ADMINISTRACIÓN DE ENTIDADES --- */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Administración de Entidades</Text>
-                    <View style={styles.settingsCard}>
-                       <ManagementRow 
+                        <ManagementRow 
                             iconName="people-outline" 
                             label="Gestionar Personal" 
                             onPress={() => navigation.navigate('ListarPersonal')} 
-                        />
-                        <ManagementRow 
-                            iconName="person-circle-outline" 
-                            label="Gestionar Usuarios" 
-                            onPress={() => navigation.navigate('ListarUsuarios')} 
-                        />
-                        <ManagementRow 
-                            iconName="business-outline" 
-                            label="Gestionar Sucursales" 
-                            onPress={() => navigation.navigate('ListarSucursales')} 
-                        />
-                    </View>
-                </View>
-
-                {/* --- SECCIÓN DE CATÁLOGOS Y CONFIGURACIÓN --- */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Catálogos y Configuración</Text>
-                    <View style={styles.settingsCard}>
-                        <ManagementRow 
-                            iconName="file-tray-full-outline" 
-                            label="Gestionar Servicios" 
-                            onPress={() => navigation.navigate('ListarServicios')} 
-                        />
-                         <ManagementRow 
-                            iconName="cube-outline" 
-                            label="Gestionar Productos" 
-                            onPress={() => navigation.navigate('ListarProductos')} 
                         />
                         <ManagementRow 
                             iconName="layers-outline" 
@@ -106,13 +65,10 @@ export default function PantallaGestion({ navigation }) {
                             label="Gestionar Promociones" 
                             onPress={() => navigation.navigate('ListarPromociones')} 
                         />
-                         <ManagementRow 
-                            iconName="notifications-outline" 
-                            label="Gestionar Recordatorios" 
-                            onPress={() => navigation.navigate('ListarRecordatorios')} 
-                        />
                     </View>
                 </View>
+
+                {/* Las secciones "Administración de Entidades" y "Catálogos y Configuración" han sido eliminadas */}
 
             </ScrollView>
         </SafeAreaView>
