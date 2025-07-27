@@ -4,6 +4,7 @@ import ListarRecordatorio from "../../../Screen/Recordatorios/ListarRecordatorio
 import DetalleRecordatorio from "../../../Screen/Recordatorios/DetalleRecordatorio";
 import EditarRecordatorio from "../../../Screen/Recordatorios/EditarRecordatorio";
 import AgregarRecordatorio from "../../../Screen/Recordatorios/AgregarRecordatorio";
+import FijarRecordatorio from "../../../Screen/Recordatorios/FijarRecordatorio";
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,11 @@ export default function RecordatoriosStack () {
                 name= "DetalleRecordatorio"
                 component={DetalleRecordatorio}
                 options={{ title: "Nuevo Detalle Recordatorio" }}
+            />
+             <Stack.Screen
+                name= "FijarRecordatorio"
+                component={FijarRecordatorio}
+                options={{ title: "Nuevo Fijar Recordatorio" }}
             />
         </Stack.Navigator>
     );
