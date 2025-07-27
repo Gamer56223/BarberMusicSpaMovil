@@ -1,23 +1,28 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Switch } from 'react-native'; // Importamos Switch
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PantallaConfiguracion({ navigation }) {
-    // Estado para el modo oscuro, puedes manejarlo con Redux, Context API, AsyncStorage, etc.
     const [isDarkModeEnabled, setIsDarkModeEnabled] = React.useState(false);
-    // Estado para las notificaciones, similar al modo oscuro
     const [areNotificationsEnabled, setAreNotificationsEnabled] = React.useState(true);
 
     const toggleDarkMode = () => {
         setIsDarkModeEnabled(previousState => !previousState);
-        // Aquí podrías agregar la lógica para cambiar el tema de tu aplicación
         console.log('Modo Oscuro:', !isDarkModeEnabled ? 'Activado' : 'Desactivado');
     };
 
     const toggleNotifications = () => {
         setAreNotificationsEnabled(previousState => !previousState);
-        // Aquí podrías agregar la lógica para activar/desactivar notificaciones
         console.log('Notificaciones:', !areNotificationsEnabled ? 'Activadas' : 'Desactivadas');
+    };
+
+    const navigateToReminders = () => {
+        navigation.navigate('ListarRecordatorios'); // Asegúrate que 'ListarRecordatorios' es el nombre de la ruta en tu stack
+    };
+
+    const navigateToChangePassword = () => {
+        console.log('Navegar a Cambiar Contraseña');
+        // navigation.navigate('CambiarContraseña'); // Descomenta y ajusta si tienes esta ruta
     };
 
     return (
@@ -59,11 +64,17 @@ export default function PantallaConfiguracion({ navigation }) {
                             ios_backgroundColor="#E0E0E0"
                         />
                     </View>
+                    {/* ¡NUEVA OPCIÓN DE RECORDATORIOS! */}
+                    <TouchableOpacity style={styles.settingItem} onPress={navigateToReminders}>
+                        <Ionicons name="calendar-outline" size={22} color="#3498db" />
+                        <Text style={styles.settingText}>Mis Recordatorios</Text>
+                        <Ionicons name="chevron-forward-outline" size={20} color="#7f8c8d" />
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Seguridad</Text>
-                    <TouchableOpacity style={styles.settingItem} onPress={() => console.log('Navegar a Cambiar Contraseña')}>
+                    <TouchableOpacity style={styles.settingItem} onPress={navigateToChangePassword}>
                         <Ionicons name="lock-closed-outline" size={22} color="#3498db" />
                         <Text style={styles.settingText}>Cambiar Contraseña</Text>
                         <Ionicons name="chevron-forward-outline" size={20} color="#7f8c8d" />
@@ -129,7 +140,7 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         paddingHorizontal: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#F0F4F8', // Último item no tiene borde inferior
+        borderBottomColor: '#F0F4F8',
     },
     settingText: {
         flex: 1,

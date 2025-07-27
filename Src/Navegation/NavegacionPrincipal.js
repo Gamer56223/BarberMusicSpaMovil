@@ -51,7 +51,8 @@ export default function NavegacionPrincipal({ updateUserToken }) {
                 component={GestionesStack}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <Entypo name="user" size={size} color={color} />
+                        // ¡Icono cambiado aquí!
+                        <AntDesign name="setting" size={size} color={color} />
                     )
                 }}
             />
