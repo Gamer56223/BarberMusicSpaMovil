@@ -23,7 +23,7 @@ const formatErrorMessage = (errorResponseData) => {
 
 export const listarUsuarios = async () => {
     try {
-        const response = await api.get("/listarUsuarios");
+        const response = await api.get("/Client_usuarios/usuarios");
         console.log("Respuesta listarUsuarios:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -38,7 +38,7 @@ export const listarUsuarios = async () => {
 
 export const DetalleUsuarioId = async (id) => {
     try {
-        const response = await api.get(`listarUsuarios/${id}`);
+        const response = await api.get(`/Client_usuarios/usuarios/${id}`);
         console.log("Respuesta DetalleUsuarios:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -55,9 +55,9 @@ export const DetalleUsuarioId = async (id) => {
 export const eliminarUsuario = async (id) => {
     console.log("Intentando eliminar usuario con ID:", id);
     try {
-        const response = await api.delete(`/eliminarUsuario/${id}`);
+        const response = await api.delete(`/Client_usuarios/usuarios/${id}`);
         console.log("Respuesta eliminarUsuario:", response.data);
-        return { success: true, message: response.data.message || "Excepcion Usuario eliminado correctamente" };
+        return { success: true, message: response.data.message || "Usuario eliminado correctamente" };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
         console.error("Error al eliminar Usuario:", error.response ? error.response.data : error.message);
@@ -70,7 +70,7 @@ export const eliminarUsuario = async (id) => {
 
 export const crearUsuario = async (data) => {
     try {
-        const response = await api.post("/crearUsuario", data);
+        const response = await api.post("/Client_usuarios/usuarios", data);
         console.log("Respuesta crearUsuario:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -85,7 +85,7 @@ export const crearUsuario = async (data) => {
 
 export const editarUsuario = async (id, data) => {
     try {
-        const response = await api.put(`/editarUsuario/${id}`, data);
+        const response = await api.put(`/Client_usuarios/usuarios/${id}`, data);
         console.log("Respuesta editarUsuario:", response.data);
         return { success: true, data: response.data };
     } catch (error) {

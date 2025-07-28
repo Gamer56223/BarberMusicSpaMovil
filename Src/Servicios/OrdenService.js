@@ -23,7 +23,7 @@ const formatErrorMessage = (errorResponseData) => {
 
 export const listarOrdenes = async () => {
     try {
-        const response = await api.get("/listarOrdenes");
+        const response = await api.get("/Client_ordenes/ordenes");
         console.log("Respuesta listarOrdenes:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -38,7 +38,7 @@ export const listarOrdenes = async () => {
 
 export const DetalleOrdenId = async (id) => {
     try {
-        const response = await api.get(`listarOrdenes/${id}`);
+        const response = await api.get(`/Client_ordenes/ordenes/${id}`);
         console.log("Respuesta DetalleOrdenes:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -55,9 +55,9 @@ export const DetalleOrdenId = async (id) => {
 export const eliminarOrden = async (id) => {
     console.log("Intentando eliminar orden con ID:", id);
     try {
-        const response = await api.delete(`/eliminarOrden/${id}`);
+        const response = await api.delete(`/Client_ordenes/ordenes/${id}`);
         console.log("Respuesta eliminarOrden:", response.data);
-        return { success: true, message: response.data.message || "Excepcion Orden eliminada correctamente" };
+        return { success: true, message: response.data.message || "Orden eliminada correctamente" };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
         console.error("Error al eliminar Orden:", error.response ? error.response.data : error.message);
@@ -67,6 +67,3 @@ export const eliminarOrden = async (id) => {
         };
     }
 };
-
-
-

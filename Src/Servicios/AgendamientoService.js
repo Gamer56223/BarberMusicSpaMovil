@@ -23,7 +23,7 @@ const formatErrorMessage = (errorResponseData) => {
 
 export const listarAgendamientos = async () => {
     try {
-        const response = await api.get("/listarAgendamientos");
+        const response = await api.get("/Scheduling_agendamientos/agendamientos");
         console.log("Respuesta listarAgendamientos:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -37,11 +37,10 @@ export const listarAgendamientos = async () => {
 }
 
 
-
 export const eliminarAgendamiento = async (id) => {
     console.log("Intentando eliminar agendamiento con ID:", id);
     try {
-        const response = await api.delete(`/eliminarAgendamiento/${id}`);
+        const response = await api.delete(`/Scheduling_agendamientos/agendamientos/${id}`);
         console.log("Respuesta eliminarAgendamiento:", response.data);
         return { success: true, message: response.data.message || "Agendamiento eliminado correctamente" };
     } catch (error) {
@@ -55,10 +54,9 @@ export const eliminarAgendamiento = async (id) => {
 };
 
 
-
 export const editarAgendamiento = async (id, data) => {
     try {
-        const response = await api.put(`/editarAgendamiento/${id}`, data);
+        const response = await api.put(`/Scheduling_agendamientos/agendamientos/${id}`, data);
         console.log("Respuesta editarAgendamiento:", response.data);
         return { success: true, data: response.data };
     } catch (error) {

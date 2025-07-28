@@ -23,7 +23,7 @@ const formatErrorMessage = (errorResponseData) => {
 
 export const listarRecordatorios = async () => {
     try {
-        const response = await api.get("/listarRecordatorios");
+        const response = await api.get("/Client_recordatorios/recordatorios");
         console.log("Respuesta listarRecordatorios:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -38,7 +38,7 @@ export const listarRecordatorios = async () => {
 
 export const DetalleRecordatorioId = async (id) => {
     try {
-        const response = await api.get(`listarRecordatorios/${id}`);
+        const response = await api.get(`/Client_recordatorios/recordatorios/${id}`);
         console.log("Respuesta DetalleRecordatorios:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -55,9 +55,9 @@ export const DetalleRecordatorioId = async (id) => {
 export const eliminarRecordatorio = async (id) => {
     console.log("Intentando eliminar recordatorio con ID:", id);
     try {
-        const response = await api.delete(`/eliminarRecordatorio/${id}`);
+        const response = await api.delete(`/Client_recordatorios/recordatorios/${id}`);
         console.log("Respuesta eliminarRecordatorio:", response.data);
-        return { success: true, message: response.data.message || "Excepcion Recordatorio eliminado correctamente" };
+        return { success: true, message: response.data.message || "Recordatorio eliminado correctamente" };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
         console.error("Error al eliminar Recordatorio:", error.response ? error.response.data : error.message);
@@ -70,7 +70,7 @@ export const eliminarRecordatorio = async (id) => {
 
 export const crearRecordatorio = async (data) => {
     try {
-        const response = await api.post("/crearRecordatorio", data);
+        const response = await api.post("/Client_recordatorios/recordatorios", data);
         console.log("Respuesta crearRecordatorio:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -85,7 +85,7 @@ export const crearRecordatorio = async (data) => {
 
 export const editarRecordatorio = async (id, data) => {
     try {
-        const response = await api.put(`/editarRecordatorio/${id}`, data);
+        const response = await api.put(`/Client_recordatorios/recordatorios/${id}`, data);
         console.log("Respuesta editarRecordatorio:", response.data);
         return { success: true, data: response.data };
     } catch (error) {

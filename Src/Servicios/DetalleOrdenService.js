@@ -23,7 +23,7 @@ const formatErrorMessage = (errorResponseData) => {
 
 export const listarDetalleOrdenes = async () => {
     try {
-        const response = await api.get("/listarDetalleOrdenes");
+        const response = await api.get("/Client_detalle_ordenes/detalle_ordenes");
         console.log("Respuesta listarDetalleOrdenes:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -35,4 +35,3 @@ export const listarDetalleOrdenes = async () => {
         };
     }
 }
-

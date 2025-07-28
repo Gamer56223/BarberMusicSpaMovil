@@ -20,9 +20,10 @@ const formatErrorMessage = (errorResponseData) => {
     return "Error desconocido";
 };
 
+
 export const listarHorarioSucursales = async () => {
     try {
-        const response = await api.get("Scheduling_horarios_sucursal/horarios");
+        const response = await api.get("/Scheduling_horarios_sucursal/horarios");
         console.log("Respuesta listarHorarioSucursales:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -38,7 +39,7 @@ export const listarHorarioSucursales = async () => {
 
 export const crearHorarioSucursal = async (data) => {
     try {
-        const response = await api.post("Scheduling_horarios_sucursal/horarios", data);
+        const response = await api.post("/Scheduling_horarios_sucursal/horarios", data);
         console.log("Respuesta crearHorarioSucursal:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -50,4 +51,3 @@ export const crearHorarioSucursal = async (data) => {
         };
     }
 };
-

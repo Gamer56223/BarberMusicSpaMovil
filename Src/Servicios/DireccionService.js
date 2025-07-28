@@ -23,7 +23,7 @@ const formatErrorMessage = (errorResponseData) => {
 
 export const listarDirecciones = async () => {
     try {
-        const response = await api.get("/listarDirecciones");
+        const response = await api.get("/Client_direcciones/direcciones");
         console.log("Respuesta listarDirecciones:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -39,7 +39,7 @@ export const listarDirecciones = async () => {
 
 export const crearDireccion = async (data) => {
     try {
-        const response = await api.post("/crearDireccion", data);
+        const response = await api.post("/Client_direcciones/direcciones", data);
         console.log("Respuesta crearDireccion:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -51,4 +51,3 @@ export const crearDireccion = async (data) => {
         };
     }
 };
-

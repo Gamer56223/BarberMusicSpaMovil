@@ -22,7 +22,7 @@ const formatErrorMessage = (errorResponseData) => {
 
 export const listarProductos = async () => {
     try {
-        const response = await api.get("Catalog_productos/productos");
+        const response = await api.get("/Catalog_productos/productos");
         console.log("Respuesta listarProductos:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -37,7 +37,7 @@ export const listarProductos = async () => {
 
 export const DetalleProductoId = async (id) => {
     try {
-        const response = await api.get(`Catalog_productos/productos/${id}`);
+        const response = await api.get(`/Catalog_productos/productos/${id}`);
         console.log("Respuesta DetalleProductos:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -53,7 +53,7 @@ export const DetalleProductoId = async (id) => {
 export const eliminarProducto = async (id) => {
     console.log("Intentando eliminar producto con ID:", id);
     try {
-        const response = await api.delete(`Catalog_productos/productos/${id}`);
+        const response = await api.delete(`/Catalog_productos/productos/${id}`);
         console.log("Respuesta eliminarProducto:", response.data);
         return { success: true, message: response.data.message || "Producto eliminado correctamente" };
     } catch (error) {
@@ -68,7 +68,7 @@ export const eliminarProducto = async (id) => {
 
 export const crearProducto = async (data) => {
     try {
-        const response = await api.post("Catalog_productos/productos", data);
+        const response = await api.post("/Catalog_productos/productos", data);
         console.log("Respuesta crearProducto:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
@@ -83,7 +83,7 @@ export const crearProducto = async (data) => {
 
 export const editarProducto = async (id, data) => {
     try {
-        const response = await api.put(`Catalog_productos/productos/${id}`, data);
+        const response = await api.put(`/Catalog_productos/productos/${id}`, data);
         console.log("Respuesta editarProducto:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
