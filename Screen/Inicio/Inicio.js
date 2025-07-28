@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, Text, SafeAreaView, Image } from "react-native";
-import { AntDesign, FontAwesome6, Ionicons, MaterialIcons, Octicons } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import Square from "../../components/Square";
 
 export default function Inicio({ navigation }) {
     const adminItems = [
-        { title: "Productos", IconComponent: AntDesign, iconName: "shoppingcart", screen: "ProductosStack", color: '#fce4ec' },
-        { title: "Servicios", IconComponent: MaterialIcons, iconName: "miscellaneous-services", screen: "ServiciosStack", color: '#fff3e0' },
-        { title: "Sucursales", IconComponent: MaterialIcons, iconName: "business", screen: "SucursalesStack", color: '#fffde7' },
+        { title: "Productos", IconComponent: AntDesign, iconName: "shoppingcart", screen: "ProductosFlow", color: '#fce4ec' },
+        { title: "Servicios", IconComponent: MaterialIcons, iconName: "miscellaneous-services", screen: "ServiciosFlow", color: '#fff3e0' },
+        { title: "Sucursales", IconComponent: MaterialIcons, iconName: "business", screen: "SucursalesFlow", color: '#fffde7' },
     ];
 
     return (

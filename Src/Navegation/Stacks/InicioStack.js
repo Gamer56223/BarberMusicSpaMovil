@@ -1,9 +1,5 @@
-// src/stacks/InicioStack.js
-
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-
-// Importa la pantalla de Inicio (el "dashboard" con las 4 casillas)
 import Inicio from "../../../Screen/Inicio/Inicio";
 import AgendamientosStack from "./AgendamientoStack";
 import CategoriasStack from "./CategoriaStack";
@@ -27,109 +23,106 @@ import ReseñaStack from "./ReseñaStack";
 
 const Stack = createStackNavigator();
 
-export default function InicioStack () {
+export default function InicioStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="InicioPantalla" 
+                name="InicioPantalla"
                 component={Inicio}
-                options={{ headerShown: false }} 
+                options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="AgendamientosFlow" 
+                name="AgendamientosFlow"
                 component={AgendamientosStack}
                 options={{ headerShown: false }}
             />
-
             <Stack.Screen
-                name="CategoriasFlow" 
+                name="CategoriasFlow"
                 component={CategoriasStack}
                 options={{ headerShown: false }}
             />
-
             <Stack.Screen
-                name="DetalleOrdenesFlow" 
+                name="DetalleOrdenesFlow"
                 component={DetalleOrdenesStack}
                 options={{ headerShown: false }}
             />
-
             <Stack.Screen
-                name="DireccionesFlow" 
+                name="DireccionesFlow"
                 component={DireccionesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="EspecialidadesFlow" 
+                name="EspecialidadesFlow"
                 component={EspecialidadesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="ExcepcionHorariosFlow" 
+                name="ExcepcionHorariosFlow"
                 component={ExcepcionHorariosStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="HorarioSucursalesFlow" 
+                name="HorarioSucursalesFlow"
                 component={HorarioSucursalesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="MusicaPreferencialesFlow" 
+                name="MusicaPreferencialesFlow"
                 component={MusicaPreferencialesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="OrdenesFlow" 
+                name="OrdenesFlow"
                 component={OrdenesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="PersonalesFlow" 
+                name="PersonalesFlow"
                 component={PersonalesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="ProductosFlow" 
+                name="ProductosFlow"
                 component={ProductosStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="PromocionesFlow" 
+                name="PromocionesFlow"
                 component={PromocionesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="RecordatoriosFlow" 
+                name="RecordatoriosFlow"
                 component={RecordatoriosStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="ServiciosFlow" 
+                name="ServiciosFlow"
                 component={ServiciosStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="ServicioSucursalesFlow" 
+                name="ServicioSucursalesFlow"
                 component={ServicioSucursalesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="SucursalesFlow" 
+                name="SucursalesFlow"
                 component={SucursalesStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="TransaccionPagosFlow" 
+                name="TransaccionPagosFlow"
                 component={TransaccionPagosStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="UsuariosFlow" 
+                name="UsuariosFlow"
                 component={UsuariosStack}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="ReseñasFlow" 
+                name="ReseñasFlow"
                 component={ReseñaStack}
                 options={{ headerShown: false }}
             />
