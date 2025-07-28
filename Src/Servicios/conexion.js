@@ -7,10 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * Configuración centralizada de Axios para la API.
  */
 
-// --- ❗ ACCIÓN REQUERIDA ❗ ---
-// Reemplaza esta URL con la IP de tu red local donde se ejecuta el servidor de Laravel.
-// ¡No uses 'localhost' o '127.0.0.1' si usas un emulador o un dispositivo físico!
-const API_BASE_URL = "http://192.168.0.11:8000/api";
+const API_BASE_URL = "http://172.30.2.48:8000/api";
 
 // Crea la instancia de Axios.
 const api = axios.create({

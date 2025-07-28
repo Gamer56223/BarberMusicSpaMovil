@@ -10,18 +10,8 @@ import AppNavegacion from "./Src/Navegation/AppNavegacion";
 const RootStack = createStackNavigator();
 
 export default function App() {
-    // --- CAMBIOS PARA PRUEBAS ---
-    // 1. Se asigna un token falso para simular que el usuario ya inició sesión.
-    const [userToken, setUserToken] = useState('token_de_prueba');
-    // 2. Se desactiva la pantalla de carga inicial.
-    const [isLoading, setIsLoading] = useState(false);
-    // --- FIN DE CAMBIOS PARA PRUEBAS ---
-    
-    /*
-    // --- CÓDIGO ORIGINAL COMENTADO ---
     const [userToken, setUserToken] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    */
 
     const updateUserToken = async (token) => {
         if (token) {
@@ -32,8 +22,6 @@ export default function App() {
         setUserToken(token);
     };
 
-    /*
-    // 3. Se comenta el useEffect para evitar que verifique el token real en el dispositivo.
     useEffect(() => {
         const checkToken = async () => {
             try {
@@ -47,7 +35,6 @@ export default function App() {
         };
         checkToken();
     }, []);
-    */
 
     if (isLoading) {
         return (

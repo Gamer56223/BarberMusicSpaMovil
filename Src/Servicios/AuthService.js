@@ -38,28 +38,6 @@ export const logoutUser = async () => {
     }
 };
 
-export const registerUser = async (name, email, password, role) => {
-    try {
-        const response = await api.post("/auth/register", { name, email, password, role });
-        const token = response.data?.data?.token || response.data?.token;
-
-        if (token) {
-            await AsyncStorage.setItem("userToken", token);
-            return { success: true, token };
-        } else {
-            return {
-                success: false,
-                message: response.data.message || "No se recibió un token de autenticación válido después del registro."
-            };
-        }
-    } catch (error) {
-        console.error("Error de registro:", error.response ? error.response.data : error.message);
-        return {
-            success: false,
-            message: error.response?.data?.message || "Error al registrar el usuario. El correo podría ya estar registrado."
-        };
-    }
-};
 
 export const editarPerfil = async (id, data) => {
     try {

@@ -1,0 +1,175 @@
+import { StyleSheet, Platform } from 'react-native';
+
+const styles = StyleSheet.create({
+    keyboardAvoidingView: {
+        flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        paddingBottom: 30, // Espacio al final del scroll
+    },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#f8f8f8',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 30,
+        textAlign: 'center',
+    },
+    input: {
+        width: '100%',
+        padding: 15,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 10,
+        marginBottom: 15,
+        backgroundColor: '#fff',
+        fontSize: 16,
+        color: '#333',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    pickerLabel: {
+        fontSize: 16,
+        color: '#333',
+        marginBottom: 5,
+        alignSelf: 'flex-start',
+        fontWeight: 'bold',
+    },
+    pickerContainer: {
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 10,
+        marginBottom: 15,
+        backgroundColor: '#fff',
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    picker: {
+        width: '100%',
+        height: 50,
+        color: '#333',
+    },
+    pickerItem: {
+        fontSize: 16,
+        color: '#333',
+    },
+    pickerLoading: {
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    // Nuevos estilos para la tarjeta de detalles del servicio seleccionado
+    serviceDetailsCard: {
+        width: '100%',
+        backgroundColor: '#E0F7FA', // Un color de fondo diferente para destacar
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+        borderWidth: 1,
+        borderColor: '#B2EBF2',
+    },
+    serviceDetailsTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#00796B', // Color de título para los detalles del servicio
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    serviceImagePreview: {
+        width: '90%',
+        height: 100,
+        borderRadius: 8,
+        marginVertical: 10,
+        alignSelf: 'center',
+        backgroundColor: '#CFD8DC',
+        resizeMode: 'cover',
+    },
+    noImageText: {
+        fontSize: 14,
+        color: '#7F8C8D',
+        textAlign: 'center',
+        marginVertical: 10,
+        fontStyle: 'italic',
+    },
+    detailText: {
+        fontSize: 14,
+        color: '#455A64',
+        marginBottom: 4,
+    },
+    detailLabel: {
+        fontWeight: 'bold',
+        color: '#263238',
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 20,
+        paddingHorizontal: 5,
+    },
+    switchLabel: {
+        fontSize: 16,
+        color: '#333',
+        fontWeight: 'bold',
+    },
+    boton: {
+        width: '90%',
+        padding: 15,
+        backgroundColor: '#1976D2',
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+        marginBottom: 10,
+        shadowColor: '#1976D2',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 5,
+    },
+    botonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    botonIcon: {
+        marginRight: 8,
+    },
+    textoBoton: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    backButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#555',
+        fontSize: 16,
+        marginLeft: 5,
+    },
+});
+
+export default styles;

@@ -1,37 +1,64 @@
-// import { View, Text, TouchableOpacity } from 'react-native';
-// import { Ionicons } from '@expo/vector-icons';
-// import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 
-// import styles from '../Styles/ServicioCardStyles';
+import styles from '../Styles/Servicio/ServicioCardStyles'; // Asegúrate de que esta ruta sea correcta
 
-// function ServicioCard({ servicio, nombreCategoria, nombreEspecialidad, onEdit, onDelete, onDetail }) {
-//     return (
-//         <View style={styles.card}>
-//             <View style={styles.info}>
-//                 <Text style={styles.nombre}>{servicio.Nombre}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Dirección:</Text> {servicio.Descripcion}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Teléfono:</Text> {servicio.ImagenPath}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {servicio.PrecioBase}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {servicio.DuracionMinutos}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {servicio.Activo}</Text>
+function ServicioCard({ servicio, onEdit, onDelete, onDetail }) {
+    // Función para limpiar referencias en la descripción
+    const cleanDescription = (text) => {
+        if (!text) return '';
+        return text.replace(/\[cite: \d+\]/g, '').trim();
+    };
 
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Categoria:</Text> {nombreCategoria}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Especialidad:</Text> {nombreEspecialidad}</Text>
+    return (
+        <View style={styles.card}>
+            <View style={styles.contentContainer}> {/* Usar contentContainer para consistencia */}
+                <Text style={styles.nombre}>{servicio.nombre}</Text>
+                
+                <View style={styles.detailRow}>
+                    <Text style={styles.detalle}><Text style={styles.detalleLabel}>Categoría</Text>: {servicio.nombreCategoria}</Text>
+                </View>
 
-//             </View>
-//             <View style={styles.actions}>
-//                 <TouchableOpacity onPress={onEdit} style={styles.iconBtn}>
-//                     <Ionicons name="create-outline" size={26} color="#1976D2" />
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={onDelete} style={styles.iconBtn}>
-//                     <Ionicons name="trash-outline" size={26} color="#D32F2F" />
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={onDetail} style={styles.iconBtn}>
-//                     <Ionicons name="bulb-outline" size={26} color="silver" />
-//                 </TouchableOpacity>
-//             </View>
-//         </View>
-//     );
-// }
+                {servicio.especialidad_requerida_id ? ( // Mostrar especialidad solo si está presente
+                    <View style={styles.detailRow}>
+                        <Text style={styles.detalle}><Text style={styles.detalleLabel}>Especialidad</Text>: {servicio.nombreEspecialidad}</Text>
+                    </View>
+                ) : null}
 
-// export default React.memo(ServicioCard);
+                {servicio.descripcion ? (
+                    <Text style={styles.shortDescription} numberOfLines={2} ellipsizeMode="tail">
+                        <Text style={styles.detalleLabel}>Descripción</Text>: {cleanDescription(servicio.descripcion)}
+                    </Text>
+                ) : null}
+
+                <View style={styles.priceDurationSection}> {/* Contenedor para precio y duración */}
+                    <Text style={styles.priceText}><Text style={styles.detalleLabel}>Precio Base</Text>: ${servicio.precio_base}</Text>
+                    <Text style={styles.durationText}><Text style={styles.detalleLabel}>Duración</Text>: {servicio.duracion_minutos} min</Text>
+                </View>
+                
+                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Activo</Text>: {servicio.activo ? 'Sí' : 'No'}</Text>
+
+                {servicio.imagen_path ? (
+                    <Text style={styles.detalle} numberOfLines={1} ellipsizeMode="tail">
+                        <Text style={styles.detalleLabel}>Imagen</Text>: {servicio.imagen_path}
+                    </Text>
+                ) : null}
+            </View>
+
+            <View style={styles.actions}>
+                <TouchableOpacity onPress={onEdit} style={styles.iconBtn}>
+                    <Ionicons name="create-outline" size={24} color="#1976D2" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onDelete} style={styles.iconBtn}>
+                    <Ionicons name="trash-outline" size={24} color="#D32F2F" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onDetail} style={styles.iconBtn}>
+                    <Ionicons name="information-circle-outline" size={24} color="#555" />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
+
+export default React.memo(ServicioCard);
