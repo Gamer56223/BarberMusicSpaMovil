@@ -6,21 +6,19 @@ const styles = StyleSheet.create({
     },
     scrollContainer: {
         flexGrow: 1,
-        // Eliminamos justifyContent: 'center' aquí para permitir que el contenido fluya
-        paddingBottom: 80, // Espacio para evitar que el botón quede pegado a la navegación
+        paddingBottom: 150, // Aumentado para dejar más espacio al FAB en la parte inferior
     },
     container: {
-        flex: 1, // Asegura que el contenedor ocupe todo el espacio disponible
+        flex: 1,
         padding: 20,
         backgroundColor: '#f8f8f8',
-        alignItems: 'center', // Centra los elementos horizontalmente
-        // Eliminamos justifyContent: 'center' aquí
+        alignItems: 'center',
     },
     title: {
-        fontSize: 28, // Aumentado para mayor visibilidad
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#333',
-        marginBottom: 30, // Más espacio debajo del título
+        marginBottom: 30,
         textAlign: 'center',
     },
     input: {
@@ -49,8 +47,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         fontSize: 16,
         color: '#333',
-        height: 100, // Altura fija para multilínea
-        textAlignVertical: 'top', // Alineación del texto al inicio
+        height: 100,
+        textAlignVertical: 'top',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -61,7 +59,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
         marginBottom: 5,
-        alignSelf: 'flex-start', // Alinea la etiqueta a la izquierda
+        alignSelf: 'flex-start',
         fontWeight: 'bold',
     },
     pickerContainer: {
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 15,
         backgroundColor: '#fff',
-        overflow: 'hidden', // Asegura que el borde redondeado se aplique al Picker
+        overflow: 'hidden',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
     },
     picker: {
         width: '100%',
-        height: 50, // Ajusta la altura del picker
+        height: 50,
         color: '#333',
     },
     pickerItem: {
@@ -94,7 +92,7 @@ const styles = StyleSheet.create({
     switchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between', // Espacio entre el texto y el switch
+        justifyContent: 'space-between',
         width: '100%',
         marginBottom: 20,
         paddingHorizontal: 5,
@@ -104,20 +102,23 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: 'bold',
     },
-    boton: {
-        width: '90%', // Ancho del botón ajustado
+    fabButton: {
+        position: 'absolute',
+        bottom: 80, // Se ha subido más el botón
+        left: '5%',
+        right: '5%',
+        width: '90%',
         padding: 15,
         backgroundColor: '#1976D2',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 20, // Espacio encima del botón
-        marginBottom: 10, // Espacio debajo del botón
         shadowColor: '#1976D2',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
         elevation: 5,
+        zIndex: 10,
     },
     botonContent: {
         flexDirection: 'row',
@@ -135,6 +136,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 10,
+        marginBottom: 20,
         padding: 10,
         borderRadius: 5,
     },

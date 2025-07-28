@@ -1,13 +1,10 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-    // Contenedor principal para toda la pantalla
     fullScreenContainer: {
         flex: 1,
-        backgroundColor: '#F5F8FA', // Un color de fondo suave y profesional
+        backgroundColor: '#F5F8FA',
     },
-
-    // Estilos para el estado de carga
     centeredContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -19,8 +16,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#555',
     },
-
-    // Estilos del encabezado
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -28,58 +23,59 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
     },
     headerIcon: {
-        marginRight: 15,
+        marginRight: 10,
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#1A2533', // Un color oscuro para el texto
+        color: '#1A2533',
     },
-
-    // Estilos para la FlatList
     flatListContent: {
         paddingHorizontal: 10,
         paddingTop: 10,
-        paddingBottom: 100, // Espacio para el botón de crear
+        paddingBottom: 120, // Espacio para el botón flotante
     },
     flatListEmpty: {
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingVertical: 50,
     },
-
-    // Estilos para cuando la lista está vacía
     emptyListContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
     },
     emptyText: {
-        fontSize: 16,
-        color: '#7F8C8D', // Un color gris suave
-        marginTop: 10,
+        fontSize: 18,
+        color: '#888',
         textAlign: 'center',
+        marginTop: 10,
     },
-
-    // Estilos para el botón flotante de Crear
     botonCrear: {
         position: 'absolute',
-        bottom: 30,
-        right: 20,
-        backgroundColor: '#007BFF', // Color primario de la app
+        bottom: 70, // Se ha subido más el botón
+        alignSelf: 'center', // Centra el botón horizontalmente
+        width: '60%', // Se ha reducido el ancho del botón
+        backgroundColor: '#007BFF',
         borderRadius: 30,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        elevation: 8, // Sombra para Android
-        shadowColor: "#000", // Sombra para iOS
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.30,
-        shadowRadius: 4.65,
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        shadowColor: '#007BFF',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.4,
+        shadowRadius: 10,
+        elevation: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     botonCrearContent: {
         flexDirection: 'row',
@@ -90,8 +86,27 @@ const styles = StyleSheet.create({
     },
     textoBotonCrear: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
+    },
+    loadMoreButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#E3F2FD',
+        padding: 15,
+        borderRadius: 10,
+        marginHorizontal: 20,
+        marginTop: 15,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#BBDEFB',
+    },
+    loadMoreButtonText: {
+        fontSize: 16,
+        color: '#1976D2',
+        fontWeight: 'bold',
+        marginRight: 8,
     },
 });
 

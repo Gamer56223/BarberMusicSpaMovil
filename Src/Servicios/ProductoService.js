@@ -54,11 +54,21 @@ export const eliminarProducto = async (id) => {
     console.log("Intentando eliminar producto con ID:", id);
     try {
         const response = await api.delete(`/Catalog_productos/productos/${id}`);
-        console.log("Respuesta eliminarProducto:", response.data);
+        console.log("Respuesta eliminarProducto - Estado HTTP:", response.status); // Agregado: Log del estado HTTP
+        console.log("Respuesta eliminarProducto - Datos:", response.data); // Agregado: Log de los datos de respuesta
         return { success: true, message: response.data.message || "Producto eliminado correctamente" };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
-        console.error("Error al eliminar Producto:", error.response ? error.response.data : error.message);
+        console.error("Error al eliminar Producto:", error); // Modificado: Log del objeto error completo
+        if (error.response) {
+            console.error("Detalles del error de respuesta (eliminarProducto):", error.response.data);
+            console.error("Estado HTTP del error (eliminarProducto):", error.response.status);
+            console.error("Cabeceras del error (eliminarProducto):", error.response.headers);
+        } else if (error.request) {
+            console.error("No se recibió respuesta del servidor (eliminarProducto):", error.request);
+        } else {
+            console.error("Error al configurar la solicitud (eliminarProducto):", error.message);
+        }
         return {
             success: false,
             message: errorMessage,

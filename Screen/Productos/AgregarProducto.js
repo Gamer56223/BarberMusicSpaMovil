@@ -36,7 +36,7 @@ export default function AgregarProducto({ navigation }) {
                 }
                 return JSON.stringify(msg.message);
             }
-            return JSON.stringify(msg);
+            return defaultMsg;
         }
         return defaultMsg;
     };
@@ -200,7 +200,6 @@ export default function AgregarProducto({ navigation }) {
                             />
                         </View>
 
-                        {/* El botón "Volver" se mantiene dentro del ScrollView */}
                         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                             <Ionicons name="arrow-back-circle-outline" size={24} color="#555" />
                             <Text style={styles.backButtonText}>Volver</Text>
@@ -209,7 +208,6 @@ export default function AgregarProducto({ navigation }) {
                 </ScrollView>
             </TouchableWithoutFeedback>
 
-            {/* El botón "Crear Producto" se mueve fuera del ScrollView para ser FAB */}
             <TouchableOpacity style={styles.fabButton} onPress={handleGuardar} disabled={loading || loadingData}>
                 {loading ? (
                     <ActivityIndicator color="#fff" />

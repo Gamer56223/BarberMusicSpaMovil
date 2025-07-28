@@ -8,10 +8,13 @@ import { listarCategorias } from "../../Src/Servicios/CategoriaService";
 
 import styles from "../../Styles/Producto/ListarProductoStyles";
 
+const PRODUCTS_PER_LOAD = 5;
+
 export default function ListarProductos (){
     const [productos, setProductos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [categoriasMap, setCategoriasMap] = useState({});
+    const [displayCount, setDisplayCount] = useState(PRODUCTS_PER_LOAD);
     const navigation = useNavigation();
 
     const handleProductos = async () => {
@@ -54,7 +57,10 @@ export default function ListarProductos (){
     };
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', handleProductos);
+        const unsubscribe = navigation.addListener('focus', () => {
+            handleProductos();
+            setDisplayCount(PRODUCTS_PER_LOAD); // Reiniciar el contador al volver a la pantalla
+        });
         return unsubscribe;
     }, [navigation]);
 
@@ -87,7 +93,7 @@ export default function ListarProductos (){
     };
 
     const handleCrear = () => {
-        navigation.navigate('CrearProducto'); 
+        navigation.navigate('CrearProducto');
     };
 
     const handleEditar = (producto) => {
@@ -96,6 +102,10 @@ export default function ListarProductos (){
 
     const HandleDetalle = (productoId) => {
         navigation.navigate("DetalleProducto", {productoId: productoId});
+    };
+
+    const handleLoadMore = () => {
+        setDisplayCount(prevCount => prevCount + PRODUCTS_PER_LOAD);
     };
 
     if (loading) {
@@ -117,7 +127,7 @@ export default function ListarProductos (){
             </View>
 
             <FlatList
-                data={productos}
+                data={productos.slice(0, displayCount)}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                     <ProductoCard
@@ -133,6 +143,14 @@ export default function ListarProductos (){
                         <Text style={styles.emptyText}>No hay productos registrados.</Text>
                         <Text style={styles.emptyText}>¡Añade un nuevo producto!</Text>
                     </View>
+                }
+                ListFooterComponent={
+                    displayCount < productos.length ? (
+                        <TouchableOpacity onPress={handleLoadMore} style={styles.loadMoreButton}>
+                            <Text style={styles.loadMoreButtonText}>Ver más productos</Text>
+                            <Ionicons name="arrow-down-circle-outline" size={20} color="#1976D2" />
+                        </TouchableOpacity>
+                    ) : null
                 }
                 contentContainerStyle={productos.length === 0 ? styles.flatListEmpty : styles.flatListContent}
             />
