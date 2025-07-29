@@ -11,13 +11,9 @@ import { listarSucursales } from "../../Src/Servicios/SucursalService";
 
 import styles from "../../Styles/Agendamiento/ListarAgendamientoStyles";
 
-export default function ListarAgendamiento (){
+export default function ListarAgendamiento() {
     const [agendamientos, setAgendamientos] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [personalMap, setPersonalMap] = useState({});
-    const [clientesMap, setClientesMap] = useState({});
-    const [serviciosMap, setServiciosMap] = useState({});
-    const [sucursalesMap, setSucursalesMap] = useState({});
     const navigation = useNavigation();
 
     const handleAgendamientos = async () => {
@@ -31,72 +27,42 @@ export default function ListarAgendamiento (){
                 listarAgendamientos()
             ]);
 
-            let tempPersonalMap = {};
-            if (personalRes.success) {
-                personalRes.data.forEach(p => {
-                    tempPersonalMap[p.id] = `${p.Nombre} ${p.Apellido}`;
-                });
-                setPersonalMap(tempPersonalMap);
-            } else {
-                console.error("Error al cargar personal:", personalRes.message);
-                Alert.alert("Error de Carga", personalRes.message || "No se pudo cargar el personal.");
-            }
+            // Función mejorada para crear mapas y manejar errores específicos
+            const createMap = (response, idKey, nameKeys, resourceName) => {
+                const map = {};
+                if (response.success && Array.isArray(response.data)) {
+                    response.data.forEach(item => {
+                        map[item[idKey]] = nameKeys.map(key => item[key] || '').join(' ').trim();
+                    });
+                } else {
+                    // Muestra una alerta si una lista específica falla, en lugar de fallar silenciosamente
+                    Alert.alert("Error de Carga", `No se pudieron cargar los datos de: ${resourceName}.`);
+                    console.error(`Error al procesar ${resourceName}:`, response.message);
+                }
+                return map;
+            };
 
-            let tempClientesMap = {};
-            if (clientesRes.success) {
-                clientesRes.data.forEach(cliente => {
-                    tempClientesMap[cliente.id] = `${cliente.Nombre} ${cliente.Apellido}`;
-                });
-                setClientesMap(tempClientesMap);
-            } else {
-                console.error("Error al cargar clientes:", clientesRes.message);
-                Alert.alert("Error de Carga", clientesRes.message || "No se pudieron cargar los clientes.");
-            }
+            const personalMap = createMap(personalRes, 'id', ['nombre', 'apellido'], 'Personal');
+            const clientesMap = createMap(clientesRes, 'id', ['nombre', 'apellido'], 'Clientes');
+            const serviciosMap = createMap(serviciosRes, 'id', ['nombre'], 'Servicios');
+            const sucursalesMap = createMap(sucursalesRes, 'id', ['nombre'], 'Sucursales');
 
-            let tempServiciosMap = {};
-            if (serviciosRes.success) {
-                serviciosRes.data.forEach(servicio => {
-                    tempServiciosMap[servicio.id] = servicio.Nombre;
-                });
-                setServiciosMap(tempServiciosMap);
-            } else {
-                console.error("Error al cargar servicios:", serviciosRes.message);
-                Alert.alert("Error de Carga", serviciosRes.message || "No se pudieron cargar los servicios.");
-            }
-
-            let tempSucursalesMap = {};
-            if (sucursalesRes.success) {
-                sucursalesRes.data.forEach(sucursal => {
-                    tempSucursalesMap[sucursal.id] = sucursal.Nombre;
-                });
-                setSucursalesMap(tempSucursalesMap);
-            } else {
-                console.error("Error al cargar sucursales:", sucursalesRes.message);
-                Alert.alert("Error de Carga", sucursalesRes.message || "No se pudieron cargar las sucursales.");
-            }
-
-            if (agendamientosRes.success) {
-                const enrichedAgendamientos = agendamientosRes.data.map(agendamientoItem => {
-                    const nombrePersonal = tempPersonalMap[agendamientoItem.personal_id] || 'Personal Desconocido';
-                    const nombreCliente = tempClientesMap[agendamientoItem.cliente_usuario_id] || 'Cliente Desconocido';
-                    const nombreServicio = tempServiciosMap[agendamientoItem.servicio_id] || 'Servicio Desconocido';
-                    const nombreSucursal = tempSucursalesMap[agendamientoItem.sucursal_id] || 'Sucursal Desconocida';
-
-                    return {
-                        ...agendamientoItem,
-                        nombrePersonal,
-                        nombreCliente,
-                        nombreServicio,
-                        nombreSucursal
-                    };
-                });
+            if (agendamientosRes.success && Array.isArray(agendamientosRes.data)) {
+                const enrichedAgendamientos = agendamientosRes.data.map(agendamiento => ({
+                    ...agendamiento,
+                    nombrePersonal: personalMap[agendamiento.personal_id] || 'Personal no asignado',
+                    nombreCliente: clientesMap[agendamiento.cliente_usuario_id] || 'Cliente no encontrado',
+                    nombreServicio: serviciosMap[agendamiento.servicio_id] || 'Servicio no encontrado',
+                    nombreSucursal: sucursalesMap[agendamiento.sucursal_id] || 'Sucursal no encontrada'
+                }));
                 setAgendamientos(enrichedAgendamientos);
             } else {
-                Alert.alert("Error", agendamientosRes.message || "No se pudieron cargar los agendamientos");
+                Alert.alert("Error", agendamientosRes.message || "No se pudieron cargar los agendamientos.");
+                setAgendamientos([]); // Limpia los agendamientos si la carga falla
             }
         } catch (error) {
-            console.error("Error general al cargar datos de agendamientos y relacionados:", error);
-            Alert.alert("Error", "Ocurrió un error inesperado al cargar los datos de los agendamientos.");
+            console.error("Error general al cargar datos:", error);
+            Alert.alert("Error", "Ocurrió un error inesperado al cargar los datos.");
         } finally {
             setLoading(false);
         }
@@ -117,17 +83,12 @@ export default function ListarAgendamiento (){
                     text: "Eliminar",
                     style: "destructive",
                     onPress: async () => {
-                        try {
-                            const result = await eliminarAgendamiento(id);
-                            if (result.success) {
-                                Alert.alert("Éxito", "Agendamiento eliminado correctamente.");
-                                handleAgendamientos();
-                            } else {
-                                Alert.alert("Error", result.message || "No se pudo eliminar el agendamiento.");
-                            }
-                        } catch (error) {
-                            console.error("Error al eliminar agendamiento:", error);
-                            Alert.alert("Error", "Ocurrió un error inesperado al eliminar el agendamiento.");
+                        const result = await eliminarAgendamiento(id);
+                        if (result.success) {
+                            Alert.alert("Éxito", "Agendamiento eliminado correctamente.");
+                            handleAgendamientos();
+                        } else {
+                            Alert.alert("Error", result.message || "No se pudo eliminar.");
                         }
                     },
                 },
@@ -136,15 +97,15 @@ export default function ListarAgendamiento (){
     };
 
     const handleCrear = () => {
-        navigation.navigate('CrearAgendamiento'); 
+        navigation.navigate('CrearAgendamiento');
     };
 
     const handleEditar = (agendamiento) => {
-        navigation.navigate("EditarAgendamiento", {agendamiento});
+        navigation.navigate("EditarAgendamiento", { agendamiento });
     };
 
-    const HandleDetalle = (agendamientoId) => {
-        navigation.navigate("DetalleAgendamiento", {agendamientoId: agendamientoId});
+    const handleDetalle = (agendamientoId) => {
+        navigation.navigate("DetalleAgendamiento", { agendamientoId: agendamientoId });
     };
 
     if (loading) {
@@ -177,17 +138,17 @@ export default function ListarAgendamiento (){
                         nombreSucursal={item.nombreSucursal}
                         onEdit={() => handleEditar(item)}
                         onDelete={() => handleEliminar(item.id)}
-                        onDetail={() => HandleDetalle(item.id)}
+                        onDetail={() => handleDetalle(item.id)}
                     />
                 )}
-                ListEmptyComponent = {
+                ListEmptyComponent={
                     <View style={styles.emptyListContainer}>
                         <Ionicons name="calendar-outline" size={80} color="#BDC3C7" />
                         <Text style={styles.emptyText}>No hay agendamientos registrados.</Text>
                         <Text style={styles.emptyText}>¡Crea un nuevo agendamiento!</Text>
                     </View>
                 }
-                contentContainerStyle={agendamientos.length === 0 ? styles.flatListEmpty : styles.flatListContent}
+                contentContainerStyle={agendamientos.length === 0 ? styles.flatListEmpty : { paddingBottom: 100 }}
             />
 
             <TouchableOpacity style={styles.botonCrear} onPress={handleCrear} activeOpacity={0.8}>
@@ -197,5 +158,5 @@ export default function ListarAgendamiento (){
                 </View>
             </TouchableOpacity>
         </SafeAreaView>
-    )
+    );
 }

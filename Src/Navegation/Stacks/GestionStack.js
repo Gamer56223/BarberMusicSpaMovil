@@ -2,6 +2,14 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Gestion from "../../../Screen/Gestion/Gestion"; 
 
+import AgendamientosStack from "./AgendamientoStack";
+import CategoriasStack from "./CategoriaStack";
+import EspecialidadesStack from "./EspecialidadStack";
+import OrdenesStack from "./OrdenStack";
+import PersonalesStack from "./PersonalStack";
+import PromocionesStack from "./PromocionStack";
+import ReseñaStack from "./ReseñaStack";
+
 const Stack = createStackNavigator();
 
 export default function GestionesStack () {
@@ -12,15 +20,26 @@ export default function GestionesStack () {
                 component={Gestion} 
                 options={{
                     title: "Gestiones",
-                    headerStyle: { // <-- Agregado para el color de encabezado
-                        backgroundColor: '#6A5ACD', // Un color púrpura/lavanda para Configuración
+                    headerStyle: {
+                        backgroundColor: '#6A5ACD',
                     },
-                    headerTintColor: '#fff', // Color del texto del título y el icono de retroceso
+                    headerTintColor: '#fff',
                     headerTitleStyle: {
-                        fontWeight: 'bold', // Título en negrita
+                        fontWeight: 'bold',
                     },
                 }}
             />
+            <Stack.Screen
+                name="PersonalesStack"
+                component={PersonalesStack}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen name="AgendamientosStack" component={AgendamientosStack} options={{ headerShown: false }} />
+            <Stack.Screen name="CategoriasStack" component={CategoriasStack} options={{ headerShown: false }} />
+            <Stack.Screen name="EspecialidadesStack" component={EspecialidadesStack} options={{ headerShown: false }} />
+            <Stack.Screen name="OrdenesStack" component={OrdenesStack} options={{ headerShown: false }} />
+            <Stack.Screen name="PromocionesStack" component={PromocionesStack} options={{ headerShown: false }} />
+            <Stack.Screen name="ResenasStack" component={ReseñaStack} options={{ headerShown: false }} />
         </Stack.Navigator>
     );
 }

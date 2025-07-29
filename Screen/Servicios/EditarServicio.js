@@ -3,11 +3,11 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator,
 import { useRoute } from '@react-navigation/native';
 import { Picker } from "@react-native-picker/picker";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; // Necesitas instalar esta librería: npx expo install expo-image-picker
+import * as ImagePicker from 'expo-image-picker';
 
-import { editarServicio } from "../../Src/Servicios/ServicioService"; // Asume que tienes este servicio
-import { listarCategorias } from "../../Src/Servicios/CategoriaService"; // Servicio para listar categorías
-import { listarEspecialidades } from "../../Src/Servicios/EspecialidadService"; // Servicio para listar especialidades
+import { editarServicio } from "../../Src/Servicios/ServicioService";
+import { listarCategorias } from "../../Src/Servicios/CategoriaService";
+import { listarEspecialidades } from "../../Src/Servicios/EspecialidadService";
 
 import styles from "../../Styles/Servicio/EditarServicioStyles";
 
@@ -17,7 +17,7 @@ export default function EditarServicio({ navigation }) {
 
     const [nombre, setNombre] = useState(servicioInicial?.nombre || "");
     const [descripcion, setDescripcion] = useState(servicioInicial?.descripcion || "");
-    const [imagenPath, setImagenPath] = useState(servicioInicial?.imagen_path || null); // Para guardar la URI de la imagen
+    const [imagenPath, setImagenPath] = useState(servicioInicial?.imagen_path || null);
     const [precioBase, setPrecioBase] = useState(servicioInicial?.precio_base?.toString() || "");
     const [duracionMinutos, setDuracionMinutos] = useState(servicioInicial?.duracion_minutos?.toString() || "");
     const [categoriaId, setCategoriaId] = useState(servicioInicial?.categoria_id?.toString() || "");
@@ -120,16 +120,13 @@ export default function EditarServicio({ navigation }) {
             formData.append('duracion_minutos', parseInt(duracionMinutos));
             formData.append('categoria_id', parseInt(categoriaId));
             formData.append('especialidad_requerida_id', parseInt(especialidadRequeridaId));
-            formData.append('activo', activo === "1" ? true : false);
+            formData.append('activo', activo);
 
             if (imagenPath && imagenPath.startsWith('file://')) {
                 const filename = imagenPath.split('/').pop();
                 const match = /\.(\w+)$/.exec(filename);
                 const type = match ? `image/${match[1]}` : `image`;
                 formData.append('imagen', { uri: imagenPath, name: filename, type });
-            } else if (imagenPath) {
-                // Si ya es una URL de imagen existente y no se cambió, no se envía el archivo
-                // Se podría enviar un campo 'imagen_path_existente' si la API lo requiere para indicar que no hubo cambio
             }
 
             result = await editarServicio(servicioInicial.id, formData);

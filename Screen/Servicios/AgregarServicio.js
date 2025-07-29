@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from "@react-native-picker/picker";
-import { crearServicioSucursal } from "../../Src/Servicios/ServicioSucursalService"; // Asume que tienes este servicio
-import { listarServicios } from "../../Src/Servicios/ServicioService"; // Ya tenemos este servicio
-import { listarSucursales } from "../../Src/Servicios/SucursalService"; // Ya tenemos este servicio
-
+import { crearServicio } from "../../Src/Servicios/ServicioService";
+import { listarCategorias } from "../../Src/Servicios/CategoriaService";
+import { listarEspecialidades } from "../../Src/Servicios/EspecialidadService";
 import styles from "../../Styles/Servicio/AgregarServicioStyles";
 
-export default function AgregarServicioSucursal({ navigation }) {
-    const [servicioId, setServicioId] = useState("");
-    const [sucursalId, setSucursalId] = useState("");
-    const [precioEnSucursal, setPrecioEnSucursal] = useState("");
-    const [estaDisponible, setEstaDisponible] = useState(true);
-
-    const [servicios, setServicios] = useState([]);
-    const [sucursales, setSucursales] = useState([]);
+export default function AgregarServicio({ navigation }) {
+    const [nombre, setNombre] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [imagenPath, setImagenPath] = useState("");
+    const [precioBase, setPrecioBase] = useState("");
+    const [duracionMinutos, setDuracionMinutos] = useState("");
+    const [categoriaId, setCategoriaId] = useState("");
+    const [especialidadId, setEspecialidadId] = useState("");
+    const [activo, setActivo] = useState(true);
+    const [categorias, setCategorias] = useState([]);
+    const [especialidades, setEspecialidades] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadingData, setLoadingData] = useState(true);
+    const [loadingDependencies, setLoadingDependencies] = useState(true);
 
     const getAlertMessage = (msg, defaultMsg) => {
         if (typeof msg === 'string') {
@@ -41,72 +43,81 @@ export default function AgregarServicioSucursal({ navigation }) {
 
     useEffect(() => {
         const cargarDatosIniciales = async () => {
-            setLoadingData(true);
+            setLoadingDependencies(true);
             try {
-                const [resultServicios, resultSucursales] = await Promise.all([
-                    listarServicios(),
-                    listarSucursales(),
+                const [resultCategorias, resultEspecialidades] = await Promise.all([
+                    listarCategorias(),
+                    listarEspecialidades(),
                 ]);
 
-                if (resultServicios.success) {
-                    setServicios(resultServicios.data);
-                    if (resultServicios.data.length > 0) {
-                        setServicioId(resultServicios.data[0].id.toString());
+                if (resultCategorias.success) {
+                    setCategorias(resultCategorias.data);
+                    if (resultCategorias.data.length > 0) {
+                        setCategoriaId(resultCategorias.data[0].id.toString());
                     }
                 } else {
-                    Alert.alert("Error al cargar servicios", resultServicios.message || "No se pudieron cargar los servicios.");
+                    Alert.alert("Error al cargar categorías", resultCategorias.message || "No se pudieron cargar las categorías.");
                 }
 
-                if (resultSucursales.success) {
-                    setSucursales(resultSucursales.data);
-                    if (resultSucursales.data.length > 0) {
-                        setSucursalId(resultSucursales.data[0].id.toString());
+                if (resultEspecialidades.success) {
+                    setEspecialidades(resultEspecialidades.data);
+                    if (resultEspecialidades.data.length > 0) {
+                        setEspecialidadId(resultEspecialidades.data[0].id.toString());
                     }
                 } else {
-                    Alert.alert("Error al cargar sucursales", resultSucursales.message || "No se pudieron cargar las sucursales.");
+                    Alert.alert("Error al cargar especialidades", resultEspecialidades.message || "No se pudieron cargar las especialidades.");
                 }
 
             } catch (error) {
                 console.error("Error al cargar datos iniciales:", error);
                 Alert.alert("Error", "Ocurrió un error inesperado al cargar los datos iniciales.");
             } finally {
-                setLoadingData(false);
+                setLoadingDependencies(false);
             }
         };
         cargarDatosIniciales();
     }, []);
 
     const handleGuardar = async () => {
-        if (!servicioId || !sucursalId || !precioEnSucursal) {
-            Alert.alert("Campos requeridos", "Por favor, complete los campos obligatorios: Servicio, Sucursal y Precio en Sucursal.");
+        if (!nombre || !descripcion || !precioBase || !duracionMinutos || !categoriaId) {
+            Alert.alert("Campos requeridos", "Por favor, complete todos los campos obligatorios.");
             return;
         }
 
-        const precioEnSucursalNum = parseFloat(precioEnSucursal);
+        const precioBaseNum = parseFloat(precioBase);
+        const duracionMinutosNum = parseInt(duracionMinutos);
 
-        if (isNaN(precioEnSucursalNum) || precioEnSucursalNum < 0) {
-            Alert.alert("Precio inválido", "Por favor, ingrese un precio numérico válido.");
+        if (isNaN(precioBaseNum) || precioBaseNum < 0) {
+            Alert.alert("Precio inválido", "Por favor, ingrese un precio base numérico válido.");
+            return;
+        }
+        if (isNaN(duracionMinutosNum) || duracionMinutosNum < 0) {
+            Alert.alert("Duración inválida", "Por favor, ingrese una duración en minutos numérica válida.");
             return;
         }
 
         setLoading(true);
         try {
-            const result = await crearServicioSucursal({
-                servicio_id: parseInt(servicioId),
-                sucursal_id: parseInt(sucursalId),
-                precio_en_sucursal: precioEnSucursalNum,
-                esta_disponible: estaDisponible,
+            const result = await crearServicio({
+                nombre: nombre,
+                descripcion: descripcion,
+                imagen_path: imagenPath,
+                precio_base: precioBaseNum,
+                duracion_minutos: duracionMinutosNum,
+                categoria_id: parseInt(categoriaId),
+                especialidad_requerida_id: especialidadId ? parseInt(especialidadId) : null,
+                activo: activo,
             });
 
             if (result.success) {
-                Alert.alert("Éxito", "Servicio en sucursal creado correctamente");
+                Alert.alert("Éxito", "Servicio creado correctamente");
                 navigation.goBack();
             } else {
-                Alert.alert("Error", getAlertMessage(result.message, "No se pudo crear el servicio en sucursal"));
+                Alert.alert("Error", getAlertMessage(result.message, "No se pudo crear el servicio"));
             }
         } catch (error) {
-            console.error("Error al crear servicio en sucursal:", error);
-            Alert.alert("Error", getAlertMessage(error.message, "Ocurrió un error inesperado al crear el servicio en sucursal."));
+            console.error("Error al crear servicio:", error);
+            Alert.alert("Error", getAlertMessage(error.message, "Ocurrió un error inesperado al crear el servicio."));
         } finally {
             setLoading(false);
         }
@@ -120,68 +131,94 @@ export default function AgregarServicioSucursal({ navigation }) {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.title}>Nuevo Servicio por Sucursal</Text>
-
-                        {loadingData ? (
+                        <Text style={styles.title}>Nuevo Servicio</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Nombre del Servicio"
+                            placeholderTextColor="#888"
+                            value={nombre}
+                            onChangeText={setNombre}
+                        />
+                        <TextInput
+                            style={[styles.input, styles.multilineInput]}
+                            placeholder="Descripción"
+                            placeholderTextColor="#888"
+                            value={descripcion}
+                            onChangeText={setDescripcion}
+                            multiline
+                            numberOfLines={4}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Ruta de Imagen (URL o nombre de archivo)"
+                            placeholderTextColor="#888"
+                            value={imagenPath}
+                            onChangeText={setImagenPath}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Precio Base"
+                            placeholderTextColor="#888"
+                            value={precioBase}
+                            onChangeText={setPrecioBase}
+                            keyboardType="numeric"
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Duración en Minutos"
+                            placeholderTextColor="#888"
+                            value={duracionMinutos}
+                            onChangeText={setDuracionMinutos}
+                            keyboardType="numeric"
+                        />
+                        {loadingDependencies ? (
                             <ActivityIndicator size="large" color="#1976D2" style={styles.pickerLoading} />
                         ) : (
                             <>
-                                <Text style={styles.pickerLabel}>Servicio:</Text>
+                                <Text style={styles.pickerLabelActual}>Categoría:</Text>
                                 <View style={styles.pickerContainer}>
                                     <Picker
-                                        selectedValue={servicioId}
-                                        onValueChange={(itemValue) => setServicioId(itemValue)}
+                                        selectedValue={categoriaId}
+                                        onValueChange={(itemValue) => setCategoriaId(itemValue)}
                                         style={styles.picker}
                                         itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
                                     >
-                                        <Picker.Item label="-- Seleccione un Servicio --" value="" />
-                                        {servicios.map((srv) => (
-                                            <Picker.Item key={srv.id.toString()} label={srv.nombre} value={srv.id.toString()} />
+                                        <Picker.Item label="-- Seleccione Categoría --" value="" />
+                                        {categorias.map((cat) => (
+                                            <Picker.Item key={cat.id.toString()} label={cat.nombre} value={cat.id.toString()} />
                                         ))}
                                     </Picker>
                                 </View>
-
-                                <Text style={styles.pickerLabel}>Sucursal:</Text>
+                                <Text style={styles.pickerLabelActual}>Especialidad Requerida:</Text>
                                 <View style={styles.pickerContainer}>
                                     <Picker
-                                        selectedValue={sucursalId}
-                                        onValueChange={(itemValue) => setSucursalId(itemValue)}
+                                        selectedValue={especialidadId}
+                                        onValueChange={(itemValue) => setEspecialidadId(itemValue)}
                                         style={styles.picker}
                                         itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
                                     >
-                                        <Picker.Item label="-- Seleccione una Sucursal --" value="" />
-                                        {sucursales.map((suc) => (
-                                            <Picker.Item key={suc.id.toString()} label={suc.nombre} value={suc.id.toString()} />
+                                        <Picker.Item label="-- Seleccione Especialidad (Opcional) --" value="" />
+                                        {especialidades.map((esp) => (
+                                            <Picker.Item key={esp.id.toString()} label={esp.nombre} value={esp.id.toString()} />
                                         ))}
                                     </Picker>
                                 </View>
                             </>
                         )}
-
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Precio en Sucursal"
-                            placeholderTextColor="#888"
-                            value={precioEnSucursal}
-                            onChangeText={setPrecioEnSucursal}
-                            keyboardType="numeric"
-                        />
-                        
                         <View style={styles.switchContainer}>
-                            <Text style={styles.switchLabel}>Está Disponible:</Text>
+                            <Text style={styles.switchLabel}>Activo:</Text>
                             <Switch
-                                onValueChange={setEstaDisponible}
-                                value={estaDisponible}
+                                onValueChange={setActivo}
+                                value={activo}
                             />
                         </View>
-
-                        <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading || loadingData}>
+                        <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading || loadingDependencies}>
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
                                 <View style={styles.botonContent}>
                                     <Ionicons name="add-circle-outline" size={22} color="#fff" style={styles.botonIcon} />
-                                    <Text style={styles.textoBoton}>Crear Servicio por Sucursal</Text>
+                                    <Text style={styles.textoBoton}>Crear Servicio</Text>
                                 </View>
                             )}
                         </TouchableOpacity>

@@ -1,33 +1,39 @@
-// import { View, Text, TouchableOpacity } from 'react-native';
-// import { Ionicons } from '@expo/vector-icons';
-// import React from 'react';
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import styles from '../Styles/Categoria/CategoriaCardStyles';
 
-// import styles from '../Styles/CategoriaCardStyles';
+function CategoriaCard({ categoria, onEdit, onDelete, onDetail }) {
+    return (
+        <View style={styles.card}>
+            <View style={styles.info}>
+                <Text style={styles.nombre}>{categoria.nombre || 'Nombre no disponible'}</Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Descripción:</Text> {categoria.descripcion || 'N/A'}
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Tipo:</Text> {categoria.tipo_categoria || 'N/A'}
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Icono Clave:</Text> {categoria.icono_clave || 'N/A'}
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Activo:</Text> {categoria.activo ? 'Sí' : 'No'}
+                </Text>
+            </View>
+            <View style={styles.actions}>
+                <TouchableOpacity onPress={onEdit} style={styles.iconBtn}>
+                    <Ionicons name="create-outline" size={26} color="#1976D2" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onDelete} style={styles.iconBtn}>
+                    <Ionicons name="trash-outline" size={26} color="#D32F2F" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onDetail} style={styles.iconBtn}>
+                    <Ionicons name="eye-outline" size={26} color="#4CAF50" />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
 
-// function CategoriaCard({ categoria, onEdit, onDelete, onDetail }) {
-//     return (
-//         <View style={styles.card}>
-//             <View style={styles.info}>
-//                 <Text style={styles.nombre}>{categoria.Nombre}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Descripcióm:</Text> {categoria.Descripcion}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Tipo Categoria:</Text> {categoria.TipoCategoria}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Icono Clave:</Text> {categoria.IconoClave}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Activo:</Text> {categoria.Activo}</Text>
-
-//             </View>
-//             <View style={styles.actions}>
-//                 <TouchableOpacity onPress={onEdit} style={styles.iconBtn}>
-//                     <Ionicons name="create-outline" size={26} color="#1976D2" />
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={onDelete} style={styles.iconBtn}>
-//                     <Ionicons name="trash-outline" size={26} color="#D32F2F" />
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={onDetail} style={styles.iconBtn}>
-//                     <Ionicons name="bulb-outline" size={26} color="silver" />
-//                 </TouchableOpacity>
-//             </View>
-//         </View>
-//     );
-// }
-
-// export default React.memo(CategoriaCard);
+export default React.memo(CategoriaCard);

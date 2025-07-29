@@ -3,11 +3,11 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator,
 import { useRoute } from '@react-navigation/native';
 import { Picker } from "@react-native-picker/picker";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; // Necesitas instalar esta librería: npx expo install expo-image-picker
+import * as ImagePicker from 'expo-image-picker';
 
-import { editarSucursal } from "../../Src/Servicios/SucursalService"; // Asume que tienes este servicio
+import { editarSucursal } from "../../Src/Servicios/SucursalService";
 
-import styles from "../../Styles/Sucursal/EditarSucursalStyles"; // Asume que tienes un archivo de estilos similar
+import styles from "../../Styles/Sucursal/EditarSucursalStyles";
 
 export default function EditarSucursal({ navigation }) {
     const route = useRoute();
@@ -81,16 +81,13 @@ export default function EditarSucursal({ navigation }) {
             formData.append('link_maps', linkMaps);
             formData.append('latitud', parseFloat(latitud));
             formData.append('longitud', parseFloat(longitud));
-            formData.append('activo', activo === "1" ? true : false);
+            formData.append('activo', activo);
 
             if (imagenPath && imagenPath.startsWith('file://')) {
                 const filename = imagenPath.split('/').pop();
                 const match = /\.(\w+)$/.exec(filename);
                 const type = match ? `image/${match[1]}` : `image`;
                 formData.append('imagen', { uri: imagenPath, name: filename, type });
-            } else if (imagenPath) {
-                // Si ya es una URL de imagen existente y no se cambió, no se envía el archivo
-                // Se podría enviar un campo 'imagen_path_existente' si la API lo requiere para indicar que no hubo cambio
             }
 
             result = await editarSucursal(sucursalInicial.id, formData);

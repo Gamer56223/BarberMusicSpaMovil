@@ -5,6 +5,7 @@ import DetalleProducto from "../../../Screen/Productos/DetalleProducto";
 import EditarProducto from "../../../Screen/Productos/EditarProducto";
 import AgregarProducto from "../../../Screen/Productos/AgregarProducto";
 
+
 const Stack = createStackNavigator();
 
 export default function ProductosStack () {

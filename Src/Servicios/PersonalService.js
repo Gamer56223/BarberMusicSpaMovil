@@ -20,22 +20,21 @@ const formatErrorMessage = (errorResponseData) => {
     return "Error desconocido";
 };
 
-
-export const listarPersonales = async () => {
+// *** CAMBIO AQUÍ: RENOMBRADA a listarPersonal (singular) ***
+export const listarPersonal = async () => { //
     try {
         const response = await api.get("/Admin_personal/personal");
-        console.log("Respuesta listarPersonales:", response.data);
+        console.log("Respuesta listarPersonal:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
-        console.error("Error al listar personales:", error.response ? error.response.data : error.message);
+        console.error("Error al listar personal:", error.response ? error.response.data : error.message);
         return {
             success: false,
             message: errorMessage,
         };
     }
 }
-
 
 export const eliminarPersonal = async (id) => {
     console.log("Intentando eliminar personal con ID:", id);

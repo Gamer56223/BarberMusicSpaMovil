@@ -1,51 +1,56 @@
+// En tu archivo AgendamientoCardStyles.js
+
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#fff',
         borderRadius: 12,
-        padding: 16,
+        padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
-        flexDirection: 'row', // Organiza la info y los botones en una fila
+        flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start', // Alinea al inicio por si el texto ocupa varias líneas
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        alignItems: 'flex-start',
+        elevation: 3, // Sombra para Android
+        shadowColor: '#000', // Sombra para iOS
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 5,
+        
+        // ¡¡ESTA LÍNEA ES LA CORRECCIÓN MÁS IMPORTANTE!!
+        position: 'relative', 
     },
     info: {
-        flex: 1, // Permite que el texto se ajuste y ocupe el espacio disponible
+        flex: 1, // Permite que la información ocupe el espacio disponible
         marginRight: 10,
     },
     nombre: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333333',
-        marginBottom: 12, // Más espacio después del título
+        color: '#333',
+        marginBottom: 8,
     },
     detalle: {
         fontSize: 14,
-        color: '#555555',
-        marginBottom: 6,
-        lineHeight: 20, // Mejora la legibilidad del texto
+        color: '#555',
+        lineHeight: 22,
     },
     detalleLabel: {
-        fontWeight: 'bold',
-        color: '#111111',
+        fontWeight: '600',
+        color: '#111',
     },
+    // ¡ESTA ES LA SEGUNDA PARTE DE LA CORRECCIÓN!
+    // Posiciona el contenedor de acciones de forma absoluta DENTRO de la tarjeta.
     actions: {
-        flexDirection: 'column', // Apila los íconos verticalmente
-        justifyContent: 'space-around',
-        height: '100%', // Asegura que ocupen toda la altura de la tarjeta
+        position: 'absolute',
+        top: 15,
+        right: 15,
+        flexDirection: 'column', // Organiza los botones verticalmente
+        alignItems: 'center',
     },
     iconBtn: {
-        padding: 8, // Aumenta el área táctil de cada botón
+        padding: 8, // Aumenta el área táctil de los botones
     },
 });
 

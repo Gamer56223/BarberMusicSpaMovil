@@ -1,7 +1,39 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./conexion";
+import { Alert } from 'react-native';
 
 export const loginUser = async (email, password) => {
+    // **********************************************************************
+    // *** CÓDIGO TEMPORAL: SIMULACIÓN DE LOGIN EXITOSO PARA DESARROLLO ***
+    // **********************************************************************
+    // Este bloque simula un login exitoso y DEBE ser eliminado o comentado
+    // cuando quieras volver a la autenticación real con tu backend.
+
+    console.log("Modo de desarrollo: Simulando login exitoso para", email);
+    Alert.alert("Simulación de Login", `¡Has ingresado como ${email} (modo desarrollo)!`);
+    
+    // *** ¡LA LÍNEA CRÍTICA QUE FALTABA! ***
+    // Guarda el token simulado en AsyncStorage para que App.js lo pueda leer
+    await AsyncStorage.setItem("userToken", "fake_token_para_desarrollo_12345"); 
+    
+    // Retorna un éxito simulado con un token falso para que la función que llama lo use
+    return {
+        success: true,
+        message: "Login simulado exitosamente",
+        token: "fake_token_para_desarrollo_12345", // Se devuelve también para consistencia
+        user: { email: email, name: "Usuario Simulado" } // Datos de usuario simulados
+    };
+
+    // **********************************************************************
+    // *** FIN DEL CÓDIGO TEMPORAL (el resto de la función es el original)***
+    // **********************************************************************
+
+
+    // **********************************************************************
+    // *** CÓDIGO ORIGINAL DE LOGIN (COMENTADO PARA SIMULACIÓN)          ***
+    // *** DESCOMENTAR TODO EL BLOQUE SIGUIENTE PARA HABILITAR AUTENTICACIÓN REAL ***
+    // **********************************************************************
+    /*
     try {
         const response = await api.post("Client_usuarios/auth/login", { email, password });
         const token = response.data?.data?.token;
@@ -22,6 +54,10 @@ export const loginUser = async (email, password) => {
             message: error.response?.data?.message || "Error al iniciar sesión. Verifica tus credenciales."
         };
     }
+    */
+    // **********************************************************************
+    // *** FIN DEL CÓDIGO ORIGINAL COMENTADO                            ***
+    // **********************************************************************
 };
 
 export const logoutUser = async () => {
@@ -37,7 +73,6 @@ export const logoutUser = async () => {
         };
     }
 };
-
 
 export const editarPerfil = async (id, data) => {
     try {

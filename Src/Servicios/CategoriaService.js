@@ -1,99 +1,102 @@
 import api from "./conexion";
 
 const formatErrorMessage = (errorResponseData) => {
-    if (typeof errorResponseData === 'string') {
-        return errorResponseData;
-    }
+    // ... (esta función no cambia)
+    if (typeof errorResponseData === 'string') return errorResponseData;
     if (errorResponseData && typeof errorResponseData === 'object') {
         if (errorResponseData.errors) {
-            const messages = Object.values(errorResponseData.errors).flat();
-            return messages.join('\n');
+            return Object.values(errorResponseData.errors).flat().join('\n');
         }
         if (errorResponseData.message) {
-            if (typeof errorResponseData.message === 'string') {
-                return errorResponseData.message;
-            }
-            return JSON.stringify(errorResponseData.message);
+            return typeof errorResponseData.message === 'string' ? errorResponseData.message : JSON.stringify(errorResponseData.message);
         }
         return JSON.stringify(errorResponseData);
     }
     return "Error desconocido";
 };
 
-
 export const listarCategorias = async () => {
+    // ... (esta función no cambia)
     try {
         const response = await api.get("/Admin_categorias/categorias");
-        console.log("Respuesta listarCategorias:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
-        console.error("Error al listar categorias:", error.response ? error.response.data : error.message);
-        return {
-            success: false,
-            message: errorMessage,
-        };
+        return { success: false, message: errorMessage };
     }
 }
 
 export const DetalleCategoriaId = async (id) => {
+    // ... (esta función no cambia)
     try {
         const response = await api.get(`/Admin_categorias/categorias/${id}`);
-        console.log("Respuesta DetalleCategorias:", response.data);
         return { success: true, data: response.data };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
-        console.error("Error al detalle categoria:", error.response ? error.response.data : error.message);
-        return {
-            success: false,
-            message: errorMessage,
-        };
+        return { success: false, message: errorMessage };
     }
 };
 
-
 export const eliminarCategoria = async (id) => {
-    console.log("Intentando eliminar categoria con ID:", id);
+    // ... (esta función no cambia)
     try {
         const response = await api.delete(`/Admin_categorias/categorias/${id}`);
-        console.log("Respuesta eliminarCategoria:", response.data);
         return { success: true, message: response.data.message || "Categoria eliminada correctamente" };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
-        console.error("Error al eliminar Categoria:", error.response ? error.response.data : error.message);
-        return {
-            success: false,
-            message: errorMessage,
-        };
+        return { success: false, message: errorMessage };
     }
 };
 
+// --- FUNCIÓN CORREGIDA ---
 export const crearCategoria = async (data) => {
+    // 1. Convertimos el objeto de datos a FormData
+    const formData = new FormData();
+    for (const key in data) {
+        if (data[key] !== null) { // Evita enviar valores nulos
+            formData.append(key, data[key]);
+        }
+    }
+
     try {
-        const response = await api.post("/Admin_categorias/categorias", data);
-        console.log("Respuesta crearCategoria:", response.data);
+        // 2. Enviamos el objeto FormData
+        const response = await api.post("/Admin_categorias/categorias", formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data', // Aseguramos la cabecera correcta
+            },
+        });
         return { success: true, data: response.data };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
         console.error("Error al crear categoria:", error.response ? error.response.data : error.message);
-        return {
-            success: false,
-            message: errorMessage
-        };
+        return { success: false, message: errorMessage };
     }
 };
 
+
+// --- FUNCIÓN CORREGIDA (PROACTIVAMENTE) ---
+// La función de editar tendría el mismo problema, así que también la corrijo.
 export const editarCategoria = async (id, data) => {
+    const formData = new FormData();
+    for (const key in data) {
+        if (data[key] !== null) {
+            formData.append(key, data[key]);
+        }
+    }
+    // Truco común para que Laravel acepte 'PUT' con FormData
+    formData.append('_method', 'PUT'); 
+
     try {
-        const response = await api.put(`/Admin_categorias/categorias/${id}`, data);
-        console.log("Respuesta editarCategoria:", response.data);
+        // Se envía como POST pero con el método 'PUT' especificado dentro
+        const response = await api.post(`/Admin_categorias/categorias/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return { success: true, data: response.data };
     } catch (error) {
         const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
         console.error("Error al editar la categoria:", error.response ? error.response.data : error.message);
-        return {
-            success: false,
-            message: errorMessage
-        };
+        return { success: false, message: errorMessage };
     }
 };

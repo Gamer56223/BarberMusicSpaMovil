@@ -1,28 +1,29 @@
 // import { View, Text, FlatList, Alert, ActivityIndicator, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 // import React, { useEffect, useState } from 'react';
 // import { Ionicons } from '@expo/vector-icons';
-// import ResenaCard from '../../components/ResenaCard';
+// import ReseñaCard from "../../components/ReseñaCard";
 // import { useNavigation } from "@react-navigation/native";
-// import { listarResenas, eliminarResena } from "../../Src/Servicios/ResenaService";
+// import { default as ResenaServiceListarResenas } from "../../Src/Servicios/ReseñaService"; // ¡Aquí está el cambio!
+// import { eliminarResena } from "../../Src/Servicios/ResenaService";
 // import { listarUsuarios } from "../../Src/Servicios/UsuarioService";
 // import { listarServicios } from "../../Src/Servicios/ServicioService";
 
-// import styles from "../../Styles/ListarResenasStyles";
+// import styles from "../../Styles/Reseña/ListarReseñaStyles";
 
-// export default function ListarResenas (){
-//     const [resenas, setResenas] = useState([]);
+// export default function ListarReseñas (){
+//     const [reseñas, setReseñas] = useState([]);
 //     const [loading, setLoading] = useState(true);
 //     const [usuariosMap, setUsuariosMap] = useState({});
-//     const [resenablesMap, setResenablesMap] = useState({});
+//     const [reseñablesMap, setReseñablesMap] = useState({});
 //     const navigation = useNavigation();
 
-//     const handleResenas = async () => {
+//     const handleReseñas = async () => {
 //         setLoading(true);
 //         try {
-//             const [usuariosRes, serviciosRes, resenasRes] = await Promise.all([
+//             const [usuariosRes, serviciosRes, reseñasRes] = await Promise.all([
 //                 listarUsuarios(),
 //                 listarServicios(), // Asumimos que las reseñas son de servicios por ahora
-//                 listarResenas()
+//                 ResenaServiceListarResenas() // ¡Usamos el nombre renombrado aquí!
 //             ]);
 
 //             let tempUsuariosMap = {};
@@ -59,7 +60,7 @@
 //                         nombreResenable
 //                     };
 //                 });
-//                 setResenas(enrichedResenas);
+//                 setReseñas(enrichedResenas);
 //             } else {
 //                 Alert.alert("Error", resenasRes.message || "No se pudieron cargar las reseñas");
 //             }
@@ -72,7 +73,7 @@
 //     };
 
 //     useEffect(() => {
-//         const unsubscribe = navigation.addListener('focus', handleResenas);
+//         const unsubscribe = navigation.addListener('focus', handleReseñas);
 //         return unsubscribe;
 //     }, [navigation]);
 
@@ -90,7 +91,7 @@
 //                             const result = await eliminarResena(id);
 //                             if (result.success) {
 //                                 Alert.alert("Éxito", "Reseña eliminada correctamente.");
-//                                 handleResenas();
+//                                 handleReseñas();
 //                             } else {
 //                                 Alert.alert("Error", result.message || "No se pudo eliminar la reseña.");
 //                             }
@@ -135,10 +136,10 @@
 //             </View>
 
 //             <FlatList
-//                 data={resenas}
+//                 data={reseñas}
 //                 keyExtractor={(item) => item.id.toString()}
 //                 renderItem={({ item }) => (
-//                     <ResenaCard
+//                     <ReseñaCard
 //                         resena={item}
 //                         onEdit={() => handleEditar(item)}
 //                         onDelete={() => handleEliminar(item.id)}
@@ -152,7 +153,7 @@
 //                         <Text style={styles.emptyText}>¡Crea una nueva reseña!</Text>
 //                     </View>
 //                 }
-//                 contentContainerStyle={resenas.length === 0 ? styles.flatListEmpty : styles.flatListContent}
+//                 contentContainerStyle={reseñas.length === 0 ? styles.flatListEmpty : styles.flatListContent}
 //             />
 
 //             <TouchableOpacity style={styles.botonCrear} onPress={handleCrear} activeOpacity={0.8}>
