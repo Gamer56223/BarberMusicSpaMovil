@@ -1,47 +1,56 @@
+// Styles/Producto/ProductoCardStyles.js
+
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     card: {
         backgroundColor: '#FFFFFF',
         borderRadius: 12,
-        padding: 15,
         marginVertical: 8,
-        marginHorizontal: 10,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
+        marginHorizontal: 16,
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.15,
-        shadowRadius: 5,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 4,
+    },
+    imageContainer: {
+        width: '100%',
+        height: 180,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        overflow: 'hidden',
+        backgroundColor: '#f0f0f0',
+    },
+    image: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
     },
     contentContainer: {
+        padding: 16,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+    },
+    mainContent: {
         flex: 1,
-        marginRight: 15,
     },
     nombre: {
-        fontSize: 19,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#2C3E50',
-        marginBottom: 6,
+        marginBottom: 8,
     },
     detailRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 4,
+        marginBottom: 5,
     },
     detalle: {
         fontSize: 14,
         color: '#555',
-        marginBottom: 2,
     },
     detalleLabel: {
         fontWeight: 'bold',
         color: '#34495E',
-        marginRight: 4,
     },
     shortDescription: {
         fontSize: 14,
@@ -51,10 +60,9 @@ const styles = StyleSheet.create({
     },
     priceStockSkuSection: {
         marginTop: 10,
-        marginBottom: 8,
-        paddingTop: 8,
+        paddingTop: 10,
         borderTopWidth: 1,
-        borderTopColor: '#F0F0F0',
+        borderTopColor: '#f0f0f0',
     },
     priceText: {
         fontSize: 15,
@@ -70,24 +78,14 @@ const styles = StyleSheet.create({
     skuText: {
         fontSize: 14,
         color: '#7F8C8D',
-        marginBottom: 4,
     },
     actions: {
         flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignItems: 'center',
+        justifyContent: 'flex-start',
         paddingLeft: 10,
     },
     iconBtn: {
         padding: 8,
-        borderRadius: 20,
-        backgroundColor: '#F8F8F8',
-        marginBottom: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
     },
 });
 

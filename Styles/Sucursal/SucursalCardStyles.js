@@ -1,59 +1,62 @@
+// Styles/Sucursal/SucursalCardStyles.js
+
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-    // Contenedor principal de la tarjeta
     card: {
         backgroundColor: '#FFFFFF',
         borderRadius: 12,
-        padding: 16,
         marginVertical: 8,
         marginHorizontal: 16,
-        flexDirection: 'row', // Alinea la info y los botones en una fila
-        justifyContent: 'space-between', // Espacio entre info y acciones
-        alignItems: 'center', // Centra verticalmente el contenido
-        // Sombra para darle elevación (estilo iOS)
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        // Sombra para darle elevación (estilo Android)
-        elevation: 5,
+        elevation: 4,
     },
-    // Contenedor para la información de texto
-    info: {
-        flex: 1, // Permite que el texto ocupe el espacio disponible
-        marginRight: 10,
+    imageContainer: {
+        width: '100%',
+        height: 180,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        overflow: 'hidden',
+        backgroundColor: '#f0f0f0',
     },
-    // Estilo para el nombre de la sucursal (título)
+    image: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    contentContainer: {
+        padding: 16,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+    },
+    mainContent: {
+        flex: 1,
+    },
     nombre: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333333',
+        color: '#2C3E50',
         marginBottom: 8,
     },
-    // Estilo para cada línea de detalle
     detalle: {
         fontSize: 14,
-        color: '#555555',
-        marginBottom: 4,
+        color: '#555',
+        marginBottom: 5,
     },
-    // Estilo para la etiqueta de cada detalle (ej. "Dirección:")
     detalleLabel: {
         fontWeight: 'bold',
-        color: '#111111',
+        color: '#34495E',
     },
-    // Contenedor para los botones de acción
     actions: {
-        flexDirection: 'row', // Alinea los íconos horizontalmente
-        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        paddingLeft: 10,
     },
-    // Estilo para cada botón de ícono
     iconBtn: {
-        padding: 8, // Aumenta el área táctil del botón
-        marginLeft: 8, // Espacio entre los botones
+        padding: 8,
     },
 });
 

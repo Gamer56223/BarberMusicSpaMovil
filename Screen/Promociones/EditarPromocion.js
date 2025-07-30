@@ -1,53 +1,84 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useRoute } from '@react-navigation/native';
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { editarPromocion } from "../../Src/Servicios/PromocionService"; // Asume que tienes este servicio
+import { editarPromocion, DetallePromocionId } from "../../Src/Servicios/PromocionService"; 
 
-import styles from "../../Styles/Promocion/EditarPromocionStyles"; // Asume que tienes un archivo de estilos similar
+import styles from "../../Styles/Promocion/EditarPromocionStyles";
 
 export default function EditarPromocion({ navigation }) {
     const route = useRoute();
-    const promocionInicial = route.params?.promocion;
+    const promocionId = route.params?.promocion?.id || route.params?.promocionId;
 
-    const [codigo, setCodigo] = useState(promocionInicial?.codigo || "");
-    const [nombre, setNombre] = useState(promocionInicial?.nombre || "");
-    const [descripcion, setDescripcion] = useState(promocionInicial?.descripcion || "");
-    const [tipoDescuento, setTipoDescuento] = useState(promocionInicial?.tipo_descuento || "");
-    const [valorDescuento, setValorDescuento] = useState(promocionInicial?.valor_descuento?.toString() || "");
-    const [fechaInicio, setFechaInicio] = useState(promocionInicial?.fecha_inicio ? new Date(promocionInicial.fecha_inicio) : new Date());
-    const [fechaFin, setFechaFin] = useState(promocionInicial?.fecha_fin ? new Date(promocionInicial.fecha_fin) : new Date());
-    const [usosMaximosTotal, setUsosMaximosTotal] = useState(promocionInicial?.usos_maximos_total?.toString() || "");
-    const [usosMaximosPorCliente, setUsosMaximosPorCliente] = useState(promocionInicial?.usos_maximos_por_cliente?.toString() || "");
-    const [aplicaATodosProductos, setAplicaATodosProductos] = useState(promocionInicial?.aplica_a_todos_productos ? "1" : "0");
-    const [aplicaATodosServicios, setAplicaATodosServicios] = useState(promocionInicial?.aplica_a_todos_servicios ? "1" : "0");
-    const [activo, setActivo] = useState(promocionInicial?.activo ? "1" : "0");
+    const [codigo, setCodigo] = useState("");
+    const [nombre, setNombre] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [tipoDescuento, setTipoDescuento] = useState("Porcentaje"); // Valor inicial
+    const [valorDescuento, setValorDescuento] = useState("");
+    const [fechaInicio, setFechaInicio] = useState(new Date());
+    const [fechaFin, setFechaFin] = useState(new Date());
+    const [usosMaximosTotal, setUsosMaximosTotal] = useState("");
+    const [usosMaximosPorCliente, setUsosMaximosPorCliente] = useState("");
+    const [aplicaATodosProductos, setAplicaATodosProductos] = useState("0");
+    const [aplicaATodosServicios, setAplicaATodosServicios] = useState("0");
+    const [activo, setActivo] = useState("1");
 
-    const [loading, setLoading] = useState(false);
-
+    const [loading, setLoading] = useState(true);
     const [showFechaInicioPicker, setShowFechaInicioPicker] = useState(false);
     const [showFechaFinPicker, setShowFechaFinPicker] = useState(false);
+    
+    // 1. CORRECCIÓN: Los 'value' ahora son exactamente como las etiquetas.
+    const tiposDescuento = [
+        { label: "Porcentaje", value: "Porcentaje" },
+        { label: "Monto Fijo", value: "Monto Fijo" },
+    ];
 
-    const esEdicion = !!promocionInicial;
-
-    const getAlertMessage = (msg, defaultMsg) => {
-        if (typeof msg === 'string') {
-            return msg;
+    useEffect(() => {
+        if (!promocionId) {
+            Alert.alert("Error", "No se recibió un ID de promoción válido.");
+            navigation.goBack();
+            return;
         }
-        if (msg && typeof msg === 'object') {
-            if (msg.errors) {
-                const messages = Object.values(msg.errors).flat();
-                return messages.join('\n');
-            }
-            if (msg.message) {
-                if (typeof msg.message === 'string') {
-                    return msg.message;
+
+        const cargarDatosPromocion = async () => {
+            try {
+                const res = await DetallePromocionId(promocionId);
+                if (res.success) {
+                    const promo = res.data;
+                    setCodigo(promo.codigo || "");
+                    setNombre(promo.nombre || "");
+                    setDescripcion(promo.descripcion || "");
+                    // 2. CORRECCIÓN: Se quita la conversión a minúsculas.
+                    setTipoDescuento(promo.tipo_descuento || "Porcentaje");
+                    setValorDescuento(promo.valor_descuento?.toString() || "");
+                    setFechaInicio(promo.fecha_inicio ? new Date(promo.fecha_inicio) : new Date());
+                    setFechaFin(promo.fecha_fin ? new Date(promo.fecha_fin) : new Date());
+                    setUsosMaximosTotal(promo.usos_maximos_total?.toString() || "1");
+                    setUsosMaximosPorCliente(promo.usos_maximos_por_cliente?.toString() || "1");
+                    setAplicaATodosProductos(promo.aplica_a_todos_productos ? "1" : "0");
+                    setAplicaATodosServicios(promo.aplica_a_todos_servicios ? "1" : "0");
+                    setActivo(promo.activo ? "1" : "0");
+                } else {
+                    Alert.alert("Error", "No se pudieron cargar los datos.");
+                    navigation.goBack();
                 }
-                return JSON.stringify(msg.message);
+            } catch (error) {
+                Alert.alert("Error", "Ocurrió un error inesperado al cargar los datos.");
+            } finally {
+                setLoading(false);
             }
+        };
+        cargarDatosPromocion();
+    }, [promocionId]);
+    
+    const getAlertMessage = (msg, defaultMsg) => {
+        if (typeof msg === 'string') return msg;
+        if (msg && typeof msg === 'object') {
+            if (msg.errors) return Object.values(msg.errors).flat().join('\n');
+            if (msg.message) return typeof msg.message === 'string' ? msg.message : JSON.stringify(msg.message);
             return JSON.stringify(msg);
         }
         return defaultMsg;
@@ -65,36 +96,38 @@ export default function EditarPromocion({ navigation }) {
         setFechaFin(currentDate);
     };
 
-    const tiposDescuento = [
-        { label: "Porcentaje", value: "PORCENTAJE" },
-        { label: "Monto Fijo", value: "MONTO_FIJO" },
-    ];
+    const formatDateForAPI = (date, endOfDay = false) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const time = endOfDay ? '23:59:59' : '00:00:00';
+        return `${year}-${month}-${day} ${time}`;
+    };
 
     const handleGuardar = async () => {
-        if (!codigo || !nombre || !tipoDescuento || !valorDescuento || !fechaInicio || !fechaFin || !usosMaximosTotal || !usosMaximosPorCliente) {
+        if (!codigo || !nombre || !tipoDescuento || !valorDescuento) {
             Alert.alert("Campos requeridos", "Por favor, complete todos los campos obligatorios.");
             return;
         }
 
         setLoading(true);
-        let result;
         try {
-            const dataToSave = {
-                codigo: codigo,
-                nombre: nombre,
-                descripcion: descripcion,
-                tipo_descuento: tipoDescuento,
-                valor_descuento: parseFloat(valorDescuento),
-                fecha_inicio: fechaInicio.toISOString().split('T')[0], // Formato YYYY-MM-DD
-                fecha_fin: fechaFin.toISOString().split('T')[0], // Formato YYYY-MM-DD
-                usos_maximos_total: parseInt(usosMaximosTotal),
-                usos_maximos_por_cliente: parseInt(usosMaximosPorCliente),
-                aplica_a_todos_productos: aplicaATodosProductos === "1" ? true : false,
-                aplica_a_todos_servicios: aplicaATodosServicios === "1" ? true : false,
-                activo: activo === "1" ? true : false,
-            };
+            const formData = new FormData();
+            formData.append('codigo', codigo);
+            formData.append('nombre', nombre);
+            formData.append('descripcion', descripcion);
+            formData.append('tipo_descuento', tipoDescuento);
+            formData.append('valor_descuento', parseFloat(valorDescuento));
+            formData.append('fecha_inicio', formatDateForAPI(fechaInicio));
+            formData.append('fecha_fin', formatDateForAPI(fechaFin, true));
+            formData.append('usos_maximos_total', parseInt(usosMaximosTotal || '1'));
+            formData.append('usos_maximos_por_cliente', parseInt(usosMaximosPorCliente || '1'));
+            formData.append('aplica_a_todos_productos', aplicaATodosProductos);
+            formData.append('aplica_a_todos_servicios', aplicaATodosServicios);
+            formData.append('activo', activo);
+            formData.append('_method', 'PUT');
 
-            result = await editarPromocion(promocionInicial.id, dataToSave);
+            const result = await editarPromocion(promocionId, formData);
 
             if (result.success) {
                 Alert.alert("Éxito", "Promoción actualizada correctamente");
@@ -103,167 +136,79 @@ export default function EditarPromocion({ navigation }) {
                 Alert.alert("Error", getAlertMessage(result.message, "No se pudo guardar la promoción"));
             }
         } catch (error) {
-            console.error("Error al guardar promoción:", error);
-            Alert.alert("Error", getAlertMessage(error.message, "Ocurrió un error inesperado al guardar la promoción."));
+            Alert.alert("Error", getAlertMessage(error.message, "Ocurrió un error inesperado."));
         } finally {
             setLoading(false);
         }
     };
 
+    if (loading) {
+        return <ActivityIndicator size="large" color="#1976D2" style={{ flex: 1 }} />;
+    }
+
     return (
-        <KeyboardAvoidingView
-            style={styles.keyboardAvoidingView}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
+        <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.title}>{esEdicion ? "Editar Promoción" : "Nueva Promoción"}</Text>
+                        <Text style={styles.title}>Editar Promoción</Text>
 
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Código de Promoción"
-                            placeholderTextColor="#888"
-                            value={codigo}
-                            onChangeText={setCodigo}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Nombre de la Promoción"
-                            placeholderTextColor="#888"
-                            value={nombre}
-                            onChangeText={setNombre}
-                        />
-                        <TextInput
-                            style={[styles.input, styles.multilineInput]}
-                            placeholder="Descripción"
-                            placeholderTextColor="#888"
-                            value={descripcion}
-                            onChangeText={setDescripcion}
-                            multiline
-                            numberOfLines={4}
-                        />
+                        <TextInput style={styles.input} placeholder="Código" value={codigo} onChangeText={setCodigo} />
+                        <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
+                        <TextInput style={styles.inputMultiline} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
 
-                        <Text style={styles.pickerLabelActual}>Tipo de Descuento:</Text>
+                        <Text style={styles.pickerLabel}>Tipo de Descuento:</Text>
                         <View style={styles.pickerContainer}>
-                            <Picker
-                                selectedValue={tipoDescuento}
-                                onValueChange={(itemValue) => setTipoDescuento(itemValue)}
-                                style={styles.picker}
-                                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-                            >
-                                <Picker.Item label="-- Seleccione Tipo --" value="" />
-                                {tiposDescuento.map((tipo) => (
-                                    <Picker.Item key={tipo.value} label={tipo.label} value={tipo.value} />
-                                ))}
+                            <Picker selectedValue={tipoDescuento} onValueChange={(itemValue) => setTipoDescuento(itemValue)} style={styles.picker}>
+                                {tiposDescuento.map((tipo) => ( <Picker.Item key={tipo.value} label={tipo.label} value={tipo.value} /> ))}
                             </Picker>
                         </View>
 
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Valor del Descuento"
-                            placeholderTextColor="#888"
-                            value={valorDescuento}
-                            onChangeText={setValorDescuento}
-                            keyboardType="numeric"
-                        />
+                        <TextInput style={styles.input} placeholder="Valor del Descuento" value={valorDescuento} onChangeText={setValorDescuento} keyboardType="numeric" />
 
-                        <Text style={styles.label}>Fecha de Inicio:</Text>
+                        <Text style={styles.pickerLabel}>Fecha de Inicio:</Text>
                         <TouchableOpacity onPress={() => setShowFechaInicioPicker(true)} style={styles.datePickerButton}>
-                            <Text style={styles.datePickerButtonText}>{fechaInicio.toLocaleDateString()}</Text>
+                            <Text style={styles.datePickerButtonText}>{fechaInicio.toLocaleDateString('es-CO')}</Text>
                         </TouchableOpacity>
-                        {showFechaInicioPicker && (
-                            <DateTimePicker
-                                testID="fechaInicioPicker"
-                                value={fechaInicio}
-                                mode="date"
-                                display="default"
-                                onChange={onFechaInicioChange}
-                            />
-                        )}
+                        {showFechaInicioPicker && ( <DateTimePicker value={fechaInicio} mode="date" display="default" onChange={onFechaInicioChange} /> )}
 
-                        <Text style={styles.label}>Fecha de Fin:</Text>
+                        <Text style={styles.pickerLabel}>Fecha de Fin:</Text>
                         <TouchableOpacity onPress={() => setShowFechaFinPicker(true)} style={styles.datePickerButton}>
-                            <Text style={styles.datePickerButtonText}>{fechaFin.toLocaleDateString()}</Text>
+                            <Text style={styles.datePickerButtonText}>{fechaFin.toLocaleDateString('es-CO')}</Text>
                         </TouchableOpacity>
-                        {showFechaFinPicker && (
-                            <DateTimePicker
-                                testID="fechaFinPicker"
-                                value={fechaFin}
-                                mode="date"
-                                display="default"
-                                onChange={onFechaFinChange}
-                            />
-                        )}
+                        {showFechaFinPicker && ( <DateTimePicker value={fechaFin} mode="date" display="default" onChange={onFechaFinChange} /> )}
 
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Usos Máximos Totales"
-                            placeholderTextColor="#888"
-                            value={usosMaximosTotal}
-                            onChangeText={setUsosMaximosTotal}
-                            keyboardType="numeric"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Usos Máximos por Cliente"
-                            placeholderTextColor="#888"
-                            value={usosMaximosPorCliente}
-                            onChangeText={setUsosMaximosPorCliente}
-                            keyboardType="numeric"
-                        />
+                        <TextInput style={styles.input} placeholder="Usos Máximos Totales" value={usosMaximosTotal} onChangeText={setUsosMaximosTotal} keyboardType="numeric" />
+                        <TextInput style={styles.input} placeholder="Usos Máximos por Cliente" value={usosMaximosPorCliente} onChangeText={setUsosMaximosPorCliente} keyboardType="numeric" />
 
-                        <Text style={styles.pickerLabelActual}>Aplica a todos los Productos:</Text>
+                        <Text style={styles.pickerLabel}>Aplica a todos los Productos:</Text>
                         <View style={styles.pickerContainer}>
-                            <Picker
-                                selectedValue={aplicaATodosProductos}
-                                onValueChange={(itemValue) => setAplicaATodosProductos(itemValue)}
-                                style={styles.picker}
-                                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-                            >
+                            <Picker selectedValue={aplicaATodosProductos} onValueChange={(itemValue) => setAplicaATodosProductos(itemValue)} style={styles.picker}>
                                 <Picker.Item label="Sí" value="1" />
                                 <Picker.Item label="No" value="0" />
                             </Picker>
                         </View>
 
-                        <Text style={styles.pickerLabelActual}>Aplica a todos los Servicios:</Text>
+                        <Text style={styles.pickerLabel}>Aplica a todos los Servicios:</Text>
                         <View style={styles.pickerContainer}>
-                            <Picker
-                                selectedValue={aplicaATodosServicios}
-                                onValueChange={(itemValue) => setAplicaATodosServicios(itemValue)}
-                                style={styles.picker}
-                                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-                            >
+                            <Picker selectedValue={aplicaATodosServicios} onValueChange={(itemValue) => setAplicaATodosServicios(itemValue)} style={styles.picker}>
                                 <Picker.Item label="Sí" value="1" />
                                 <Picker.Item label="No" value="0" />
                             </Picker>
                         </View>
 
-                        <Text style={styles.pickerLabelActual}>Activo:</Text>
+                        <Text style={styles.pickerLabel}>Activo:</Text>
                         <View style={styles.pickerContainer}>
-                            <Picker
-                                selectedValue={activo}
-                                onValueChange={(itemValue) => setActivo(itemValue)}
-                                style={styles.picker}
-                                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-                            >
+                            <Picker selectedValue={activo} onValueChange={(itemValue) => setActivo(itemValue)} style={styles.picker}>
                                 <Picker.Item label="Sí" value="1" />
                                 <Picker.Item label="No" value="0" />
                             </Picker>
                         </View>
 
                         <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading}>
-                            {loading ? (
-                                <ActivityIndicator color="#fff" />
-                            ) : (
-                                <View style={styles.botonContent}>
-                                    <Ionicons name="save-outline" size={22} color="#fff" style={styles.botonIcon} />
-                                    <Text style={styles.textoBoton}>{esEdicion ? "Guardar Cambios" : "Crear Promoción"}</Text>
-                                </View>
-                            )}
+                            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textoBoton}>Guardar Cambios</Text>}
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                            <Ionicons name="arrow-back-circle-outline" size={24} color="#555" />
                             <Text style={styles.backButtonText}>Volver</Text>
                         </TouchableOpacity>
                     </View>

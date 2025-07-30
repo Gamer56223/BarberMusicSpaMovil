@@ -105,12 +105,13 @@ export default function ListarPersonal (){
                         personal={item}
                         onDelete={() => handleEliminar(item.id)}
                         onDetail={() => handleDetalle(item.id)}
-                        // Se elimina la propiedad onEdit
                     />
                 )}
                 ListEmptyComponent = { <View style={styles.emptyListContainer}><Ionicons name="people-outline" size={80} color="#BDC3C7" /><Text style={styles.emptyText}>No hay personal registrado.</Text></View> }
                 contentContainerStyle={personal.length === 0 ? styles.flatListEmpty : styles.flatListContent}
             />
+            
+            {/* --- ESTE ES EL BOTÓN --- */}
             <TouchableOpacity style={styles.botonCrear} onPress={handleCrear} activeOpacity={0.8}>
                 <View style={styles.botonCrearContent}>
                     <Ionicons name="add-circle-outline" size={24} color="#fff" style={styles.botonIcon} />
