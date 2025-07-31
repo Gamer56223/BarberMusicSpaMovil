@@ -1,97 +1,79 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-    container: {
+    mainContainer: {
+        flex: 1,
+    },
+    backgroundImageContainer: {
+        // Este contenedor se posiciona detrás de todo
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+    },
+    backgroundImage: {
+        // Cada imagen ocupa la mitad de la pantalla
+        flex: 1,
+        width: '100%',
+    },
+    formContainer: {
+        // Este es el contenedor del formulario que va por encima
         flex: 1,
         justifyContent: "center",
-        padding: 30, // Aumentar el padding para más espacio
-        backgroundColor: "#F5F8FA", // Fondo suave y claro
+        padding: 30,
+        // Fondo oscuro semitransparente para que el texto resalte
+        backgroundColor: 'rgba(20, 20, 40, 0.7)',
     },
-
     title: {
-        fontSize: 32, // Un poco más grande
-        fontWeight: "800", // Más audaz
-        color: "#2C3E50", // Un azul oscuro casi negro
-        marginBottom: 35, // Más espacio debajo del título
+        fontSize: 36,
+        fontWeight: "bold",
+        color: "#FFFFFF", // Texto blanco
+        marginBottom: 40,
         textAlign: "center",
+        // Sombra para el texto
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 5,
     },
-
-    // Estilo mejorado para el contenedor del input y el icono
     inputContainer: {
-        flexDirection: 'row', // Para alinear el icono y el input horizontalmente
-        alignItems: 'center', // Centrar verticalmente
-        backgroundColor: "#F8F8F8", // Fondo ligeramente gris para los inputs
-        borderRadius: 10, // Bordes redondeados
-        marginBottom: 18, // Espacio entre inputs
-        borderWidth: 1, // Borde sutil
-        borderColor: '#E0E0E0', // Color del borde
-        paddingHorizontal: 15, // Padding para el contenedor completo
-        shadowColor: "#000", // Sombra sutil
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2,
+        flexDirection: 'row',
+        alignItems: 'center',
+        // Fondo de input semitransparente
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        borderRadius: 10,
+        marginBottom: 18,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.4)', // Borde claro
+        paddingHorizontal: 15,
     },
-
-    // Estilo para el icono
     icon: {
-        marginRight: 12, // Espacio entre el icono y el texto
-        color: "#888", // Color sutil para el icono
+        marginRight: 12,
+        color: "#ccc",
     },
-
-    // Estilo modificado para el TextInput
     input: {
-        flex: 1, // Para que el TextInput ocupe el espacio restante
-        height: 55, // Altura para el TextInput
+        flex: 1,
+        height: 55,
         fontSize: 16,
-        color: "#333333", // Color de texto oscuro
-        paddingVertical: 0, // Eliminar padding vertical por defecto
+        color: "#FFFFFF", // Texto del input en blanco
     },
-
-    // Estilos para los botones (copiados y adaptados de RegistroStyles.js)
-    // El BottonComponent en LoginScreen usa 'color="primary"' y 'color="secondary"',
-    // así que no se aplican directamente estos estilos.
-    // Si tu BottonComponent usa 'buttonStyle' y 'textStyle', deberías pasarlos desde aquí.
-    // Asumo que tu BottonComponent maneja 'color="primary"' y 'color="secondary"' internamente
-    // y aplica los estilos base.
-    // Si necesitas que estos estilos se apliquen directamente al BottonComponent,
-    // deberás modificar BottonComponent o cómo lo usas en LoginScreen.
-    primaryButton: { // Nombre cambiado para evitar conflicto si BottonComponent usa 'primary'
-        backgroundColor: "#2196F3", // Un azul más vibrante (Material Blue)
-        paddingVertical: 12, // Más pequeño
-        borderRadius: 8,
-        alignItems: "center",
-        width: "100%",
-        marginTop: 25,
-        shadowColor: "#2196F3",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.35,
-        shadowRadius: 12,
-        elevation: 8,
+    passwordVisibilityToggle: {
+        padding: 5,
     },
-    secondaryButton: { // Nombre cambiado para evitar conflicto si BottonComponent usa 'secondary'
-        backgroundColor: "#9E9E9E", // Un gris más neutro y moderno (Material Grey)
-        paddingVertical: 12, // Más pequeño
-        borderRadius: 8,
-        alignItems: "center",
-        width: "100%",
-        marginTop: 10,
-        shadowColor: "#9E9E9E",
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.2,
-        shadowRadius: 6,
-        elevation: 5,
+    // Nuevos estilos para el botón de "Ingresar"
+    loginButton: {
+        backgroundColor: '#FF0000', // Color rojo para el botón
+        borderRadius: 10,
+        paddingVertical: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20, // Espacio superior para separar del último input
     },
-    buttonText: {
-        color: "#FFFFFF",
-        fontWeight: "700",
-        fontSize: 15, // Más pequeño
-        textTransform: 'uppercase',
+    loginButtonText: {
+        color: '#FFFFFF', // Texto blanco para el botón
+        fontSize: 18,
+        fontWeight: 'bold',
     },
-
-    registerButton: { // Este es el estilo que ya tenías para el segundo botón
-        marginTop: 15, // Mantener el margen superior
-    }
 });
 
 export default styles;

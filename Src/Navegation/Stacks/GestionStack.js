@@ -19,14 +19,17 @@ export default function GestionesStack () {
                 name= "GestionPantalla" 
                 component={Gestion} 
                 options={{
-                    title: "Gestiones",
-                    headerStyle: {
-                        backgroundColor: '#6A5ACD',
-                    },
-                    headerTintColor: '#fff',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
+                    headerShown: false, // <--- CAMBIO CLAVE: Esto oculta el encabezado
+                    // Las siguientes propiedades ya no son necesarias si el header está oculto,
+                    // pero las dejo comentadas por si decides mostrarlas en el futuro con otros estilos.
+                    // title: "Gestiones",
+                    // headerStyle: {
+                    //     backgroundColor: '#6A5ACD',
+                    // },
+                    // headerTintColor: '#fff',
+                    // headerTitleStyle: {
+                    //     fontWeight: 'bold',
+                    // },
                 }}
             />
             <Stack.Screen
