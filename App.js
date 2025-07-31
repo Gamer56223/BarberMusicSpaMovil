@@ -3,20 +3,26 @@ import { ActivityIndicator, View, StyleSheet, Button, Alert } from 'react-native
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications'; // Importación de la librería de notificaciones comentada
 
 import LoginScreen from './Screen/Auth/Login';
 import AppNavegacion from "./Src/Navegation/AppNavegacion";
 
 const RootStack = createStackNavigator();
 
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-    }),
-});
+/* --- CÓDIGO DE NOTIFICACIONES COMENTADO PARA NO ACTIVARSE --- */
+
+// // Este manejador global define cómo se deben mostrar las notificaciones cuando la app está en primer plano.
+// Notifications.setNotificationHandler({
+//     handleNotification: async () => ({
+//         shouldShowAlert: true,
+//         shouldPlaySound: true,
+//         shouldSetBadge: false,
+//     }),
+// });
+
+/* --- FIN DEL CÓDIGO DE NOTIFICACIONES COMENTADO --- */
+
 
 export default function App() {
     const [userToken, setUserToken] = useState(null);
@@ -37,12 +43,16 @@ export default function App() {
                 const token = await AsyncStorage.getItem('userToken');
                 setUserToken(token);
 
-                const { status } = await Notifications.requestPermissionsAsync();
-                if (status !== "granted") {
-                    Alert.alert('Permiso Requerido', 'Se requieren permisos para recibir notificaciones.');
-                } else {
-                    console.log('Permisos de notificación concedidos.');
-                }
+                /* --- GESTIÓN DE PERMISOS DE NOTIFICACIONES COMENTADO --- */
+                // Se comenta la solicitud de permisos para que no se active.
+                // const { status } = await Notifications.requestPermissionsAsync();
+                
+                // if (status !== "granted") {
+                //     Alert.alert('Permiso Requerido', 'Se requieren permisos para recibir notificaciones.');
+                // } else {
+                //     console.log('Permisos de notificación concedidos.');
+                // }
+                /* --- FIN DEL CÓDIGO COMENTADO --- */
 
             } catch (e) {
                 console.error("Error al iniciar la aplicación:", e);
@@ -54,16 +64,21 @@ export default function App() {
         checkTokenAndPermissions();
     }, []);
 
-    const enviarNotificacionLocal = async () => {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "¡Notificación de Prueba! 🔔",
-                body: "Esta es una notificación local enviada desde App.js.",
-            },
-            trigger: { seconds: 2 },
-        });
-        console.log("Notificación local programada desde App.js.");
-    };
+    /* --- FUNCIÓN Y BOTÓN PARA NOTIFICACIÓN DE PRUEBA COMENTADOS --- */
+
+    // // Esta función programa una notificación que aparecerá en 2 segundos.
+    // const enviarNotificacionLocal = async () => {
+    //     await Notifications.scheduleNotificationAsync({
+    //         content: {
+    //             title: "¡Notificación de Prueba! 🔔",
+    //             body: "Esta es una notificación local enviada desde App.js.",
+    //         },
+    //         trigger: { seconds: 2 },
+    //     });
+    //     console.log("Notificación local programada desde App.js.");
+    // };
+
+    /* --- FIN DEL CÓDIGO COMENTADO --- */
 
     if (isLoading) {
         return (
@@ -87,12 +102,13 @@ export default function App() {
                         <RootStack.Screen 
                             name="Login" 
                             component={LoginScreen} 
-                            initialParams={{ updateUserToken: updateUserToken }} // CORREGIDO: updateUserToken
+                            initialParams={{ updateUserToken: updateUserToken }}
                         />
                     )}
                 </RootStack.Navigator>
             </NavigationContainer>
-            <Button title="Probar Notificación Local (App.js)" onPress={enviarNotificacionLocal} />
+            {/* BOTÓN PARA PROBAR LA NOTIFICACIÓN (COMENTADO) */}
+            {/* <Button title="Probar Notificación Local (App.js)" onPress={enviarNotificacionLocal} /> */}
         </View>
     );
 }

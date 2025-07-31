@@ -1,159 +1,225 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Image } from "react-native";
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import { editarPerfil } from '../../Src/Servicios/AuthService';
-import * as ImagePicker from 'expo-image-picker';
-import { useRoute } from '@react-navigation/native'; // Importar useRoute
+import { editarPerfil, changeUserPassword } from '../../Src/Servicios/AuthService';
+import { useRoute } from '@react-navigation/native';
 
-export default function EditarPerfil({ navigation }) { // Eliminamos 'route' de las props directas
-
-    const route = useRoute(); // Usar useRoute para acceder a los parámetros
-    const { usuario: initialUser, onSave, updateUserToken } = route.params; // Asegúrate de que updateUserToken se reciba aquí
+export default function EditarPerfil({ navigation }) {
+    const route = useRoute();
+    const { usuario: initialUser, onSave } = route.params;
 
     const [nombre, setNombre] = useState(initialUser.nombre);
     const [telefono, setTelefono] = useState(initialUser.telefono);
+    const [email, setEmail] = useState(initialUser.email);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [profileImage, setProfileImage] = useState(initialUser.imagen_path);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+
+    // Refs para gestionar el foco de los inputs
+    const nombreRef = useRef(null);
+    const telefonoRef = useRef(null);
+    const emailRef = useRef(null);
+    const currentPasswordRef = useRef(null);
+    const newPasswordRef = useRef(null);
 
     useEffect(() => {
         setNombre(initialUser.nombre);
         setTelefono(initialUser.telefono);
-        setProfileImage(initialUser.imagen_path);
+        setEmail(initialUser.email);
+        setCurrentPassword('');
+        setNewPassword('');
     }, [initialUser]);
 
     const handleSaveChanges = async () => {
         if (!nombre || !telefono) {
-            Alert.alert("Campos incompletos", "Por favor, llena todos los campos.");
+            Alert.alert("Campos incompletos", "Por favor, llena los campos de Nombre y Teléfono.");
             return;
         }
 
         setLoading(true);
+        let profileUpdateSuccess = false;
+        let passwordUpdateSuccess = true;
+        let allSucceeded = false;
 
-        const updatedData = {
-            nombre,
-            telefono,
-            imagen_path: profileImage
+        // Petición para actualizar nombre, teléfono y email
+        const profileData = {
+            nombre: nombre,
+            telefono: telefono,
+            email: email,
         };
-
         try {
-            const response = await editarPerfil(initialUser.id, updatedData);
-
-            if (response.success) {
-                const newUser = { ...initialUser, ...updatedData, role: 'Administrador' };
-                if (onSave) {
-                    onSave(newUser);
-                }
-                Alert.alert(
-                    "Perfil Actualizado",
-                    "Tus datos han sido guardados exitosamente.",
-                    [{ text: "OK", onPress: () => navigation.goBack() }]
-                );
+            const profileResponse = await editarPerfil(profileData);
+            if (profileResponse.success) {
+                profileUpdateSuccess = true;
             } else {
-                Alert.alert("Error al Actualizar", response.message || "No se pudieron guardar los cambios.");
+                Alert.alert("Error en Perfil", profileResponse.message || "No se pudieron guardar los datos del perfil.");
             }
         } catch (error) {
-            console.error("Error al guardar cambios:", error);
-            Alert.alert("Error", "Ocurrió un error inesperado al guardar los cambios.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handlePickImage = async () => {
-        console.log("Intentando abrir la galería de imágenes...");
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        console.log("Estado de los permisos de la galería:", status);
-
-        if (status !== 'granted') {
-            Alert.alert('Permiso denegado', 'Necesitamos permiso para acceder a tu galería de fotos.');
-            return;
+            Alert.alert("Error", "Ocurrió un error inesperado al guardar los datos del perfil.");
         }
 
-        console.log("Permisos concedidos, lanzando la librería de imágenes...");
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaType.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 0.7,
-            base64: true,
-        });
+        // Si se han llenado los campos de contraseña, se envía la petición separada
+        if (currentPassword && newPassword) {
+            const passwordData = { 
+                current_password: currentPassword,
+                new_password: newPassword,
+                new_password_confirmation: newPassword,
+            };
+            try {
+                const passwordResponse = await changeUserPassword(passwordData);
+                if (passwordResponse.success) {
+                    passwordUpdateSuccess = true;
+                } else {
+                    passwordUpdateSuccess = false;
+                    Alert.alert("Error en Contraseña", passwordResponse.message || "No se pudo cambiar la contraseña.");
+                }
+            } catch (error) {
+                passwordUpdateSuccess = false;
+                Alert.alert("Error", "Ocurrió un error inesperado al cambiar la contraseña.");
+            }
+        } else if (newPassword || currentPassword) {
+            Alert.alert("Campos de Contraseña", "Debes llenar ambos campos: 'Contraseña Actual' y 'Nueva Contraseña'.");
+            passwordUpdateSuccess = false;
+        }
+        
+        allSucceeded = profileUpdateSuccess && passwordUpdateSuccess;
+        setLoading(false);
 
-        console.log("Resultado de la selección de imagen:", result);
-
-        if (!result.canceled) {
-            setProfileImage(`data:image/jpeg;base64,${result.assets[0].base64}`);
-            console.log("Imagen seleccionada y URI actualizada.");
-        } else {
-            console.log("Selección de imagen cancelada.");
+        if (allSucceeded) {
+            Alert.alert(
+                "Actualización Exitosa",
+                "Tus cambios han sido guardados.",
+                [{ text: "OK", onPress: () => {
+                    if (onSave) {
+                        onSave();
+                    }
+                    navigation.goBack();
+                }}]
+            );
         }
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Editar Perfil</Text>
-            </View>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 20 }}>
+                            <Ionicons name="arrow-back" size={26} color="#2c3e50" />
+                        </TouchableOpacity>
+                        <Text style={styles.headerTitle}>Editar Perfil</Text>
+                    </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <View style={styles.avatarSection}>
-                    <TouchableOpacity style={styles.avatarTouchable} onPress={handlePickImage}>
+                    <View style={styles.avatarSection}>
                         <View style={styles.avatarContainer}>
-                            {profileImage ? (
-                                <Image source={{ uri: profileImage }} style={styles.profileImage} />
-                            ) : (
-                                <Ionicons name="person" size={60} color="#3498db" />
-                            )}
-                            <View style={styles.cameraIconContainer}>
-                                <Ionicons name="camera-reverse" size={20} color="#FFF" />
-                            </View>
+                            <Ionicons name="person" size={60} color="#3498db" />
                         </View>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.formContainer}>
-                    <Text style={styles.sectionTitle}>Datos Personales</Text>
-
-                    <View style={styles.inputContainer}>
-                        <Ionicons name="person-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                        <TextInput
-                            style={styles.input}
-                            value={nombre}
-                            onChangeText={setNombre}
-                            placeholder="Nombre"
-                        />
                     </View>
 
-                    <View style={styles.inputContainer}>
-                        <Ionicons name="call-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                        <TextInput
-                            style={styles.input}
-                            value={telefono}
-                            onChangeText={setTelefono}
-                            placeholder="Teléfono"
-                            keyboardType="phone-pad"
-                        />
+                    <View style={styles.formContainer}>
+                        <Text style={styles.sectionTitle}>Datos Personales</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="person-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                value={nombre}
+                                onChangeText={setNombre}
+                                placeholder="Nombre"
+                                returnKeyType="next"
+                                onSubmitEditing={() => telefonoRef.current.focus()}
+                                ref={nombreRef}
+                            />
+                        </View>
+
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="call-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                value={telefono}
+                                onChangeText={setTelefono}
+                                placeholder="Teléfono"
+                                keyboardType="phone-pad"
+                                returnKeyType="next"
+                                onSubmitEditing={() => emailRef.current.focus()}
+                                ref={telefonoRef}
+                            />
+                        </View>
+
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="mail-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                value={email}
+                                onChangeText={setEmail}
+                                placeholder="Email"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                returnKeyType="next"
+                                onSubmitEditing={() => currentPasswordRef.current.focus()}
+                                ref={emailRef}
+                            />
+                        </View>
                     </View>
-                </View>
 
-                <View style={styles.actionSection}>
-                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges} disabled={loading}>
-                        {loading ? (
-                            <ActivityIndicator color="#FFF" />
-                        ) : (
-                            <>
-                                <Ionicons name="checkmark-circle-outline" size={22} color="#FFF" />
-                                <Text style={styles.actionButtonText}>Guardar Cambios</Text>
-                            </>
-                        )}
-                    </TouchableOpacity>
+                    <View style={styles.formContainer}>
+                        <Text style={styles.sectionTitle}>Cambiar Contraseña</Text>
+                        
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="lock-closed-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                value={currentPassword}
+                                onChangeText={setCurrentPassword}
+                                placeholder="Contraseña Actual"
+                                secureTextEntry={!showCurrentPassword}
+                                returnKeyType="next"
+                                onSubmitEditing={() => newPasswordRef.current.focus()}
+                                ref={currentPasswordRef}
+                            />
+                            <TouchableOpacity onPress={() => setShowCurrentPassword(!showCurrentPassword)} style={styles.passwordToggle}>
+                                <Ionicons name={showCurrentPassword ? 'eye-off-outline' : 'eye-outline'} size={24} color="#7f8c8d" />
+                            </TouchableOpacity>
+                        </View>
 
-                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                        <Ionicons name="arrow-back-outline" size={22} color="#FFF" />
-                        <Text style={styles.actionButtonText}>Regresar</Text>
-                    </TouchableOpacity>
-                </View>
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="lock-closed-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                value={newPassword}
+                                onChangeText={setNewPassword}
+                                placeholder="Nueva contraseña"
+                                secureTextEntry={!showNewPassword}
+                                returnKeyType="done"
+                                ref={newPasswordRef}
+                            />
+                            <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)} style={styles.passwordToggle}>
+                                <Ionicons name={showNewPassword ? 'eye-off-outline' : 'eye-outline'} size={24} color="#7f8c8d" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
 
-            </ScrollView>
+                    <View style={styles.actionSection}>
+                        <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges} disabled={loading}>
+                            {loading ? (
+                                <ActivityIndicator color="#FFF" />
+                            ) : (
+                                <>
+                                    <Ionicons name="checkmark-circle-outline" size={22} color="#FFF" />
+                                    <Text style={styles.actionButtonText}>Guardar Cambios</Text>
+                                </>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                            <Ionicons name="arrow-back-outline" size={22} color="#FFF" />
+                            <Text style={styles.actionButtonText}>Regresar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </TouchableWithoutFeedback>
         </SafeAreaView>
     );
 }
@@ -164,6 +230,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F0F4F8',
     },
     header: {
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: 40,
@@ -183,9 +250,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 20,
     },
-    avatarTouchable: {
-        position: 'relative',
-    },
     avatarContainer: {
         width: 140,
         height: 140,
@@ -201,21 +265,6 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 10,
         overflow: 'hidden',
-    },
-    profileImage: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 70,
-    },
-    cameraIconContainer: {
-        position: 'absolute',
-        bottom: 5,
-        right: 5,
-        backgroundColor: '#3498db',
-        borderRadius: 15,
-        padding: 5,
-        borderWidth: 2,
-        borderColor: '#FFF',
     },
     formContainer: {
         backgroundColor: '#FFFFFF',
@@ -252,6 +301,9 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         fontSize: 16,
         color: '#2c3e50',
+    },
+    passwordToggle: {
+        padding: 5,
     },
     actionSection: {
         marginTop: 10,

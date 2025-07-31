@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -21,25 +21,7 @@ function MiBarraPersonalizada({ state, descriptors, navigation }) {
                 const { options } = descriptors[route.key];
                 const label = options.tabBarLabel !== undefined ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
                 const isFocused = state.index === index;
-
-                const scaleAnim = useRef(new Animated.Value(isFocused ? 1.1 : 1)).current;
-                const opacityAnim = useRef(new Animated.Value(isFocused ? 1 : 0.6)).current;
-
-                useEffect(() => {
-                    Animated.parallel([
-                        Animated.timing(scaleAnim, {
-                            toValue: isFocused ? 1.1 : 1,
-                            duration: 200,
-                            useNativeDriver: true,
-                        }),
-                        Animated.timing(opacityAnim, {
-                            toValue: isFocused ? 1 : 0.6,
-                            duration: 200,
-                            useNativeDriver: true,
-                        }),
-                    ]).start();
-                }, [isFocused]);
-
+                
                 const onPress = () => {
                     const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
                     if (!isFocused && !event.defaultPrevented) {
@@ -56,17 +38,18 @@ function MiBarraPersonalizada({ state, descriptors, navigation }) {
                         key={index}
                         onPress={onPress}
                         style={styles.botonTab}
+                        activeOpacity={0.8}
                     >
-                        <Animated.View style={{ transform: [{ scale: scaleAnim }], opacity: opacityAnim, alignItems: 'center' }}>
+                        <View style={{ alignItems: 'center' }}>
                             {options.tabBarIcon && options.tabBarIcon({
                                 focused: isFocused,
-                                color: isFocused ? '#ffffff' : '#888888',
-                                size: 24
+                                color: isFocused ? '#FFD700' : '#dcdcdc', // ORO para enfocado, GRIS CLARO para no enfocado
+                                size: 28
                             })}
-                            <Text style={[styles.etiqueta, { color: isFocused ? '#ffffff' : '#888888' }]}>
+                            <Text style={[styles.etiqueta, { color: isFocused ? '#FFD700' : '#dcdcdc' }]}>
                                 {label}
                             </Text>
-                        </Animated.View>
+                        </View>
                     </TouchableOpacity>
                 );
             })}
@@ -85,13 +68,14 @@ export default function NavegacionPrincipal({ updateUserToken }) {
             <Tab.Screen name="Inicio" component={InicioStack} options={{ tabBarIcon: ({ color, size }) => (<AntDesign name="home" size={size} color={color} />) }} />
             <Tab.Screen name="Perfil" component={() => <PerfilStack updateUserToken={updateUserToken} />} options={{ tabBarIcon: ({ color, size }) => (<Entypo name="user" size={size} color={color} />) }} />
             <Tab.Screen name="Gestion" component={GestionesStack} options={{ tabBarIcon: ({ color, size }) => (<AntDesign name="setting" size={size} color={color} />) }} />
-            <Tab.Screen name="ProductosFlow" component={ProductosStack} options={{ tabBarButton: null }} />
-            <Tab.Screen name="ServiciosFlow" component={ServiciosStack} options={{ tabBarButton: null }} />
-            <Tab.Screen name="SucursalesFlow" component={SucursalesStack} options={{ tabBarButton: null }} />
-            <Tab.Screen name="AgendamientosStack" component={AgendamientosStack} options={{ tabBarButton: null }} />
-            <Tab.Screen name="CategoriasStack" component={CategoriasStack} options={{ tabBarButton: null }} />
-            <Tab.Screen name="EspecialidadesStack" component={EspecialidadesStack} options={{ tabBarButton: null }} />
-            <Tab.Screen name="OrdenesStack" component={OrdenesStack} options={{ tabBarButton: null }} />
+
+            <Tab.Screen name="ProductosFlow" component={ProductosStack} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="ServiciosFlow" component={ServiciosStack} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="SucursalesFlow" component={SucursalesStack} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="AgendamientosStack" component={AgendamientosStack} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="CategoriasStack" component={CategoriasStack} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="EspecialidadesStack" component={EspecialidadesStack} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="OrdenesStack" component={OrdenesStack} options={{ tabBarButton: () => null }} />
         </Tab.Navigator>
     );
 }
@@ -101,28 +85,26 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        backgroundColor: 'rgba(20, 20, 20, 0.95)',
-        height: 60,
-        paddingBottom: Platform.OS === 'ios' ? 10 : 8,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
+        backgroundColor: '#121212', // Fondo muy oscuro
+        height: 70, 
+        paddingBottom: Platform.OS === 'ios' ? 15 : 10,
+        borderTopLeftRadius: 25, 
+        borderTopRightRadius: 25,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.12,
-        shadowRadius: 6,
-        elevation: 6,
-        borderTopWidth: 0.3,
-        borderTopColor: '#333',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        elevation: 10,
     },
     botonTab: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 6,
+        paddingVertical: 8,
     },
     etiqueta: {
-        fontSize: 12,
-        marginTop: 2,
-        fontWeight: '500',
+        fontSize: 13,
+        marginTop: 4,
+        fontWeight: 'bold',
     },
 });
