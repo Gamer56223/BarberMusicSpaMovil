@@ -1,16 +1,51 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Alert } from "react-native";
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import { logoutUser } from '../../Src/Servicios/AuthService';
+import { logoutUser, getUserProfile } from '../../Src/Servicios/AuthService';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 
-export default function PantallaPerfil({ navigation, updateUserToken }) {
+export default function PantallaPerfil({ navigation }) {
+    const route = useRoute();
+    const { updateUserToken } = route.params; // Obtener updateUserToken de route.params
 
-    const usuario = {
-        nombre: 'Carlos',
-        apellido: 'Rivas',
-        telefono: '301 234 5678',
-        role: 'Administrador',
-    };
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const loadUserProfile = useCallback(async () => {
+        setLoading(true);
+        try {
+            const result = await getUserProfile();
+            if (result.success) {
+                const fullName = result.user.nombre || '';
+                setUser({
+                    id: result.user.id,
+                    nombre: fullName,
+                    telefono: result.user.telefono,
+                    email: result.user.email,
+                    role: 'Administrador', // Forzamos el rol a 'Administrador' para la visualización
+                    imagen_path: result.user.imagen_path
+                });
+            } else {
+                Alert.alert("Error", result.message || "No se pudo cargar el perfil del usuario.");
+                setUser(null);
+            }
+        } catch (error) {
+            console.error("Error al cargar el perfil:", error);
+            Alert.alert("Error", "Ocurrió un error inesperado al cargar el perfil.");
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            loadUserProfile();
+            return () => {
+                // Opcional: limpiar estados o cancelar suscripciones al salir del foco
+            };
+        }, [loadUserProfile])
+    );
 
     const handleLogout = () => {
         Alert.alert(
@@ -29,7 +64,7 @@ export default function PantallaPerfil({ navigation, updateUserToken }) {
                         } catch (error) {
                             console.error("El logout en el servidor falló, pero se cerrará la sesión localmente:", error);
                         } finally {
-                            updateUserToken(null);
+                            updateUserToken(null); // Usar updateUserToken de route.params
                         }
                     },
                     style: "destructive"
@@ -38,11 +73,44 @@ export default function PantallaPerfil({ navigation, updateUserToken }) {
         );
     };
 
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#3498db" />
+                <Text style={styles.loadingText}>Cargando perfil...</Text>
+            </View>
+        );
+    }
+
+    if (!user) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>Mi Perfil</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Configuracion')} style={styles.settingsIcon}>
+                        <Ionicons name="settings-outline" size={26} color="#2c3e50" />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.errorContainer}>
+                    <Ionicons name="alert-circle-outline" size={50} color="#e74c3c" />
+                    <Text style={styles.errorText}>No se pudo cargar la información del usuario.</Text>
+                    <TouchableOpacity style={styles.retryButton} onPress={loadUserProfile}>
+                        <Text style={styles.retryButtonText}>Reintentar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                        <Ionicons name="log-out-outline" size={22} color="#FFF" />
+                        <Text style={styles.actionButtonText}>Cerrar Sesión</Text>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     const profileInfo = [
-        { label: 'Nombre', value: usuario.nombre, icon: 'person-outline' },
-        { label: 'Apellido', value: usuario.apellido, icon: 'person-outline' },
-        { label: 'Teléfono', value: usuario.telefono, icon: 'call-outline' },
-        { label: 'Rol', value: usuario.role, icon: 'shield-checkmark-outline' },
+        { label: 'Nombre', value: user.nombre, icon: 'person-outline' },
+        { label: 'Teléfono', value: user.telefono, icon: 'call-outline' },
+        { label: 'Email', value: user.email, icon: 'mail-outline' },
+        { label: 'Rol', value: user.role, icon: 'shield-checkmark-outline' },
     ];
 
     return (
@@ -60,8 +128,8 @@ export default function PantallaPerfil({ navigation, updateUserToken }) {
                     <View style={styles.avatarContainer}>
                         <Ionicons name="person" size={60} color="#3498db" />
                     </View>
-                    <Text style={styles.userName}>{`${usuario.nombre} ${usuario.apellido}`}</Text>
-                    <Text style={styles.userRole}>{usuario.role}</Text>
+                    <Text style={styles.userName}>{user.nombre}</Text>
+                    <Text style={styles.userRole}>{user.role}</Text>
                 </View>
 
                 <View style={styles.infoSection}>
@@ -82,7 +150,13 @@ export default function PantallaPerfil({ navigation, updateUserToken }) {
                 <View style={styles.actionSection}>
                     <TouchableOpacity
                         style={styles.editButton}
-                        onPress={() => navigation.navigate('EditarPerfil', { usuario: usuario })}
+                        onPress={() => navigation.navigate('EditarPerfil', {
+                            usuario: user,
+                            onSave: (updatedUser) => {
+                                setUser(updatedUser);
+                            },
+                            updateUserToken: updateUserToken // <--- PASANDO updateUserToken A EDITARPERFIL
+                        })}
                     >
                         <Ionicons name="create-outline" size={22} color="#FFF" />
                         <Text style={styles.actionButtonText}>Editar Perfil</Text>
@@ -146,6 +220,8 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 5 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
+        elevation: 10,
+        overflow: 'hidden',
     },
     userName: {
         fontSize: 28,
@@ -250,5 +326,41 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 10,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F0F4F8',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#7f8c8d',
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    errorText: {
+        fontSize: 18,
+        color: '#e74c3c',
+        textAlign: 'center',
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    retryButton: {
+        backgroundColor: '#3498db',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        marginBottom: 15,
+    },
+    retryButtonText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

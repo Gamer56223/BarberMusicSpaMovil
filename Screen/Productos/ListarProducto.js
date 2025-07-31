@@ -1,10 +1,11 @@
-import { View, Text, FlatList, Alert, ActivityIndicator, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, FlatList, Alert, ActivityIndicator, TouchableOpacity, SafeAreaView, StatusBar, Button } from 'react-native'; // Importa Button
 import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import ProductoCard from '../../components/ProductoCard';
 import { useNavigation } from "@react-navigation/native";
 import { listarProductos, eliminarProducto } from "../../Src/Servicios/ProductoService";
 import { listarCategorias } from "../../Src/Servicios/CategoriaService";
+import * as Notifications from 'expo-notifications'; // Importa Notifications
 
 import styles from "../../Styles/Producto/ListarProductoStyles";
 
@@ -108,6 +109,18 @@ export default function ListarProductos (){
         setDisplayCount(prevCount => prevCount + PRODUCTS_PER_LOAD);
     };
 
+    // Función para enviar una notificación local de prueba desde esta pantalla
+    const enviarNotificacionTest = async () => {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "¡Notificación de Producto! 📦",
+                body: "Esta es una notificación de prueba desde la pantalla de productos.",
+            },
+            trigger: { seconds: 1 }, // Aparece rápidamente
+        });
+        console.log("Notificación de prueba programada desde ListarProductos.js.");
+    };
+
     if (loading) {
         return (
             <View style={styles.centeredContainer}>
@@ -161,6 +174,11 @@ export default function ListarProductos (){
                     <Text style={styles.textoBotonCrear}>Nuevo Producto</Text>
                 </View>
             </TouchableOpacity>
+
+            {/* Botón de prueba de notificación en ListarProductos.js */}
+            <View style={{ marginVertical: 10, paddingHorizontal: 20 }}>
+                <Button title="Probar Notificación (Productos)" onPress={enviarNotificacionTest} />
+            </View>
         </SafeAreaView>
     )
 }

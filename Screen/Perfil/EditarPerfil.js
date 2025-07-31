@@ -1,30 +1,91 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Alert } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Image } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import { editarPerfil } from '../../Src/Servicios/AuthService';
+import * as ImagePicker from 'expo-image-picker';
+import { useRoute } from '@react-navigation/native'; // Importar useRoute
 
-export default function EditarPerfil({ route, navigation }) {
+export default function EditarPerfil({ navigation }) { // Eliminamos 'route' de las props directas
 
-    const { usuario: initialUser } = route.params;
+    const route = useRoute(); // Usar useRoute para acceder a los parámetros
+    const { usuario: initialUser, onSave, updateUserToken } = route.params; // Asegúrate de que updateUserToken se reciba aquí
 
     const [nombre, setNombre] = useState(initialUser.nombre);
-    const [apellido, setApellido] = useState(initialUser.apellido);
     const [telefono, setTelefono] = useState(initialUser.telefono);
+    const [loading, setLoading] = useState(false);
+    const [profileImage, setProfileImage] = useState(initialUser.imagen_path);
 
-    const handleSaveChanges = () => {
-        if (!nombre || !apellido || !telefono) {
+    useEffect(() => {
+        setNombre(initialUser.nombre);
+        setTelefono(initialUser.telefono);
+        setProfileImage(initialUser.imagen_path);
+    }, [initialUser]);
+
+    const handleSaveChanges = async () => {
+        if (!nombre || !telefono) {
             Alert.alert("Campos incompletos", "Por favor, llena todos los campos.");
             return;
         }
-        
-        Alert.alert(
-            "Perfil Actualizado",
-            "Tus datos han sido guardados exitosamente.",
-            [{ text: "OK", onPress: () => navigation.goBack() }]
-        );
+
+        setLoading(true);
+
+        const updatedData = {
+            nombre,
+            telefono,
+            imagen_path: profileImage
+        };
+
+        try {
+            const response = await editarPerfil(initialUser.id, updatedData);
+
+            if (response.success) {
+                const newUser = { ...initialUser, ...updatedData, role: 'Administrador' };
+                if (onSave) {
+                    onSave(newUser);
+                }
+                Alert.alert(
+                    "Perfil Actualizado",
+                    "Tus datos han sido guardados exitosamente.",
+                    [{ text: "OK", onPress: () => navigation.goBack() }]
+                );
+            } else {
+                Alert.alert("Error al Actualizar", response.message || "No se pudieron guardar los cambios.");
+            }
+        } catch (error) {
+            console.error("Error al guardar cambios:", error);
+            Alert.alert("Error", "Ocurrió un error inesperado al guardar los cambios.");
+        } finally {
+            setLoading(false);
+        }
     };
-    
-    const handlePickImage = () => {
-        Alert.alert("Cambiar Foto", "Aquí se abriría la galería para seleccionar una nueva foto de perfil.");
+
+    const handlePickImage = async () => {
+        console.log("Intentando abrir la galería de imágenes...");
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        console.log("Estado de los permisos de la galería:", status);
+
+        if (status !== 'granted') {
+            Alert.alert('Permiso denegado', 'Necesitamos permiso para acceder a tu galería de fotos.');
+            return;
+        }
+
+        console.log("Permisos concedidos, lanzando la librería de imágenes...");
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaType.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.7,
+            base64: true,
+        });
+
+        console.log("Resultado de la selección de imagen:", result);
+
+        if (!result.canceled) {
+            setProfileImage(`data:image/jpeg;base64,${result.assets[0].base64}`);
+            console.log("Imagen seleccionada y URI actualizada.");
+        } else {
+            console.log("Selección de imagen cancelada.");
+        }
     };
 
     return (
@@ -34,11 +95,14 @@ export default function EditarPerfil({ route, navigation }) {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                
                 <View style={styles.avatarSection}>
                     <TouchableOpacity style={styles.avatarTouchable} onPress={handlePickImage}>
                         <View style={styles.avatarContainer}>
-                            <Ionicons name="person" size={60} color="#3498db" />
+                            {profileImage ? (
+                                <Image source={{ uri: profileImage }} style={styles.profileImage} />
+                            ) : (
+                                <Ionicons name="person" size={60} color="#3498db" />
+                            )}
                             <View style={styles.cameraIconContainer}>
                                 <Ionicons name="camera-reverse" size={20} color="#FFF" />
                             </View>
@@ -48,7 +112,7 @@ export default function EditarPerfil({ route, navigation }) {
 
                 <View style={styles.formContainer}>
                     <Text style={styles.sectionTitle}>Datos Personales</Text>
-                    
+
                     <View style={styles.inputContainer}>
                         <Ionicons name="person-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
                         <TextInput
@@ -56,16 +120,6 @@ export default function EditarPerfil({ route, navigation }) {
                             value={nombre}
                             onChangeText={setNombre}
                             placeholder="Nombre"
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Ionicons name="person-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                        <TextInput
-                            style={styles.input}
-                            value={apellido}
-                            onChangeText={setApellido}
-                            placeholder="Apellido"
                         />
                     </View>
 
@@ -82,9 +136,15 @@ export default function EditarPerfil({ route, navigation }) {
                 </View>
 
                 <View style={styles.actionSection}>
-                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-                        <Ionicons name="checkmark-circle-outline" size={22} color="#FFF" />
-                        <Text style={styles.actionButtonText}>Guardar Cambios</Text>
+                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges} disabled={loading}>
+                        {loading ? (
+                            <ActivityIndicator color="#FFF" />
+                        ) : (
+                            <>
+                                <Ionicons name="checkmark-circle-outline" size={22} color="#FFF" />
+                                <Text style={styles.actionButtonText}>Guardar Cambios</Text>
+                            </>
+                        )}
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -106,9 +166,7 @@ const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
         justifyContent: 'center',
-        // --- CAMBIO AQUÍ ---
-        // Aumentamos el padding superior para bajar el título
-        paddingTop: 40, 
+        paddingTop: 40,
         paddingBottom: 15,
         backgroundColor: '#F0F4F8',
     },
@@ -142,6 +200,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 10,
+        overflow: 'hidden',
+    },
+    profileImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 70,
     },
     cameraIconContainer: {
         position: 'absolute',

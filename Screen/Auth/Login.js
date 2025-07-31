@@ -1,35 +1,38 @@
 import { View, Text, TextInput, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard, TouchableOpacity, Image, StatusBar, KeyboardAvoidingView, Platform } from "react-native";
 import BottonComponent from "../../components/BottonComponent";
 import { useState } from "react";
-// import { loginUser } from "../../Src/Servicios/AuthService"; // Comentado para la prueba
+import { loginUser } from '../../Src/Servicios/AuthService';
 import styles from '../../Styles/Auth/LoginStyles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Ionicons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
 
-export default function LoginScreen({ navigation, updateUserToken }) {
+export default function LoginScreen({ navigation }) {
+    const route = useRoute();
+    const { updateUserToken } = route.params; // Obtener updateUserToken de route.params
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    // Función para manejar el inicio de sesión
     const handleLogin = async () => {
         setLoading(true);
         try {
-            // --- INICIO: CAMBIOS PARA MODO DE PRUEBA ---
-            // Simular un inicio de sesión exitoso sin necesidad de un token
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simula un retraso de red
+            const result = await loginUser(email, password);
 
-            Alert.alert("Éxito", "Inicio de sesión simulado exitoso (modo de prueba)", [
-                {
-                    text: "OK",
-                    onPress: () => {
-                        // Se comenta la línea de navegación para permitir el ingreso sin redirección
-                        // navigation.replace('HomeApp'); // <--- LÍNEA COMENTADA
+            if (result.success) {
+                Alert.alert("Éxito", "Inicio de sesión exitoso", [
+                    {
+                        text: "OK",
+                        onPress: () => {
+                            updateUserToken(result.token);
+                        }
                     }
-                }
-            ]);
-            // --- FIN: CAMBIOS PARA MODO DE PRUEBA ---
+                ]);
+            } else {
+                Alert.alert("Error de inicio de sesión", result.message || "Credenciales inválidas.");
+            }
 
         } catch (error) {
             console.error("Login error:", error);
@@ -39,14 +42,12 @@ export default function LoginScreen({ navigation, updateUserToken }) {
         }
     };
 
-    // Función para alternar la visibilidad de la contraseña
     const toggleShowPassword = () => { setShowPassword(!showPassword) };
 
     return (
         <View style={styles.mainContainer}>
             <StatusBar barStyle="light-content" />
 
-            {/* --- CONTENEDOR PARA LAS IMÁGENES DE FONDO --- */}
             <View style={styles.backgroundImageContainer}>
                 <Image
                     source={require('../../assets/Login/musicspa.jpg')}
@@ -58,14 +59,11 @@ export default function LoginScreen({ navigation, updateUserToken }) {
                 />
             </View>
 
-            {/* --- CONTENEDOR PARA EL FORMULARIO (ENCIMA DEL FONDO) --- */}
-            {/* KeyboardAvoidingView para ajustar la vista cuando el teclado está activo */}
             <KeyboardAvoidingView
-                style={{ flex: 1 }} // Asegura que KeyboardAvoidingView ocupe todo el espacio disponible
-                behavior={Platform.OS === "ios" ? "padding" : "height"} // Comportamiento de ajuste según la plataforma
-                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // Puedes ajustar este valor si es necesario
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
             >
-                {/* TouchableWithoutFeedback para ocultar el teclado al tocar fuera de los inputs */}
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.formContainer}>
                         <Text style={styles.title}>Iniciar Sesión</Text>
@@ -109,10 +107,8 @@ export default function LoginScreen({ navigation, updateUserToken }) {
                             onPress={handleLogin}
                             loading={loading}
                             disabled={loading}
-                            // Aplicamos los nuevos estilos para el botón y su texto
                             style={styles.loginButton}
                             textStyle={styles.loginButtonText}
-                            // Eliminamos la prop 'color' si BottonComponent ya no la necesita o si entra en conflicto
                         />
                     </View>
                 </TouchableWithoutFeedback>
