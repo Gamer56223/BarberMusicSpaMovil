@@ -5,7 +5,6 @@ import styles from "../Styles/Producto/ProductoCardStyles";
 import { imageMap } from '../utils/ImageMapper';
 
 function ProductoCard({ producto, onEdit, onDelete, onDetail }) {
-    // Genera la clave (slug) para buscar la imagen
     const slug = producto.nombre.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
     const imageSource = imageMap.productos[slug] || imageMap.default;
 
@@ -19,21 +18,32 @@ function ProductoCard({ producto, onEdit, onDelete, onDetail }) {
                     <Text style={styles.nombre}>{producto.nombre}</Text>
                     
                     <View style={styles.detailRow}>
-                        <Text style={styles.detalle}><Text style={styles.detalleLabel}>Categoría:</Text> {producto.nombreCategoria}</Text>
+                        <Text style={styles.detalle}>
+                            <Text style={styles.detalleLabel}>Categoría:</Text> {producto.nombreCategoria}
+                        </Text>
                     </View>
 
                     {producto.descripcion ? (
-                        <Text style={styles.shortDescription} numberOfLines={2} ellipsizeMode="tail">
-                            <Text style={styles.detalleLabel}>Descripción:</Text> {producto.descripcion}
-                        </Text>
+                        <View style={styles.descriptionContainer}>
+                            <Text style={styles.detalleLabel}>Descripción:</Text>
+                            <Text style={styles.shortDescription} numberOfLines={2} ellipsizeMode="tail">
+                                {producto.descripcion}
+                            </Text>
+                        </View>
                     ) : null}
 
                     <View style={styles.priceStockSkuSection}>
-                        <Text style={styles.priceText}><Text style={styles.detalleLabel}>Precio:</Text> ${producto.precio}</Text>
-                        <Text style={styles.stockText}><Text style={styles.detalleLabel}>Stock:</Text> {producto.stock}</Text>
+                        <Text style={styles.priceText}>
+                            <Text style={styles.detalleLabel}>Precio:</Text> ${producto.precio}
+                        </Text>
+                        <Text style={styles.stockText}>
+                            <Text style={styles.detalleLabel}>Stock:</Text> {producto.stock}
+                        </Text>
                     </View>
 
-                    <Text style={styles.detalle}><Text style={styles.detalleLabel}>Activo:</Text> {producto.activo ? 'Sí' : 'No'}</Text>
+                    <Text style={styles.detalle}>
+                        <Text style={styles.detalleLabel}>Activo:</Text> {producto.activo ? 'Sí' : 'No'}
+                    </Text>
                 </View>
                 
                 <View style={styles.actions}>

@@ -1,5 +1,3 @@
-// Styles/Producto/ProductoCardStyles.js
-
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -47,15 +45,20 @@ const styles = StyleSheet.create({
     detalle: {
         fontSize: 14,
         color: '#555',
+        flexWrap: 'wrap',
     },
     detalleLabel: {
         fontWeight: 'bold',
         color: '#34495E',
     },
+    // Estilo para la fila de la descripción
+    descriptionContainer: {
+        flexDirection: 'column', // Mantenemos la descripción debajo
+        marginBottom: 8,
+    },
     shortDescription: {
         fontSize: 14,
         color: '#666',
-        marginBottom: 8,
         lineHeight: 20,
     },
     priceStockSkuSection: {

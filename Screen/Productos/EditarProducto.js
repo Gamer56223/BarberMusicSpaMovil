@@ -11,8 +11,6 @@ import { listarCategorias } from "../../Src/Servicios/CategoriaService";
 import styles from "../../Styles/Producto/EditarProductoStyles";
 
 export default function EditarProducto({ route, navigation }) {
-    // --- ¡CORRECCIÓN AQUÍ! ---
-    // Esta línea ahora es más inteligente: busca el ID tanto si se pasa el objeto completo como si se pasa solo el ID.
     const productoId = route.params?.producto?.id || route.params?.productoId;
 
     const [nombre, setNombre] = useState("");
@@ -29,7 +27,6 @@ export default function EditarProducto({ route, navigation }) {
     const [loadingDependencies, setLoadingDependencies] = useState(true);
 
     useEffect(() => {
-        // Se agrega una verificación para asegurar que productoId no sea nulo antes de cargar
         if (!productoId) {
             Alert.alert("Error", "No se recibió el ID del producto para editar.");
             navigation.goBack();
@@ -148,7 +145,7 @@ export default function EditarProducto({ route, navigation }) {
                         <Text style={styles.title}>Editar Producto</Text>
 
                         <TextInput style={styles.input} placeholder="Nombre del Producto" value={nombre} onChangeText={setNombre} />
-                        <TextInput style={styles.inputMultiline} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
+                        <TextInput style={[styles.input, styles.multilineInput]} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
                         
                         <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
                             <Ionicons name="image-outline" size={24} color="#1976D2" />
@@ -179,9 +176,12 @@ export default function EditarProducto({ route, navigation }) {
                         </View>
 
                         <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading}>
-                            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textoBoton}>Guardar Cambios</Text>}
+                            <View style={styles.botonContent}>
+                                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textoBoton}>Guardar Cambios</Text>}
+                            </View>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                            <Ionicons name="arrow-back-outline" size={20} color="#555" />
                             <Text style={styles.backButtonText}>Volver</Text>
                         </TouchableOpacity>
                     </View>
