@@ -1,39 +1,67 @@
-// import { View, Text, TouchableOpacity } from 'react-native';
-// import { Ionicons } from '@expo/vector-icons';
-// import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 
-// import styles from '../Styles/OrdenCardStyles';
+import styles from '../Styles/Orden/OrdenCardStyles';
 
-// function OrdenCard({ orden, nombreUsuario, onEdit, onDelete, onDetail }) {
-//     return (
-//         <View style={styles.card}>
-//             <View style={styles.info}>
-//                 <Text style={styles.nombre}>{eps.Nombre}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Dirección:</Text> {eps.NumeroOrden}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Teléfono:</Text> {eps.FechaOrden}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {eps.FechaRecibida}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {eps.SubTotal}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {eps.DescuentoTotal}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {eps.ImpuestosTotal}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {eps.TotalOrden}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {eps.EstadoOrden}</Text>
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Nit:</Text> {eps.NotasOrden}</Text>
+function OrdenCard({ orden, nombreCliente, onDelete }) {
+    // Función para formatear fechas de manera legible
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('es-CO', options);
+    };
 
-//                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Usuario:</Text> {nombreUsuario}</Text>
-//             </View>
-//             <View style={styles.actions}>
-//                 <TouchableOpacity onPress={onEdit} style={styles.iconBtn}>
-//                     <Ionicons name="create-outline" size={26} color="#1976D2" />
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={onDelete} style={styles.iconBtn}>
-//                     <Ionicons name="trash-outline" size={26} color="#D32F2F" />
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={onDetail} style={styles.iconBtn}>
-//                     <Ionicons name="bulb-outline" size={26} color="silver" />
-//                 </TouchableOpacity>
-//             </View>
-//         </View>
-//     );
-// }
+    return (
+        <View style={styles.card}>
+            <View style={styles.info}>
+                <Text style={styles.nombre}>
+                    Orden #: <Text>{orden.numero_orden ? String(orden.numero_orden) : 'N/A'}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Cliente:</Text>
+                    <Text> {nombreCliente ? String(nombreCliente) : 'N/A'}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Fecha Orden:</Text>
+                    <Text> {formatDate(orden.fecha_orden)}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Fecha Recibida:</Text>
+                    <Text> {formatDate(orden.fecha_recibida)}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Subtotal:</Text>
+                    <Text> {orden.subtotal ? String(orden.subtotal) : 'N/A'}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Descuento:</Text>
+                    <Text> {orden.descuento_total ? String(orden.descuento_total) : 'N/A'}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Impuestos:</Text>
+                    <Text> {orden.impuestos_total ? String(orden.impuestos_total) : 'N/A'}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Total Orden:</Text>
+                    <Text> {orden.total_orden ? String(orden.total_orden) : 'N/A'}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Estado:</Text>
+                    <Text> {orden.estado_orden ? String(orden.estado_orden) : 'N/A'}</Text>
+                </Text>
+                <Text style={styles.detalle}>
+                    <Text style={styles.detalleLabel}>Notas:</Text>
+                    <Text> {orden.notas_orden ? String(orden.notas_orden) : 'N/A'}</Text>
+                </Text>
+            </View>
+            <View style={styles.actions}>
+                <TouchableOpacity onPress={onDelete} style={styles.iconBtn}>
+                    <Ionicons name="trash-outline" size={26} color="#D32F2F" />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
 
-// export default React.memo(OrdenCard);
+export default React.memo(OrdenCard);

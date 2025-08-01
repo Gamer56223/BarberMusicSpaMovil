@@ -38,6 +38,11 @@ export default function DetallePersonal({ route, navigation }) {
                     listarSucursales()
                 ]);
 
+                // Añadimos logs para depurar las respuestas de la API
+                console.log("Respuesta de DetallePersonalId:", personalRes);
+                console.log("Respuesta de listarUsuarios:", usuariosRes);
+                console.log("Respuesta de listarSucursales:", sucursalesRes);
+                
                 if (personalRes.success) {
                     const personalData = personalRes.data;
                     setPersonal(personalData);
@@ -49,7 +54,7 @@ export default function DetallePersonal({ route, navigation }) {
                     const sucursal = sucursalesRes.success ? sucursalesRes.data.find(s => s.id === personalData.sucursal_asignada_id) : null;
 
                     setNombres({
-                        // CORRECCIÓN: Filtramos valores nulos o indefinidos antes de unirlos
+                        // Filtramos valores nulos o indefinidos antes de unirlos
                         usuario: usuario ? [usuario.nombre, usuario.apellido].filter(Boolean).join(' ') : 'Desconocido',
                         sucursal: sucursal ? sucursal.nombre : 'No asignada'
                     });

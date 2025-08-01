@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     // --- Estilos de la Lista y Estado Vacío ---
     flatListContent: {
         paddingVertical: 8,
-        paddingBottom: 100, // Espacio para el botón flotante
     },
     flatListEmpty: {
         flexGrow: 1,
@@ -60,39 +59,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 16,
         fontWeight: '500',
-    },
-
-    // --- Botón Flotante para Crear ---
-    botonCrear: {
-        position: 'absolute',
-        bottom: 30,
-        right: 20,
-        backgroundColor: '#007BFF',
-        borderRadius: 30,
-        height: 60,
-        paddingHorizontal: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.30,
-        shadowRadius: 4.65,
-        elevation: 8,
-    },
-    botonCrearContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    botonCrearIcon: {
-        marginRight: 8,
-    },
-    textoBotonCrear: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
     },
 });
 

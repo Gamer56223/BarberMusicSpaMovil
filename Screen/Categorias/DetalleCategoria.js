@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, Alert } from "react-native";
 import BotonComponent from "../../components/BottonComponent";
-import { DetalleCategoriaId } from "../../Src/Servicios/CategoriaService"; // Asume que tienes este servicio
-import styles from "../../Styles/Categoria/DetalleCategoriaStyles"; // Asume que tienes un archivo de estilos similar
+import { DetalleCategoriaId } from "../../Src/Servicios/CategoriaService";
+import styles from "../../Styles/Categoria/DetalleCategoriaStyles";
 
 export default function DetalleCategoria({ route, navigation }) {
     const { categoriaId } = route.params;
@@ -14,17 +14,17 @@ export default function DetalleCategoria({ route, navigation }) {
         const cargarDetalleCategoria = async () => {
             setLoading(true);
             try {
-                const result = await DetalleCategoriaId(categoriaId); // Llama al servicio
+                const result = await DetalleCategoriaId(categoriaId);
                 if (result.success) {
                     setCategoria(result.data);
                 } else {
                     Alert.alert("Error", result.message || "No se pudo cargar la categoría.");
-                    navigation.goBack(); // Regresar si hay un error
+                    navigation.goBack();
                 }
             } catch (error) {
                 console.error("Error al cargar detalle de categoría:", error);
                 Alert.alert("Error", "Ocurrió un error inesperado al cargar la categoría.");
-                navigation.goBack(); // Regresar si hay un error
+                navigation.goBack();
             } finally {
                 setLoading(false);
             }
@@ -43,10 +43,10 @@ export default function DetalleCategoria({ route, navigation }) {
 
     if (!categoria) {
         return (
-            <SafeAreaView style={[styles.container, {backgroundColor: '#f0f4f8'}]}>
-                <Text style={[styles.title, {color: '#2c3e50'}]}>Detalle de Categoría</Text>
-                <View style={[styles.detailCard, {backgroundColor: '#FFFFFF', shadowColor: 'rgba(0, 0, 0, 0.1)'}]}>
-                    <Text style={[styles.errorText, {color: 'red'}]}>No se encontraron detalles para esta categoría.</Text>
+            <SafeAreaView style={[styles.container, { backgroundColor: '#f0f4f8' }]}>
+                <Text style={[styles.title, { color: '#2c3e50' }]}>Detalle de Categoría</Text>
+                <View style={[styles.detailCard, { backgroundColor: '#FFFFFF', shadowColor: 'rgba(0, 0, 0, 0.1)' }]}>
+                    <Text style={[styles.errorText, { color: 'red' }]}>No se encontraron detalles para esta categoría.</Text>
                     <BotonComponent
                         title="Volver al Listado"
                         onPress={() => navigation.goBack()}
@@ -59,17 +59,19 @@ export default function DetalleCategoria({ route, navigation }) {
     }
 
     return (
-        <SafeAreaView style={[styles.container, {backgroundColor: '#f0f4f8'}]}>
-            <Text style={[styles.title, {color: '#2c3e50'}]}>Detalle de Categoría</Text>
+        <SafeAreaView style={[styles.container, { backgroundColor: '#f0f4f8' }]}>
+            {/* Título de la pantalla ahora incluye el nombre de la categoría */}
+            <Text style={[styles.title, { color: '#2c3e50' }]}>Detalle de Categoría: {categoria.nombre}</Text>
 
-            <View style={[styles.detailCard, {backgroundColor: '#FFFFFF', shadowColor: 'rgba(0, 0, 0, 0.1)'}]}>
-                <Text style={[styles.categoriaName, {color: '#2c3e50'}]}>{categoria.nombre}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>ID: </Text>{categoria.id}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Descripción: </Text>{categoria.descripcion || 'N/A'}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Tipo: </Text>{categoria.tipo_categoria}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Icono Clave: </Text>{categoria.icono_clave || 'N/A'}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Activo: </Text>{categoria.activo ? 'Sí' : 'No'}</Text>
-                {/* Campos de 'created_at' y 'updated_at' eliminados como solicitaste */}
+            <View style={[styles.detailCard, { backgroundColor: '#FFFFFF', shadowColor: 'rgba(0, 0, 0, 0.1)' }]}>
+                {/* Aseguramos que el nombre de la categoría se muestre primero */}
+                <Text style={[styles.categoriaName, { color: '#2c3e50' }]}>{categoria.nombre}</Text>
+
+                <Text style={[styles.detailText, { color: '#5C6F7F' }]}><Text style={styles.detailLabel}>ID: </Text>{categoria.id}</Text>
+                <Text style={[styles.detailText, { color: '#5C6F7F' }]}><Text style={styles.detailLabel}>Descripción: </Text>{categoria.descripcion || 'N/A'}</Text>
+                <Text style={[styles.detailText, { color: '#5C6F7F' }]}><Text style={styles.detailLabel}>Tipo: </Text>{categoria.tipo_categoria}</Text>
+                <Text style={[styles.detailText, { color: '#5C6F7F' }]}><Text style={styles.detailLabel}>Icono Clave: </Text>{categoria.icono_clave || 'N/A'}</Text>
+                <Text style={[styles.detailText, { color: '#5C6F7F' }]}><Text style={styles.detailLabel}>Activo: </Text>{categoria.activo ? 'Sí' : 'No'}</Text>
             </View>
 
             <BotonComponent

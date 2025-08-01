@@ -101,8 +101,23 @@ export default function AgregarServicio({ navigation }) {
     };
 
     const handleGuardar = async () => {
-        if (!formData.nombre || !formData.descripcion || !formData.precioBase || !formData.duracionMinutos || !formData.categoriaId) {
-            Alert.alert("Campos requeridos", "Por favor, complete todos los campos obligatorios.");
+        // Validación inicial de campos requeridos
+        if (!formData.nombre || !formData.descripcion || !formData.categoriaId) {
+            Alert.alert("Campos requeridos", "Por favor, complete todos los campos obligatorios: Nombre, Descripción y Categoría.");
+            return;
+        }
+
+        // Validación explícita de los campos numéricos antes de procesarlos
+        const precio = parseFloat(formData.precioBase);
+        const duracion = parseInt(formData.duracionMinutos);
+
+        if (isNaN(precio) || precio < 0) {
+            Alert.alert("Error de validación", "El 'Precio Base' debe ser un número válido y positivo.");
+            return;
+        }
+
+        if (isNaN(duracion) || duracion < 0) {
+            Alert.alert("Error de validación", "La 'Duración en Minutos' debe ser un número entero válido y positivo.");
             return;
         }
 
@@ -112,10 +127,15 @@ export default function AgregarServicio({ navigation }) {
             const dataToSave = new FormData();
             dataToSave.append('nombre', formData.nombre);
             dataToSave.append('descripcion', formData.descripcion);
-            dataToSave.append('precio_base', parseFloat(formData.precioBase));
-            dataToSave.append('duracion_minutos', parseInt(formData.duracionMinutos));
+            
+            // Se añaden los valores numéricos validados y convertidos.
+            // Los nombres de los campos ('precio_base' y 'duracion_minutos')
+            // deben coincidir exactamente con los que espera el backend.
+            dataToSave.append('precio_base', precio.toString());
+            dataToSave.append('duracion_minutos', duracion.toString());
+            
             dataToSave.append('categoria_id', parseInt(formData.categoriaId));
-            dataToSave.append('activo', formData.activo === "1"); // Convertir a booleano para la API
+            dataToSave.append('activo', formData.activo);
 
             if (formData.imagenPath) {
                 const filename = formData.imagenPath.split('/').pop();

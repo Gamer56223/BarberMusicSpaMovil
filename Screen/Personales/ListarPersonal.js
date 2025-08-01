@@ -16,11 +16,17 @@ export default function ListarPersonal (){
     const handlePersonal = async () => {
         setLoading(true);
         try {
+            // Se realizan todas las llamadas a la API en paralelo para optimizar la carga
             const [usuariosRes, sucursalesRes, personalRes] = await Promise.all([
                 listarUsuarios(),
                 listarSucursales(),
                 listarPersonal()
             ]);
+
+            // Añadimos logs para depurar las respuestas de la API
+            console.log("Respuesta de listarUsuarios:", usuariosRes);
+            console.log("Respuesta de listarSucursales:", sucursalesRes);
+            console.log("Respuesta de listarPersonal:", personalRes);
 
             let tempUsuariosMap = {};
             if (usuariosRes.success && Array.isArray(usuariosRes.data)) {
@@ -39,6 +45,7 @@ export default function ListarPersonal (){
             if (personalRes.success && Array.isArray(personalRes.data)) {
                 const enrichedPersonal = personalRes.data.map(personalItem => ({
                     ...personalItem,
+                    // Si el usuario no existe en el mapa, se asigna "Usuario Desconocido"
                     nombreUsuario: tempUsuariosMap[personalItem.usuario_id] || 'Usuario Desconocido',
                     nombreSucursal: tempSucursalesMap[personalItem.sucursal_asignada_id] || 'Sucursal Desconocida'
                 }));
@@ -48,6 +55,7 @@ export default function ListarPersonal (){
                 setPersonal([]);
             }
         } catch (error) {
+            console.error("Error al cargar datos en ListarPersonal:", error);
             Alert.alert("Error", "Ocurrió un error inesperado.");
         } finally {
             setLoading(false);

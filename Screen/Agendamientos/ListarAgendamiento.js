@@ -110,8 +110,9 @@ export default function ListarAgendamiento() {
         navigation.navigate('CrearAgendamiento');
     };
 
+    // ** LÍNEA CORREGIDA **
     const handleEditar = (agendamiento) => {
-        navigation.navigate("EditarAgendamiento", { agendamiento });
+        navigation.navigate("EditarAgendamiento", { agendamientoId: agendamiento.id });
     };
 
     const handleDetalle = (agendamiento) => {
@@ -160,7 +161,7 @@ export default function ListarAgendamiento() {
                 }
                 contentContainerStyle={agendamientos.length === 0 ? styles.flatListEmpty : { paddingBottom: 100 }}
             />
-             <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
+            <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
                 <View style={styles.botonCrearContent}>
                     <Ionicons name="add" size={24} color="#FFFFFF" style={styles.botonCrearIcon} />
                     <Text style={styles.textoBotonCrear}>Nuevo Agendamiento</Text>

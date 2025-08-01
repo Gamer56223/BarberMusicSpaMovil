@@ -53,7 +53,8 @@ export const listarReseñas = async () => {
  */
 export const listarReseñasNoAprobadas = async () => {
     try {
-        const response = await api.get("/Client_reseñas/reviews/unapproved");
+        // La ruta corregida es 'reviews/pending' según la lista de rutas
+        const response = await api.get("/Client_reseñas/reviews/pending");
         console.log("Respuesta listarReseñasNoAprobadas:", response.data);
         return { success: true, data: response.data };
     } catch (error) {

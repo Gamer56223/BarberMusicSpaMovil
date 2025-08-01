@@ -34,7 +34,29 @@ export const listarAgendamientos = async () => {
             message: errorMessage,
         };
     }
-}
+};
+
+/**
+ * Función para obtener los detalles de un agendamiento por su ID.
+ * @param {string|number} id El ID del agendamiento a buscar.
+ * @returns {object} Un objeto con 'success' y 'data' (en caso de éxito) o 'message' (en caso de error).
+ */
+export const DetalleAgendamientoId = async (id) => {
+    console.log("Intentando obtener detalles del agendamiento con ID:", id);
+    try {
+        const response = await api.get(`/Scheduling_agendamientos/agendamientos/${id}`);
+        console.log("Respuesta DetalleAgendamientoId:", response.data);
+        // La API debe devolver un objeto de agendamiento, lo devolvemos en 'data'
+        return { success: true, data: response.data };
+    } catch (error) {
+        const errorMessage = error.response ? formatErrorMessage(error.response.data) : "Error de conexión";
+        console.error("Error al obtener detalles del agendamiento:", error.response ? error.response.data : error.message);
+        return {
+            success: false,
+            message: errorMessage,
+        };
+    }
+};
 
 
 export const eliminarAgendamiento = async (id) => {

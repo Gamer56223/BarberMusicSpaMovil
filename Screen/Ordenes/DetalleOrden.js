@@ -11,6 +11,9 @@ export default function DetalleOrden({ route, navigation }) {
     const [orden, setOrden] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // Agregamos este log para ver si se recibe el ordenId correctamente
+    console.log("DetalleOrden: ordenId recibido:", ordenId);
+
     // Función para formatear fechas de manera legible
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -22,7 +25,12 @@ export default function DetalleOrden({ route, navigation }) {
         const cargarDetalleOrden = async () => {
             setLoading(true);
             try {
+                // Aquí llamamos al servicio con el ordenId
                 const result = await DetalleOrdenId(ordenId);
+                
+                // Agregamos este log para ver el resultado completo del servicio
+                console.log("DetalleOrden: Resultado de DetalleOrdenId:", result);
+                
                 if (result.success) {
                     setOrden(result.data);
                 } else {
@@ -30,7 +38,8 @@ export default function DetalleOrden({ route, navigation }) {
                     navigation.goBack();
                 }
             } catch (error) {
-                console.error("Error al cargar detalle de orden:", error);
+                // Agregamos este log para capturar cualquier error inesperado
+                console.error("DetalleOrden: Error en el try-catch de cargarDetalleOrden:", error);
                 Alert.alert("Error", "Ocurrió un error inesperado al cargar la orden.");
                 navigation.goBack();
             } finally {
