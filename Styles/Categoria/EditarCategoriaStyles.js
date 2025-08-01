@@ -24,12 +24,26 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 30,
     },
+    // Estilo para las nuevas etiquetas de campo
+    label: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#334155',
+        marginBottom: 8,
+        marginTop: 10,
+    },
     pickerLabelActual: {
         fontSize: 16,
         fontWeight: '600',
         color: '#334155',
         marginBottom: 8,
         marginTop: 4, // Espacio extra para separar de los inputs
+    },
+    pickerText: {
+        color: '#1A2533',
+    },
+    pickerPlaceholder: {
+        color: '#9CA3AF', // Un color más claro para el placeholder
     },
 
     // --- Campos de Texto ---
@@ -69,6 +83,19 @@ const styles = StyleSheet.create({
         color: '#1A2533',
     },
 
+    // --- Switch de Activo ---
+    switchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    switchLabel: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#334155',
+    },
+
     // --- Botones de Acción ---
     boton: {
         backgroundColor: '#1976D2', // Azul primario
@@ -106,6 +133,47 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#555',
         marginLeft: 5,
+    },
+
+    // --- Modal para el Picker ---
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
+        maxHeight: '50%',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+    modalOption: {
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+    },
+    modalOptionText: {
+        fontSize: 18,
+        textAlign: 'center',
+    },
+    modalCloseButton: {
+        marginTop: 20,
+        padding: 15,
+        backgroundColor: '#F0F0F0',
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalCloseText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#555',
     },
 });
 

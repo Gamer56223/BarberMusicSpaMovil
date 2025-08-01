@@ -15,7 +15,7 @@ export default function EditarCategoria({ route, navigation }) {
     const [loading, setLoading] = useState(true);
     const [showPicker, setShowPicker] = useState(false);
 
-    // ¡CORRECCIÓN FINAL! Los valores deben estar en mayúsculas para coincidir con tu backend de Laravel.
+    // Los valores deben estar en mayúsculas para coincidir con el backend
     const tiposDeCategoria = ["PRODUCTO", "SERVICIO"];
 
     useEffect(() => {
@@ -100,19 +100,29 @@ export default function EditarCategoria({ route, navigation }) {
                     <View style={styles.container}>
                         <Text style={styles.title}>Editar Categoría</Text>
 
+                        {/* Campo de Nombre */}
+                        <Text style={styles.label}>Nombre:</Text>
                         <TextInput style={styles.input} placeholder="Nombre de la Categoría" value={nombre} onChangeText={setNombre} />
-                        <TextInput style={styles.inputMultiline} placeholder="Descripción (Opcional)" value={descripcion} onChangeText={setDescripcion} multiline />
 
+                        {/* Campo de Descripción */}
+                        <Text style={styles.label}>Descripción:</Text>
+                        <TextInput style={[styles.input, styles.multilineInput]} placeholder="Descripción (Opcional)" value={descripcion} onChangeText={setDescripcion} multiline />
+
+                        {/* Selector de Tipo de Categoría */}
+                        <Text style={styles.label}>Tipo de Categoría:</Text>
                         <TouchableOpacity style={styles.input} onPress={() => setShowPicker(true)}>
                             <Text style={tipoCategoria ? styles.pickerText : styles.pickerPlaceholder}>
                                 {tipoCategoria || "Seleccione el Tipo de Categoría"}
                             </Text>
                         </TouchableOpacity>
 
+                        {/* Campo de Ícono Clave */}
+                        <Text style={styles.label}>Ícono Clave:</Text>
                         <TextInput style={styles.input} placeholder="Ícono Clave (ej. icono_estetica)" value={iconoClave} onChangeText={setIconoClave} />
 
+                        {/* Switch de Activo */}
                         <View style={styles.switchContainer}>
-                            <Text style={styles.switchLabel}>Activo:</Text>
+                            <Text style={styles.label}>Activo:</Text>
                             <Switch
                                 trackColor={{ false: "#767577", true: "#81b0ff" }}
                                 thumbColor={activo ? "#1976D2" : "#f4f3f4"}

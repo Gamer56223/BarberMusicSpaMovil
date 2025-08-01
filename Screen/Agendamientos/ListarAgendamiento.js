@@ -161,6 +161,7 @@ export default function ListarAgendamiento() {
                 }
                 contentContainerStyle={agendamientos.length === 0 ? styles.flatListEmpty : { paddingBottom: 100 }}
             />
+            {/* El botón de crear ahora está centrado */}
             <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
                 <View style={styles.botonCrearContent}>
                     <Ionicons name="add" size={24} color="#FFFFFF" style={styles.botonCrearIcon} />

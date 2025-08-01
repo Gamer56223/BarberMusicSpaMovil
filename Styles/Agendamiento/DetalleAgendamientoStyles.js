@@ -40,7 +40,8 @@ const styles = StyleSheet.create({
     mainTitle: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#007BFF', // Un color azul primario para destacar
+        color: '#1A2533', // Color oscuro para el título
+        textAlign: 'center', // Centra el título
         marginBottom: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#EAECEE', // Una línea divisoria sutil
@@ -57,11 +58,11 @@ const styles = StyleSheet.create({
         marginBottom: 14,
         lineHeight: 24, // Espacio entre líneas para que no se vea apretado
     },
-    detailLabel: {
+    detailLabelBold: {
         fontWeight: 'bold',
         color: '#2C3E50', // Un poco más oscuro para la etiqueta
     },
-
+    
     // Estilo especial para el precio
     priceDetailText: {
         fontSize: 18,

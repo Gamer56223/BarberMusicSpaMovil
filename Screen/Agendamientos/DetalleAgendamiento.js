@@ -40,15 +40,16 @@ export default function DetalleAgendamiento({ route }) {
                     <Text style={styles.mainTitle}>{agendamiento.nombreCliente || 'Cliente Desconocido'}</Text>
                     
                     <View style={styles.detailSection}>
+                        {/* Se utiliza el nuevo estilo `detailLabelBold` para que todas las etiquetas salgan en negrita */}
                         <Text style={styles.detailText}><Text style={styles.detailLabelBold}>Servicio:</Text> {agendamiento.nombreServicio || 'Desconocido'}</Text>
                         <Text style={styles.detailText}><Text style={styles.detailLabelBold}>Sucursal:</Text> {agendamiento.nombreSucursal || 'Desconocida'}</Text>
                         <Text style={styles.detailText}><Text style={styles.detailLabelBold}>Estado:</Text> {agendamiento.estado || 'N/A'}</Text>
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Fecha Inicio:</Text> {formatDateTime(agendamiento.fecha_hora_inicio)}</Text>
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Fecha Fin:</Text> {formatDateTime(agendamiento.fecha_hora_fin)}</Text>
-                        <Text style={styles.priceDetailText}><Text style={styles.detailLabel}>Precio Final:</Text> {formatPrice(agendamiento.precio_final)}</Text>
+                        <Text style={styles.detailText}><Text style={styles.detailLabelBold}>Fecha Inicio:</Text> {formatDateTime(agendamiento.fecha_hora_inicio)}</Text>
+                        <Text style={styles.detailText}><Text style={styles.detailLabelBold}>Fecha Fin:</Text> {formatDateTime(agendamiento.fecha_hora_fin)}</Text>
+                        <Text style={styles.priceDetailText}><Text style={styles.detailLabelBold}>Precio Final:</Text> {formatPrice(agendamiento.precio_final)}</Text>
                         
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Notas del Cliente:</Text> {agendamiento.notas_cliente || 'N/A'}</Text>
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Notas Internas:</Text> {agendamiento.notas_internas || 'N/A'}</Text>
+                        <Text style={styles.detailText}><Text style={styles.detailLabelBold}>Notas del Cliente:</Text> {agendamiento.notas_cliente || 'N/A'}</Text>
+                        <Text style={styles.detailText}><Text style={styles.detailLabelBold}>Notas Internas:</Text> {agendamiento.notas_internas || 'N/A'}</Text>
                     </View>
                 </View>
             </ScrollView>

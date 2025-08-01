@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, Alert, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, Alert, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // Asegúrate de que las rutas a tus servicios sean correctas
@@ -42,14 +42,14 @@ export default function DetallePersonal({ route, navigation }) {
                 console.log("Respuesta de DetallePersonalId:", personalRes);
                 console.log("Respuesta de listarUsuarios:", usuariosRes);
                 console.log("Respuesta de listarSucursales:", sucursalesRes);
-                
+
                 if (personalRes.success) {
                     const personalData = personalRes.data;
                     setPersonal(personalData);
 
                     // Buscamos el nombre del usuario
                     const usuario = usuariosRes.success ? usuariosRes.data.find(u => u.id === personalData.usuario_id) : null;
-                    
+
                     // Buscamos el nombre de la sucursal
                     const sucursal = sucursalesRes.success ? sucursalesRes.data.find(s => s.id === personalData.sucursal_asignada_id) : null;
 
@@ -71,7 +71,7 @@ export default function DetallePersonal({ route, navigation }) {
                 setLoading(false);
             }
         };
-        
+
         cargarDetallePersonal();
     }, [personalId]);
 
@@ -101,7 +101,7 @@ export default function DetallePersonal({ route, navigation }) {
 
                 <View style={styles.detailCard}>
                     <Text style={styles.personalName}>{nombres.usuario}</Text>
-                    
+
                     <View style={styles.detailSection}>
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>ID Personal:</Text> {personal.id}</Text>
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>Sucursal Asignada:</Text> {nombres.sucursal}</Text>
@@ -111,11 +111,6 @@ export default function DetallePersonal({ route, navigation }) {
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>Activo en Empresa:</Text> {personal.activo_en_empresa ? 'Sí' : 'No'}</Text>
                     </View>
                 </View>
-
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back-circle-outline" size={24} color="#555" />
-                    <Text style={styles.backButtonText}>Volver</Text>
-                </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
     );

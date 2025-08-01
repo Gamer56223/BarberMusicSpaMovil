@@ -1,5 +1,3 @@
-// Src/Servicios/AuthService.js
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./conexion";
 import { Alert } from 'react-native';
@@ -35,6 +33,7 @@ export const logoutUser = async () => {
         return { success: true };
     } catch (error) {
         console.error("Error al cerrar sesión:", error.response ? error.response.data : error.message);
+        await AsyncStorage.removeItem("userToken");
         return {
             success: false,
             message: error.response?.data?.message || "Error al cerrar sesión."
@@ -58,7 +57,6 @@ export const getUserProfile = async () => {
     }
 };
 
-// Función para actualizar nombre, teléfono y email
 export const editarPerfil = async (data) => {
     try {
         console.log("EDITAR PERFIL - Datos enviados:", data);
@@ -73,7 +71,6 @@ export const editarPerfil = async (data) => {
     }
 };
 
-// Función para cambiar la contraseña
 export const changeUserPassword = async (data) => {
     try {
         console.log("CAMBIAR CONTRASEÑA - Datos enviados:", data);

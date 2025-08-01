@@ -116,6 +116,7 @@ export default function ListarCategorias (){
                 contentContainerStyle={categorias.length === 0 ? styles.flatListEmpty : styles.flatListContent}
             />
 
+            {/* El botón de crear ahora está centrado y con el nuevo estilo */}
             <TouchableOpacity style={styles.botonCrear} onPress={handleCrear} activeOpacity={0.8}>
                 <View style={styles.botonCrearContent}>
                     <Ionicons name="add-circle-outline" size={24} color="#fff" style={styles.botonCrearIcon} />

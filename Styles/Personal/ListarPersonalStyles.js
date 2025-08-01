@@ -73,31 +73,40 @@ const styles = StyleSheet.create({
         lineHeight: 25,
     },
     botonCrear: {
+        // Posición centrada en la parte inferior
         position: 'absolute',
-        bottom: 30, // Separación de la parte inferior de la pantalla
-        right: 25, // Separación del lado derecho
-        backgroundColor: '#007BFF', // Un azul vibrante para el botón de acción
-        borderRadius: 30, // Hace que el botón sea circular
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-        elevation: 8, // Sombra más pronunciada para el botón flotante en Android
+        bottom: 30,
+        left: '50%',
+        transform: [{ translateX: -125 }], // Ajuste para centrar el botón de 250px de ancho
+        // Estilos para el botón rojo y bonito
+        backgroundColor: '#D32F2F', // Un color rojo llamativo para "Nuevo Personal"
+        borderRadius: 15, // Esquinas más redondeadas
+        paddingVertical: 18, // Aumenta el padding vertical para un botón más grande
+        paddingHorizontal: 25,
+        shadowColor: '#D32F2F',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 10,
+        width: 250, // Ancho fijo para centrarlo correctamente
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#FFCDD2',
     },
     botonCrearContent: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    botonCrearIcon: {
-        marginRight: 8,
+    botonIcon: {
+        marginRight: 10,
     },
     textoBotonCrear: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
+        textTransform: 'uppercase', // Texto en mayúsculas
     },
 });
 
-export default styles;    
+export default styles;

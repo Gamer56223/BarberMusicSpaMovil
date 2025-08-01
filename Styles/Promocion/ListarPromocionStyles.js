@@ -59,21 +59,23 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     botonCrear: {
+        // Posición flotante y centrada en la parte inferior
         position: 'absolute',
-        bottom: 20,
-        right: 20,
-        backgroundColor: '#007BFF', // Azul brillante para el botón de crear
-        borderRadius: 30,
-        paddingVertical: 12,
+        bottom: 30,
+        alignSelf: 'center',
+        // Estilos para el botón rojo y bonito
+        backgroundColor: '#D32F2F', // Un color rojo llamativo para "Nueva Promoción"
+        borderRadius: 30, // Esquinas más redondeadas para un look tipo píldora
+        paddingVertical: 12, // Tamaño compacto
         paddingHorizontal: 20,
-        shadowColor: '#000',
+        shadowColor: '#D32F2F',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.4,
         shadowRadius: 5,
-        elevation: 6,
+        elevation: 8,
     },
     botonCrearContent: {
-        flexDirection: 'row',
+        flexDirection: 'row', // Para alinear el ícono y el texto
         alignItems: 'center',
     },
     botonCrearIcon: {
@@ -81,8 +83,9 @@ const styles = StyleSheet.create({
     },
     textoBotonCrear: {
         color: '#FFFFFF',
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
+        textTransform: 'uppercase', // Texto en mayúsculas
     },
 });
 

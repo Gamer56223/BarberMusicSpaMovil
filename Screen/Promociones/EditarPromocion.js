@@ -16,7 +16,7 @@ export default function EditarPromocion({ navigation }) {
     const [codigo, setCodigo] = useState("");
     const [nombre, setNombre] = useState("");
     const [descripcion, setDescripcion] = useState("");
-    const [tipoDescuento, setTipoDescuento] = useState("Porcentaje"); // Valor inicial
+    const [tipoDescuento, setTipoDescuento] = useState("Porcentaje");
     const [valorDescuento, setValorDescuento] = useState("");
     const [fechaInicio, setFechaInicio] = useState(new Date());
     const [fechaFin, setFechaFin] = useState(new Date());
@@ -30,7 +30,6 @@ export default function EditarPromocion({ navigation }) {
     const [showFechaInicioPicker, setShowFechaInicioPicker] = useState(false);
     const [showFechaFinPicker, setShowFechaFinPicker] = useState(false);
     
-    // 1. CORRECCIÓN: Los 'value' ahora son exactamente como las etiquetas.
     const tiposDescuento = [
         { label: "Porcentaje", value: "Porcentaje" },
         { label: "Monto Fijo", value: "Monto Fijo" },
@@ -51,7 +50,6 @@ export default function EditarPromocion({ navigation }) {
                     setCodigo(promo.codigo || "");
                     setNombre(promo.nombre || "");
                     setDescripcion(promo.descripcion || "");
-                    // 2. CORRECCIÓN: Se quita la conversión a minúsculas.
                     setTipoDescuento(promo.tipo_descuento || "Porcentaje");
                     setValorDescuento(promo.valor_descuento?.toString() || "");
                     setFechaInicio(promo.fecha_inicio ? new Date(promo.fecha_inicio) : new Date());
@@ -151,11 +149,14 @@ export default function EditarPromocion({ navigation }) {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.title}>Editar Promoción</Text>
+                        <View style={styles.headerContainer}>
+                            <Ionicons name="create-outline" size={32} color="#1A2533" />
+                            <Text style={styles.headerTitle}>Editar Promoción</Text>
+                        </View>
 
                         <TextInput style={styles.input} placeholder="Código" value={codigo} onChangeText={setCodigo} />
                         <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
-                        <TextInput style={styles.inputMultiline} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
+                        <TextInput style={[styles.input, styles.multilineInput]} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
 
                         <Text style={styles.pickerLabel}>Tipo de Descuento:</Text>
                         <View style={styles.pickerContainer}>
@@ -204,16 +205,21 @@ export default function EditarPromocion({ navigation }) {
                                 <Picker.Item label="No" value="0" />
                             </Picker>
                         </View>
-
-                        <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading}>
-                            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textoBoton}>Guardar Cambios</Text>}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                            <Text style={styles.backButtonText}>Volver</Text>
-                        </TouchableOpacity>
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
+
+            {/* Este es el botón flotante de guardar */}
+            <TouchableOpacity style={styles.botonGuardar} onPress={handleGuardar} disabled={loading} activeOpacity={0.8}>
+                {loading ? (
+                    <ActivityIndicator color="#fff" />
+                ) : (
+                    <View style={styles.botonContent}>
+                        <Ionicons name="save-outline" size={24} color="#fff" style={styles.botonIcon} />
+                        <Text style={styles.textoBoton}>Guardar Cambios</Text>
+                    </View>
+                )}
+            </TouchableOpacity>
         </KeyboardAvoidingView>
     );
 }

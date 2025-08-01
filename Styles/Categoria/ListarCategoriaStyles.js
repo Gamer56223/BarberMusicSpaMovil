@@ -62,25 +62,23 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
 
-    // --- Botón Flotante para Crear ---
+    // --- Botón Flotante para Crear (Actualizado) ---
     botonCrear: {
         position: 'absolute',
         bottom: 30,
-        right: 20,
-        backgroundColor: '#007BFF',
-        borderRadius: 30,
-        height: 60,
-        paddingHorizontal: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.30,
-        shadowRadius: 4.65,
+        alignSelf: 'center', // Centra el elemento horizontalmente
+        backgroundColor: '#DC3545', // Color rojo vibrante
+        borderRadius: 50, // Bordes más redondeados para un aspecto más moderno
+        paddingVertical: 12, // Mayor padding vertical
+        paddingHorizontal: 25, // Mayor padding horizontal
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
         elevation: 8,
+        flexDirection: 'row', // Para alinear el icono y el texto
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     botonCrearContent: {
         flexDirection: 'row',
@@ -91,7 +89,7 @@ const styles = StyleSheet.create({
     },
     textoBotonCrear: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 18, // Aumentamos el tamaño de la fuente
         fontWeight: 'bold',
     },
 });
