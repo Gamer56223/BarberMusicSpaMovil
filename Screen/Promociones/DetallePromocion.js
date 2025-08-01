@@ -72,12 +72,7 @@ export default function DetallePromocion({ route, navigation }) {
                 <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Fecha Fin: </Text>{promocion.fecha_fin}</Text>
                 <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Usos Máximos Total: </Text>{promocion.usos_maximos_total || 'Ilimitado'}</Text>
                 <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Usos Máximos por Cliente: </Text>{promocion.usos_maximos_por_cliente || 'Ilimitado'}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Usos Actuales: </Text>{promocion.usos_actuales}</Text>
                 <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Activo: </Text>{promocion.activo ? 'Sí' : 'No'}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Aplica a Todos los Productos: </Text>{promocion.aplica_a_todos_productos ? 'Sí' : 'No'}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Aplica a Todos los Servicios: </Text>{promocion.aplica_a_todos_servicios ? 'Sí' : 'No'}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Creado: </Text>{promocion.created_at}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Actualizado: </Text>{promocion.updated_at}</Text>
             </View>
 
             <BotonComponent

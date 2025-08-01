@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Keyboard, TouchableWithoutFeedback, ImageBackground } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { editarPerfil, changeUserPassword } from '../../Src/Servicios/AuthService';
 import { useRoute } from '@react-navigation/native';
+
+// Importa la imagen de fondo desde la misma ruta que en Perfil.js
+const backgroundImage = require('../../assets/Stacks/fondoprueba.png');
 
 export default function EditarPerfil({ navigation }) {
     const route = useRoute();
@@ -102,132 +105,139 @@ export default function EditarPerfil({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <ScrollView contentContainerStyle={styles.scrollContainer}>
-                    <View style={styles.header}>
-                        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 20 }}>
-                            <Ionicons name="arrow-back" size={26} color="#2c3e50" />
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Editar Perfil</Text>
-                    </View>
-
-                    <View style={styles.avatarSection}>
-                        <View style={styles.avatarContainer}>
-                            <Ionicons name="person" size={60} color="#3498db" />
-                        </View>
-                    </View>
-
-                    <View style={styles.formContainer}>
-                        <Text style={styles.sectionTitle}>Datos Personales</Text>
-
-                        <View style={styles.inputContainer}>
-                            <Ionicons name="person-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                value={nombre}
-                                onChangeText={setNombre}
-                                placeholder="Nombre"
-                                returnKeyType="next"
-                                onSubmitEditing={() => telefonoRef.current.focus()}
-                                ref={nombreRef}
-                            />
+        <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+            <SafeAreaView style={styles.safeArea}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView contentContainerStyle={styles.scrollContainer}>
+                        <View style={styles.header}>
+                            <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 20 }}>
+                                <Ionicons name="arrow-back" size={26} color="#1A2533" />
+                            </TouchableOpacity>
+                            <Text style={styles.headerTitle}>Editar Perfil</Text>
                         </View>
 
-                        <View style={styles.inputContainer}>
-                            <Ionicons name="call-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                value={telefono}
-                                onChangeText={setTelefono}
-                                placeholder="Teléfono"
-                                keyboardType="phone-pad"
-                                returnKeyType="next"
-                                onSubmitEditing={() => emailRef.current.focus()}
-                                ref={telefonoRef}
-                            />
+                        <View style={styles.avatarSection}>
+                            <View style={styles.avatarContainer}>
+                                <Ionicons name="person" size={60} color="#3498db" />
+                            </View>
                         </View>
 
-                        <View style={styles.inputContainer}>
-                            <Ionicons name="mail-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                value={email}
-                                onChangeText={setEmail}
-                                placeholder="Email"
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                returnKeyType="next"
-                                onSubmitEditing={() => currentPasswordRef.current.focus()}
-                                ref={emailRef}
-                            />
-                        </View>
-                    </View>
+                        <View style={styles.formContainer}>
+                            <Text style={styles.sectionTitle}>Datos Personales</Text>
 
-                    <View style={styles.formContainer}>
-                        <Text style={styles.sectionTitle}>Cambiar Contraseña</Text>
-                        
-                        <View style={styles.inputContainer}>
-                            <Ionicons name="lock-closed-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                value={currentPassword}
-                                onChangeText={setCurrentPassword}
-                                placeholder="Contraseña Actual"
-                                secureTextEntry={!showCurrentPassword}
-                                returnKeyType="next"
-                                onSubmitEditing={() => newPasswordRef.current.focus()}
-                                ref={currentPasswordRef}
-                            />
-                            <TouchableOpacity onPress={() => setShowCurrentPassword(!showCurrentPassword)} style={styles.passwordToggle}>
-                                <Ionicons name={showCurrentPassword ? 'eye-off-outline' : 'eye-outline'} size={24} color="#7f8c8d" />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="person-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    value={nombre}
+                                    onChangeText={setNombre}
+                                    placeholder="Nombre"
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => telefonoRef.current.focus()}
+                                    ref={nombreRef}
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="call-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    value={telefono}
+                                    onChangeText={setTelefono}
+                                    placeholder="Teléfono"
+                                    keyboardType="phone-pad"
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => emailRef.current.focus()}
+                                    ref={telefonoRef}
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="mail-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    placeholder="Email"
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => currentPasswordRef.current.focus()}
+                                    ref={emailRef}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={styles.formContainer}>
+                            <Text style={styles.sectionTitle}>Cambiar Contraseña</Text>
+                            
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="lock-closed-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    value={currentPassword}
+                                    onChangeText={setCurrentPassword}
+                                    placeholder="Contraseña Actual"
+                                    secureTextEntry={!showCurrentPassword}
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => newPasswordRef.current.focus()}
+                                    ref={currentPasswordRef}
+                                />
+                                <TouchableOpacity onPress={() => setShowCurrentPassword(!showCurrentPassword)} style={styles.passwordToggle}>
+                                    <Ionicons name={showCurrentPassword ? 'eye-off-outline' : 'eye-outline'} size={24} color="#7f8c8d" />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="lock-closed-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    value={newPassword}
+                                    onChangeText={setNewPassword}
+                                    placeholder="Nueva contraseña"
+                                    secureTextEntry={!showNewPassword}
+                                    returnKeyType="done"
+                                    ref={newPasswordRef}
+                                />
+                                <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)} style={styles.passwordToggle}>
+                                    <Ionicons name={showNewPassword ? 'eye-off-outline' : 'eye-outline'} size={24} color="#7f8c8d" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        <View style={styles.actionSection}>
+                            <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges} disabled={loading}>
+                                {loading ? (
+                                    <ActivityIndicator color="#FFF" />
+                                ) : (
+                                    <>
+                                        <Ionicons name="checkmark-circle-outline" size={22} color="#FFF" />
+                                        <Text style={styles.actionButtonText}>Guardar Cambios</Text>
+                                    </>
+                                )}
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                                <Ionicons name="arrow-back-outline" size={22} color="#FFF" />
+                                <Text style={styles.actionButtonText}>Regresar</Text>
                             </TouchableOpacity>
                         </View>
-
-                        <View style={styles.inputContainer}>
-                            <Ionicons name="lock-closed-outline" size={22} color="#7f8c8d" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                value={newPassword}
-                                onChangeText={setNewPassword}
-                                placeholder="Nueva contraseña"
-                                secureTextEntry={!showNewPassword}
-                                returnKeyType="done"
-                                ref={newPasswordRef}
-                            />
-                            <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)} style={styles.passwordToggle}>
-                                <Ionicons name={showNewPassword ? 'eye-off-outline' : 'eye-outline'} size={24} color="#7f8c8d" />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View style={styles.actionSection}>
-                        <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges} disabled={loading}>
-                            {loading ? (
-                                <ActivityIndicator color="#FFF" />
-                            ) : (
-                                <>
-                                    <Ionicons name="checkmark-circle-outline" size={22} color="#FFF" />
-                                    <Text style={styles.actionButtonText}>Guardar Cambios</Text>
-                                </>
-                            )}
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                            <Ionicons name="arrow-back-outline" size={22} color="#FFF" />
-                            <Text style={styles.actionButtonText}>Regresar</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
-        </SafeAreaView>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </SafeAreaView>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
         flex: 1,
-        backgroundColor: '#F0F4F8',
+        backgroundColor: 'transparent', // Se elimina el color de fondo para mostrar la imagen
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover', // Cubre todo el espacio disponible
+        justifyContent: 'center',
     },
     header: {
         flexDirection: 'row',
@@ -235,12 +245,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingTop: 40,
         paddingBottom: 15,
-        backgroundColor: '#F0F4F8',
+        backgroundColor: 'transparent', // Fondo transparente para el encabezado
     },
     headerTitle: {
-        fontSize: 22,
+        fontSize: 26,
         fontWeight: 'bold',
-        color: '#2c3e50',
+        color: '#1A2533', // Color cambiado a negro
+        // Se elimina la sombra de texto ya que no es necesaria
     },
     scrollContainer: {
         paddingHorizontal: 20,
@@ -267,7 +278,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     formContainer: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo semi-transparente para el formulario
         borderRadius: 16,
         padding: 20,
         marginBottom: 30,

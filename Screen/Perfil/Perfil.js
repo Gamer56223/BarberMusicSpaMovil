@@ -1,23 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native";
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    SafeAreaView, 
+    TouchableOpacity, 
+    Alert, 
+    StatusBar,
+    ImageBackground 
+} from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUserProfile, logoutUser } from '../../Src/Servicios/AuthService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Importa la imagen de fondo desde la ruta especificada
+const backgroundImage = require('../../assets/Stacks/fondoprueba.png');
+
 export default function Perfil({ navigation }) {
     const [user, setUser] = useState(null);
 
     const handleLogout = async () => {
-        // Aseguramos que el token se elimine primero, sin importar el resultado de la API
         await AsyncStorage.removeItem('userToken');
-        
-        // Hacemos la llamada a la API para invalidar el token en el servidor
-        // No esperamos el resultado, ya que lo más importante es el logout local
-        // El interceptor en conexion.js ya se encarga de esto si la llamada falla
         logoutUser(); 
-        
-        // Redirigir a la pantalla de Login
         navigation.reset({
             index: 0,
             routes: [{ name: 'Login' }],
@@ -30,9 +35,6 @@ export default function Perfil({ navigation }) {
             setUser(response.user);
         } else {
             console.error("Error al obtener el perfil:", response.message);
-            
-            // Si hay un error, asumimos que es por un token inválido
-            // y forzamos el cierre de sesión para ir a la pantalla de login.
             Alert.alert(
                 "Sesión Expirada",
                 "Tu sesión ha expirado o es inválida. Por favor, vuelve a iniciar sesión.",
@@ -50,79 +52,104 @@ export default function Perfil({ navigation }) {
     if (!user) {
         return (
             <View style={styles.loadingContainer}>
-                <Text>Cargando...</Text>
+                <Text style={styles.loadingText}>Cargando perfil...</Text>
             </View>
         );
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Mi Perfil</Text>
-            </View>
-            <View style={styles.profileSection}>
-                <View style={styles.avatarContainer}>
-                    <Ionicons name="person" size={80} color="#3498db" />
+        // Usamos ImageBackground para el fondo
+        <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+            <SafeAreaView style={styles.safeArea}>
+                <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>Mi Perfil</Text>
                 </View>
-                <Text style={styles.userName}>{user.nombre}</Text>
-                <Text style={styles.userRole}>{user.role}</Text>
-            </View>
 
-            <View style={styles.infoSection}>
-                <View style={styles.infoRow}>
-                    <Ionicons name="mail-outline" size={24} color="#34495e" />
-                    <Text style={styles.infoText}>{user.email}</Text>
+                <View style={styles.content}>
+                    <View style={styles.profileSection}>
+                        <View style={styles.avatarContainer}>
+                            <Ionicons name="person" size={80} color="#3498db" />
+                        </View>
+                        <Text style={styles.userName}>{user.nombre}</Text>
+                        <Text style={styles.userRole}>{user.role}</Text>
+                    </View>
+
+                    <View style={styles.infoCard}>
+                        <View style={styles.infoRow}>
+                            <Ionicons name="mail-outline" size={24} color="#7f8c8d" />
+                            <Text style={styles.infoText}>{user.email}</Text>
+                        </View>
+                        <View style={styles.separator} />
+                        <View style={styles.infoRow}>
+                            <Ionicons name="call-outline" size={24} color="#7f8c8d" />
+                            <Text style={styles.infoText}>{user.telefono}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.actionSection}>
+                        <TouchableOpacity 
+                            style={styles.actionButton}
+                            onPress={() => navigation.navigate('EditarPerfil', { 
+                                usuario: user, 
+                                onSave: fetchUserProfile 
+                            })}
+                        >
+                            <Ionicons name="create-outline" size={22} color="#FFF" />
+                            <Text style={styles.actionButtonText}>Editar Perfil</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.actionButton, styles.logoutButton]} onPress={handleLogout}>
+                            <Ionicons name="log-out-outline" size={22} color="#FFF" />
+                            <Text style={styles.actionButtonText}>Cerrar Sesión</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.infoRow}>
-                    <Ionicons name="call-outline" size={24} color="#34495e" />
-                    <Text style={styles.infoText}>{user.telefono}</Text>
-                </View>
-            </View>
-
-            <View style={styles.actionSection}>
-                <TouchableOpacity 
-                    style={styles.actionButton}
-                    onPress={() => navigation.navigate('EditarPerfil', { 
-                        usuario: user, 
-                        onSave: fetchUserProfile 
-                    })}
-                >
-                    <Ionicons name="create-outline" size={22} color="#FFF" />
-                    <Text style={styles.actionButtonText}>Editar Perfil</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.actionButton, styles.logoutButton]} onPress={handleLogout}>
-                    <Ionicons name="log-out-outline" size={22} color="#FFF" />
-                    <Text style={styles.actionButtonText}>Cerrar Sesión</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
         flex: 1,
-        backgroundColor: '#F0F4F8',
+        // Eliminamos el color de fondo aquí para que la imagen sea visible
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover', // Cubre todo el espacio
+        justifyContent: 'center',
     },
     header: {
-        alignItems: 'center',
         paddingVertical: 20,
-        backgroundColor: '#F0F4F8',
+        alignItems: 'center',
+        paddingTop: StatusBar.currentHeight + 20,
+        // Hacemos el fondo del header transparente para ver la imagen
+        backgroundColor: 'transparent', 
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 26,
         fontWeight: 'bold',
-        color: '#2c3e50',
+        color: '#1A2533', // Color negro para "Mi Perfil"
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#F0F4F8',
+    },
+    loadingText: {
+        fontSize: 18,
+        color: '#7f8c8d',
+    },
+    content: {
+        flex: 1,
+        paddingHorizontal: 20,
     },
     profileSection: {
         alignItems: 'center',
-        marginVertical: 20,
+        marginTop: 10,
+        marginBottom: 20,
     },
     avatarContainer: {
         width: 120,
@@ -141,22 +168,21 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     userName: {
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: 'bold',
-        color: '#2c3e50',
+        color: '#1A2533', // Color negro para el nombre del usuario
         marginTop: 10,
     },
     userRole: {
         fontSize: 16,
-        color: '#7f8c8d',
+        color: '#7f8c8d', // Color gris oscuro
         marginTop: 5,
     },
-    infoSection: {
-        backgroundColor: '#FFFFFF',
-        marginHorizontal: 20,
+    infoCard: {
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo semi-transparente
         borderRadius: 16,
         padding: 20,
-        marginTop: 20,
+        marginTop: 10,
         elevation: 4,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -166,16 +192,19 @@ const styles = StyleSheet.create({
     infoRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 15,
     },
     infoText: {
         fontSize: 16,
         color: '#34495e',
         marginLeft: 15,
     },
+    separator: {
+        height: 1,
+        backgroundColor: '#ccc', // Separador más oscuro
+        marginVertical: 15,
+    },
     actionSection: {
         marginTop: 30,
-        marginHorizontal: 20,
     },
     actionButton: {
         flexDirection: 'row',

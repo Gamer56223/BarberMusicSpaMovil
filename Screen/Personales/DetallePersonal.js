@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, Alert, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, Alert, ScrollView, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 // Asegúrate de que las rutas a tus servicios sean correctas
 import { DetallePersonalId } from "../../Src/Servicios/PersonalService";
@@ -48,7 +49,8 @@ export default function DetallePersonal({ route, navigation }) {
                     const sucursal = sucursalesRes.success ? sucursalesRes.data.find(s => s.id === personalData.sucursal_asignada_id) : null;
 
                     setNombres({
-                        usuario: usuario ? `${usuario.nombre} ${usuario.apellido}`.trim() : 'Desconocido',
+                        // CORRECCIÓN: Filtramos valores nulos o indefinidos antes de unirlos
+                        usuario: usuario ? [usuario.nombre, usuario.apellido].filter(Boolean).join(' ') : 'Desconocido',
                         sucursal: sucursal ? sucursal.nombre : 'No asignada'
                     });
 
@@ -104,6 +106,11 @@ export default function DetallePersonal({ route, navigation }) {
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>Activo en Empresa:</Text> {personal.activo_en_empresa ? 'Sí' : 'No'}</Text>
                     </View>
                 </View>
+
+                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back-circle-outline" size={24} color="#555" />
+                    <Text style={styles.backButtonText}>Volver</Text>
+                </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
     );

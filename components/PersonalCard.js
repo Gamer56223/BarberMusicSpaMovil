@@ -18,7 +18,7 @@ function PersonalCard({ personal, onDelete, onDetail }) { // Se elimina onEdit d
                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Tipo:</Text> {personal.tipo_personal || 'N/A'}</Text>
                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>N° Empleado:</Text> {personal.numero_empleado || 'N/A'}</Text>
                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Sucursal:</Text> {personal.nombreSucursal || 'No asignada'}</Text>
-                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Contratación:</Text> {formatDate(personal.fecha_contratacion)}</Text>
+                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Fecha Contratación:</Text> {formatDate(personal.fecha_contratacion)}</Text>
                 <Text style={styles.detalle}><Text style={styles.detalleLabel}>Activo:</Text> {personal.activo_en_empresa ? 'Sí' : 'No'}</Text>
             </View>
             <View style={styles.actions}>

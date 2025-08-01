@@ -20,7 +20,10 @@ const formatErrorMessage = (errorResponseData) => {
     return "Error desconocido";
 };
 
-
+// **IMPORTANTE**: Tu backend debe modificar este endpoint para que devuelva los datos de dirección.
+// Por ejemplo, usando un 'join' o un 'eager loading' en Laravel.
+// El objeto de respuesta debería tener una estructura como esta:
+// { id: 1, nombre: "Sucursal", ..., direccion: { direccion: "Calle 123", colonia: "Centro", ... } }
 export const listarSucursales = async () => {
     try {
         const response = await api.get("/Admin_sucursales/sucursales");
@@ -36,6 +39,9 @@ export const listarSucursales = async () => {
     }
 }
 
+// ... Las demás funciones (DetalleSucursalId, eliminarSucursal, etc.) no necesitan cambios
+// ya que asumo que tu API también devolverá la dirección al solicitar el detalle de una sucursal.
+
 export const DetalleSucursalId = async (id) => {
     try {
         const response = await api.get(`/Admin_sucursales/sucursales/${id}`);
@@ -50,7 +56,6 @@ export const DetalleSucursalId = async (id) => {
         };
     }
 };
-
 
 export const eliminarSucursal = async (id) => {
     console.log("Intentando eliminar sucursal con ID:", id);

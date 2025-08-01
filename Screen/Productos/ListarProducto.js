@@ -73,6 +73,14 @@ export default function ListarProductos (){
     const navigation = useNavigation();
     const [displayCount, setDisplayCount] = useState(PRODUCTS_PER_LOAD);
 
+    // Lista de nombres de productos a excluir.
+    const productosAExcluir = [
+        "2 meses gel balsamo de crecimiento 2oz",
+        "balsamo clasico de crecimiento de barba",
+        "balsamo negro para barba 2.7oz",
+        "gel balsamo de crecimiento 2oz 60ml minoxidil"
+    ];
+
     const handleProductos = async () => {
         setLoading(true);
         try {
@@ -97,7 +105,19 @@ export default function ListarProductos (){
                         nombreCategoria: tempCategoriasMap[productoItem.categoria_id] || 'Desconocida',
                     };
                 });
-                setProductos(enrichedProductos);
+                
+                // Dividir la lista en dos: los que empiezan con '2' y el resto.
+                const productosConDos = enrichedProductos.filter(producto => producto.nombre.startsWith('2'));
+                const otrosProductos = enrichedProductos.filter(producto => !producto.nombre.startsWith('2'));
+
+                // Ordenar los productos que no empiezan con '2' de la Z a la A.
+                otrosProductos.sort((a, b) => b.nombre.localeCompare(a.nombre));
+
+                // Concatenar las listas para que los productos con '2' queden al final.
+                const listaFinal = [...otrosProductos, ...productosConDos];
+
+                setProductos(listaFinal);
+
             } else {
                 Alert.alert("Error", productosRes.message || "No se pudieron cargar los productos");
             }
@@ -127,7 +147,35 @@ export default function ListarProductos (){
                     text: "Eliminar",
                     style: "destructive",
                     onPress: async () => {
-                        // ...
+                        try {
+                            const result = await eliminarProducto(id);
+                            if (result.success) {
+                                Alert.alert("Éxito", "Producto eliminado correctamente.");
+                                handleProductos(); // Volver a cargar la lista de productos
+                            } else {
+                                // Manejo de error mejorado para el problema de la base de datos
+                                // Verificamos si el mensaje de error del backend contiene la clave de restricción.
+                                if (result.message && typeof result.message === 'string' && result.message.includes('1451')) {
+                                    Alert.alert(
+                                        "Error de Eliminación",
+                                        "No se puede eliminar este producto porque está asociado a una o más órdenes. Primero debe eliminar las órdenes relacionadas en la base de datos."
+                                    );
+                                } else {
+                                    Alert.alert("Error", result.message || "No se pudo eliminar el producto.");
+                                }
+                            }
+                        } catch (error) {
+                            console.error("Error al eliminar producto:", error);
+                            // Manejo de error mejorado para el problema de la base de datos
+                            if (error.message && typeof error.message === 'string' && error.message.includes('Cannot delete or update a parent row')) {
+                                Alert.alert(
+                                    "Error de Eliminación",
+                                    "No se puede eliminar este producto porque está asociado a una o más órdenes. Primero debe eliminar las órdenes relacionadas en la base de datos."
+                                );
+                            } else {
+                                Alert.alert("Error", "Ocurrió un error inesperado al eliminar el producto.");
+                            }
+                        }
                     },
                 },
             ]

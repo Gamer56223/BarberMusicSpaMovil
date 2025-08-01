@@ -1,5 +1,3 @@
-// components/SucursalCard.js (CON DIAGNÓSTICO)
-
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
@@ -10,16 +8,6 @@ function SucursalCard({ sucursal, onEdit, onDelete, onDetail }) {
     const slug = sucursal.nombre.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
     const imageSource = imageMap.sucursales[slug] || imageMap.default;
 
-    // --- INICIO DE LA DEPURACIÓN ---
-    // Solo imprime en la consola las sucursales que están fallando
-    if (!imageMap.sucursales[slug]) {
-      console.log('--- ⚠️ IMAGEN NO ENCONTRADA PARA SUCURSAL:', `"${sucursal.nombre}"` ,'---');
-      console.log('CLAVE GENERADA:', `"${slug}"`);
-      console.log('>>> Copia esta clave y pégala en la sección "sucursales" de tu ImageMapper.js');
-      console.log('----------------------------------------------------');
-    }
-    // --- FIN DE LA DEPURACIÓN ---
-
     return (
         <View style={styles.card}>
             <View style={styles.imageContainer}>
@@ -29,10 +17,11 @@ function SucursalCard({ sucursal, onEdit, onDelete, onDetail }) {
             <View style={styles.contentContainer}>
                 <View style={styles.mainContent}>
                     <Text style={styles.nombre}>{sucursal.nombre}</Text>
-                    <Text style={styles.detalle}><Text style={styles.detalleLabel}>Email:</Text> {sucursal.email_contacto}</Text>
-                    <Text style={styles.detalle}><Text style={styles.detalleLabel}>Teléfono:</Text> {sucursal.telefono_contacto}</Text>
                     <Text style={styles.detalle}>
-                        <Text style={styles.detalleLabel}>Estado:</Text> {sucursal.activo ? 'Activo' : 'Inactivo'}
+                        <Text style={styles.detalleLabel}>Dirección:</Text> <Text>{sucursal.fullAddress || 'Dirección no disponible'}</Text>
+                    </Text>
+                    <Text style={styles.detalle}>
+                        <Text style={styles.detalleLabel}>Estado:</Text> <Text>{sucursal.activo ? 'Activo' : 'Inactivo'}</Text>
                     </Text>
                 </View>
 

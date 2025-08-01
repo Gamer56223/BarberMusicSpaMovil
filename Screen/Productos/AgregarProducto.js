@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from "@react-native-picker/picker";
 import { crearProducto } from "../../Src/Servicios/ProductoService";
@@ -124,6 +124,7 @@ export default function AgregarProducto({ navigation }) {
                     <View style={styles.container}>
                         <Text style={styles.title}>Nuevo Producto</Text>
 
+                        <Text style={styles.label}>Nombre del Producto:</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Nombre del Producto"
@@ -131,8 +132,10 @@ export default function AgregarProducto({ navigation }) {
                             value={nombre}
                             onChangeText={setNombre}
                         />
+                        
+                        <Text style={styles.label}>Descripción:</Text>
                         <TextInput
-                            style={styles.inputMultiline}
+                            style={[styles.input, styles.multilineInput]}
                             placeholder="Descripción (Opcional)"
                             placeholderTextColor="#888"
                             value={descripcion}
@@ -140,13 +143,17 @@ export default function AgregarProducto({ navigation }) {
                             multiline
                             numberOfLines={3}
                         />
+
+                        <Text style={styles.label}>Ruta de la Imagen:</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Ruta de la Imagen (URL o Path)"
+                            placeholder="URL o Path de la imagen"
                             placeholderTextColor="#888"
                             value={imagenPath}
                             onChangeText={setImagenPath}
                         />
+
+                        <Text style={styles.label}>Precio:</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Precio"
@@ -155,6 +162,8 @@ export default function AgregarProducto({ navigation }) {
                             onChangeText={setPrecio}
                             keyboardType="numeric"
                         />
+
+                        <Text style={styles.label}>Stock:</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Stock"
@@ -163,6 +172,8 @@ export default function AgregarProducto({ navigation }) {
                             onChangeText={setStock}
                             keyboardType="numeric"
                         />
+
+                        <Text style={styles.label}>SKU:</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="SKU (Stock Keeping Unit)"
@@ -172,7 +183,7 @@ export default function AgregarProducto({ navigation }) {
                         />
 
                         {loadingData ? (
-                            <ActivityIndicator size="large" color="#1976D2" style={styles.pickerLoading} />
+                            <ActivityIndicator size="large" color="#1976D2" style={{ marginTop: 20 }} />
                         ) : (
                             <>
                                 <Text style={styles.pickerLabel}>Categoría:</Text>
@@ -181,7 +192,7 @@ export default function AgregarProducto({ navigation }) {
                                         selectedValue={categoriaId}
                                         onValueChange={(itemValue) => setCategoriaId(itemValue)}
                                         style={styles.picker}
-                                        itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                                        itemStyle={Platform.OS === 'ios' ? { fontSize: 16 } : {}}
                                     >
                                         <Picker.Item label="-- Seleccione una Categoría --" value="" />
                                         {categorias.map((cat) => (
@@ -197,27 +208,24 @@ export default function AgregarProducto({ navigation }) {
                             <Switch
                                 onValueChange={setActivo}
                                 value={activo}
+                                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                                thumbColor={activo ? "#1976D2" : "#f4f3f4"}
                             />
                         </View>
+                        
+                        <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading || loadingData}>
+                            <View style={styles.botonContent}>
+                                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textoBoton}>Crear Producto</Text>}
+                            </View>
+                        </TouchableOpacity>
 
                         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                            <Ionicons name="arrow-back-circle-outline" size={24} color="#555" />
+                            <Ionicons name="arrow-back-outline" size={20} color="#555" />
                             <Text style={styles.backButtonText}>Volver</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
-
-            <TouchableOpacity style={styles.fabButton} onPress={handleGuardar} disabled={loading || loadingData}>
-                {loading ? (
-                    <ActivityIndicator color="#fff" />
-                ) : (
-                    <View style={styles.botonContent}>
-                        <Ionicons name="add-circle-outline" size={22} color="#fff" style={styles.botonIcon} />
-                        <Text style={styles.textoBoton}>Crear Producto</Text>
-                    </View>
-                )}
-            </TouchableOpacity>
         </KeyboardAvoidingView>
     );
 }

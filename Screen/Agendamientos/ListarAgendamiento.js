@@ -27,38 +27,48 @@ export default function ListarAgendamiento() {
                 listarAgendamientos()
             ]);
 
-            // Función mejorada para crear mapas y manejar errores específicos
             const createMap = (response, idKey, nameKeys, resourceName) => {
                 const map = {};
                 if (response.success && Array.isArray(response.data)) {
                     response.data.forEach(item => {
-                        map[item[idKey]] = nameKeys.map(key => item[key] || '').join(' ').trim();
+                        const name = nameKeys.map(key => item[key] || '').join(' ').trim();
+                        map[item[idKey]] = name || `Nombre no encontrado`;
                     });
                 } else {
-                    // Muestra una alerta si una lista específica falla, en lugar de fallar silenciosamente
                     Alert.alert("Error de Carga", `No se pudieron cargar los datos de: ${resourceName}.`);
                     console.error(`Error al procesar ${resourceName}:`, response.message);
                 }
                 return map;
             };
 
-            const personalMap = createMap(personalRes, 'id', ['nombre', 'apellido'], 'Personal');
+            const personalDataMap = {};
+            if (personalRes.success && Array.isArray(personalRes.data)) {
+                personalRes.data.forEach(p => {
+                    personalDataMap[p.id] = p.usuario_id;
+                });
+            }
+
             const clientesMap = createMap(clientesRes, 'id', ['nombre', 'apellido'], 'Clientes');
             const serviciosMap = createMap(serviciosRes, 'id', ['nombre'], 'Servicios');
             const sucursalesMap = createMap(sucursalesRes, 'id', ['nombre'], 'Sucursales');
-
+            
             if (agendamientosRes.success && Array.isArray(agendamientosRes.data)) {
-                const enrichedAgendamientos = agendamientosRes.data.map(agendamiento => ({
-                    ...agendamiento,
-                    nombrePersonal: personalMap[agendamiento.personal_id] || 'Personal no asignado',
-                    nombreCliente: clientesMap[agendamiento.cliente_usuario_id] || 'Cliente no encontrado',
-                    nombreServicio: serviciosMap[agendamiento.servicio_id] || 'Servicio no encontrado',
-                    nombreSucursal: sucursalesMap[agendamiento.sucursal_id] || 'Sucursal no encontrada'
-                }));
+                const enrichedAgendamientos = agendamientosRes.data.map(agendamiento => {
+                    const personal_usuario_id = personalDataMap[agendamiento.personal_id];
+                    const nombrePersonal = clientesMap[personal_usuario_id] || 'Personal no asignado';
+
+                    return {
+                        ...agendamiento,
+                        nombrePersonal: nombrePersonal,
+                        nombreCliente: clientesMap[agendamiento.cliente_usuario_id] || 'Cliente no encontrado',
+                        nombreServicio: serviciosMap[agendamiento.servicio_id] || 'Servicio no encontrado',
+                        nombreSucursal: sucursalesMap[agendamiento.sucursal_id] || 'Sucursal no encontrada'
+                    };
+                });
                 setAgendamientos(enrichedAgendamientos);
             } else {
                 Alert.alert("Error", agendamientosRes.message || "No se pudieron cargar los agendamientos.");
-                setAgendamientos([]); // Limpia los agendamientos si la carga falla
+                setAgendamientos([]);
             }
         } catch (error) {
             console.error("Error general al cargar datos:", error);
@@ -104,8 +114,8 @@ export default function ListarAgendamiento() {
         navigation.navigate("EditarAgendamiento", { agendamiento });
     };
 
-    const handleDetalle = (agendamientoId) => {
-        navigation.navigate("DetalleAgendamiento", { agendamientoId: agendamientoId });
+    const handleDetalle = (agendamiento) => {
+        navigation.navigate("DetalleAgendamiento", { agendamiento: agendamiento });
     };
 
     if (loading) {
@@ -138,7 +148,7 @@ export default function ListarAgendamiento() {
                         nombreSucursal={item.nombreSucursal}
                         onEdit={() => handleEditar(item)}
                         onDelete={() => handleEliminar(item.id)}
-                        onDetail={() => handleDetalle(item.id)}
+                        onDetail={() => handleDetalle(item)}
                     />
                 )}
                 ListEmptyComponent={
@@ -150,10 +160,9 @@ export default function ListarAgendamiento() {
                 }
                 contentContainerStyle={agendamientos.length === 0 ? styles.flatListEmpty : { paddingBottom: 100 }}
             />
-
-            <TouchableOpacity style={styles.botonCrear} onPress={handleCrear} activeOpacity={0.8}>
+             <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
                 <View style={styles.botonCrearContent}>
-                    <Ionicons name="add-circle-outline" size={24} color="#fff" style={styles.botonCrearIcon} />
+                    <Ionicons name="add" size={24} color="#FFFFFF" style={styles.botonCrearIcon} />
                     <Text style={styles.textoBotonCrear}>Nuevo Agendamiento</Text>
                 </View>
             </TouchableOpacity>

@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Image, ScrollView, ActivityIndicator, Linking } from "react-native";
+import { View, Text, SafeAreaView, Image, ScrollView, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
 import styles from "../../Styles/Sucursal/DetalleSucursalStyles";
 import { imageMap } from "../../utils/ImageMapper";
+import { Ionicons } from '@expo/vector-icons';
+import { nombreADireccionMap } from './ListarSucursal'; 
 
 export default function DetalleSucursal({ route }) {
     const sucursal = route.params?.sucursal;
@@ -14,6 +16,8 @@ export default function DetalleSucursal({ route }) {
             </View>
         );
     }
+    
+    const fullAddress = sucursal.fullAddress || nombreADireccionMap[sucursal.nombre] || 'Dirección no disponible';
 
     const handleOpenLink = (url) => {
         if (url) {
@@ -37,19 +41,46 @@ export default function DetalleSucursal({ route }) {
                     />
                     
                     <View style={styles.detailSection}>
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>ID: </Text>{sucursal.id}</Text>
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Teléfono: </Text>{sucursal.telefono_contacto}</Text>
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Email: </Text>{sucursal.email_contacto}</Text>
+                        <Text style={styles.detailText}>
+                            <Text style={styles.detailLabel}>ID: </Text>
+                            <Text>{sucursal.id}</Text>
+                        </Text>
+                        <Text style={styles.detailText}>
+                            <Text style={styles.detailLabel}>Email: </Text>
+                            <Text>{sucursal.email_contacto}</Text>
+                        </Text>
+                        <Text style={styles.detailText}>
+                            <Text style={styles.detailLabel}>Teléfono: </Text>
+                            <Text>{sucursal.telefono_contacto}</Text>
+                        </Text>
                         
-                        {sucursal.link_maps && (
-                            <Text style={styles.detailText}>
-                                <Text style={styles.detailLabel}>Ubicación: </Text>
-                                <Text style={styles.linkText} onPress={() => handleOpenLink(sucursal.link_maps)}>Ver en Mapas</Text>
-                            </Text>
-                        )}
+                        <Text style={styles.detailText}>
+                            <Text style={styles.detailLabel}>Dirección: </Text>
+                            {/* Eliminamos cualquier estilo que pudiera truncar la dirección */}
+                            <Text>{fullAddress}</Text>
+                        </Text>
                         
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Activo: </Text>{sucursal.activo ? 'Sí' : 'No'}</Text>
+                        <Text style={styles.detailText}>
+                            <Text style={styles.detailLabel}>Latitud: </Text>
+                            <Text>{sucursal.latitud || 'No disponible'}</Text>
+                        </Text>
+                        <Text style={styles.detailText}>
+                            <Text style={styles.detailLabel}>Longitud: </Text>
+                            <Text>{sucursal.longitud || 'No disponible'}</Text>
+                        </Text>
+                        
+                        <Text style={styles.detailText}>
+                            <Text style={styles.detailLabel}>Activo: </Text>
+                            <Text>{sucursal.activo ? 'Sí' : 'No'}</Text>
+                        </Text>
                     </View>
+                    
+                    {sucursal.link_maps && (
+                        <TouchableOpacity style={styles.mapButton} onPress={() => handleOpenLink(sucursal.link_maps)}>
+                            <Ionicons name="map-outline" size={24} color="#FFF" />
+                            <Text style={styles.mapButtonText}>Ver en Google Maps</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </ScrollView>
         </SafeAreaView>

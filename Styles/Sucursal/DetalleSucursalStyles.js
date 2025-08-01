@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         padding: 20,
+        paddingBottom: 100, // Espacio para el botón flotante
     },
     title: {
         fontSize: 28,
@@ -65,6 +66,31 @@ const styles = StyleSheet.create({
         color: '#007BFF',
         textDecorationLine: 'underline',
         fontWeight: 'bold',
+    },
+    // Estilos para el botón flotante "Ver en Google Maps"
+    mapButton: {
+        position: 'absolute',
+        bottom: 25,
+        alignSelf: 'center',
+        width: '80%',
+        backgroundColor: '#DC3545', // Color de fondo rojo para consistencia
+        borderRadius: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        shadowColor: '#DC3545', // Color de sombra rojo
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    mapButtonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginLeft: 10,
     },
 });
 

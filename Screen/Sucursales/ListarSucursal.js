@@ -7,16 +7,27 @@ import { listarSucursales, eliminarSucursal } from "../../Src/Servicios/Sucursal
 import styles from "../../Styles/Sucursal/ListarSucursalStyles";
 
 // Mapa que relaciona el nombre completo de la API con el slug de ImageMapper
-// Este mapa es la clave para que el detalle de la sucursal muestre la imagen correcta.
+// CORRECCIÓN: "Las" con L mayúscula
 const nombreASlugMap = {
     "BarberMusicSpa San Luis Potosí (Plaza San Luis)": "barbermusicspa-san-luis-potos-plaza-san-luis",
     "BarberMusicSpa Coatzacoalcos (Plaza Forum)": "barbermusicspa-coatzacoalcos-plaza-forum",
     "BarberMusicSpa Villahermosa (Plaza Altabrisa)": "barbermusicspa-villahermosa-plaza-altabrisa",
     "MusicSpaVillahermosa Mérida (Plaza Altabrisa)": "musicspavillahermosa-mrida-plaza-altabrisa",
     "BarberMusicSpa Ciudad del Carmen (Plaza Zentralia)": "barbermusicspa-ciudad-del-carmen-plaza-zentralia",
-    "BarberMusicSpa Villahermosa II (Plaza las Americas)": "barbermusicspa-villahermosa-ii-plaza-las-americas",
+    "BarberMusicSpa Villahermosa II (Plaza Las Americas)": "barbermusicspa-villahermosa-ii-plaza-las-americas",
     "MusicSpaVillahermosa Villahermosa III (Plaza Altabrisa)": "musicspavillahermosa-villahermosa-iii-plaza-altabrisa",
-    // Agrega aquí cualquier otra sucursal que necesites mapear
+};
+
+// --- MAPA DE DIRECCIONES MANUALMENTE CREADO ---
+// CORRECCIÓN: "Las" con L mayúscula
+export const nombreADireccionMap = {
+    "BarberMusicSpa San Luis Potosí (Plaza San Luis)": "Plaza San Luis Local 448, Lomas del Tecnológico",
+    "BarberMusicSpa Coatzacoalcos (Plaza Forum)": "Plaza Fórum – Planta Baja 53, Paraíso",
+    "BarberMusicSpa Villahermosa (Plaza Altabrisa)": "Plaza Altabrisa – Tabasco Planta Alta, Local 131, José Pagés Llergo",
+    "MusicSpaVillahermosa Mérida (Plaza Altabrisa)": "Plaza Altabrisa – Local #93 Planta Alta, El recreo",
+    "BarberMusicSpa Ciudad del Carmen (Plaza Zentralia)": "Plaza Zentralia – Local #91, San Miguel",
+    "BarberMusicSpa Villahermosa II (Plaza Las Americas)": "Plaza Las Américas Villahermosa – Local 7ª Av. Pro...",
+    "MusicSpaVillahermosa Villahermosa III (Plaza Altabrisa)": "Plaza Altabrisa Villahermosa – Local 93 Planta Alt..., José Pagés Llergo",
 };
 
 export default function ListarSucursales (){
@@ -29,17 +40,15 @@ export default function ListarSucursales (){
         try {
             const sucursalesRes = await listarSucursales();
             if (sucursalesRes.success) {
-                // Mapeamos los datos de la API para agregar el slug
                 const enrichedSucursales = sucursalesRes.data.map(item => {
                     const slug = nombreASlugMap[item.nombre];
+                    const fullAddress = nombreADireccionMap[item.nombre] || 'Dirección no disponible';
 
-                    // --- CÓDIGO DE DIAGNÓSTICO ---
                     if (!slug) {
                         console.log(`ATENCIÓN (Sucursales): No se encontró la sucursal en el mapa. Nombre recibido: "${item.nombre}"`);
                     }
-                    // ------------------------------------------
 
-                    return { ...item, slug: slug };
+                    return { ...item, slug: slug, fullAddress: fullAddress };
                 });
                 setSucursales(enrichedSucursales);
             } else {
@@ -58,11 +67,35 @@ export default function ListarSucursales (){
         return unsubscribe;
     }, [navigation]);
 
-    const handleEliminar = (id) => { /* ... tu lógica de eliminar ... */ };
+    const handleEliminar = (id) => {
+        Alert.alert(
+            "Confirmar eliminación",
+            "¿Estás seguro de que quieres eliminar esta sucursal? Esta acción no se puede deshacer.",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Eliminar",
+                    onPress: async () => {
+                        const res = await eliminarSucursal(id);
+                        if (res.success) {
+                            Alert.alert("Éxito", res.message);
+                            handleSucursales();
+                        } else {
+                            Alert.alert("Error", res.message || "No se pudo eliminar la sucursal.");
+                        }
+                    },
+                    style: "destructive"
+                }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const handleCrear = () => navigation.navigate('CrearSucursal'); 
     const handleEditar = (sucursal) => navigation.navigate("EditarSucursal", { sucursal });
-
-    // Modificamos la navegación para pasar el objeto completo
     const HandleDetalle = (item) => {
         navigation.navigate("DetalleSucursal", { sucursal: item });
     };
@@ -91,7 +124,7 @@ export default function ListarSucursales (){
                         sucursal={item}
                         onEdit={() => handleEditar(item)}
                         onDelete={() => handleEliminar(item.id)}
-                        onDetail={() => HandleDetalle(item)} // Pasamos el item completo
+                        onDetail={() => HandleDetalle(item)}
                     />
                 )}
                 ListEmptyComponent = {

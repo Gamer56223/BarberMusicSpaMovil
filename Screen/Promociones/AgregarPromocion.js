@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch, StyleSheet } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -13,7 +13,6 @@ export default function AgregarPromocion({ navigation }) {
     const [tipoDescuento, setTipoDescuento] = useState("PORCENTAJE");
     const [valorDescuento, setValorDescuento] = useState("");
     
-    // 1. CORRECCIÓN: Se cambia el estado inicial a "1"
     const [usosMaximosTotal, setUsosMaximosTotal] = useState("1");
     const [usosMaximosPorCliente, setUsosMaximosPorCliente] = useState("1");
 
@@ -74,7 +73,6 @@ export default function AgregarPromocion({ navigation }) {
                 valor_descuento: parseFloat(valorDescuento),
                 fecha_inicio: formatDateForAPI(fechaInicio),
                 fecha_fin: formatDateForAPI(fechaFin, true),
-                // 2. CORRECCIÓN: Si el campo está vacío, se envía '1' por defecto
                 usos_maximos_total: parseInt(usosMaximosTotal || '1'),
                 usos_maximos_por_cliente: parseInt(usosMaximosPorCliente || '1'),
                 usos_actuales: 0,
@@ -96,6 +94,17 @@ export default function AgregarPromocion({ navigation }) {
         }
     };
 
+    // Estilos internos para las etiquetas
+    const localStyles = StyleSheet.create({
+        label: {
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: '#34495e',
+            marginTop: 15,
+            marginBottom: 5,
+        },
+    });
+
     return (
         <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -103,34 +112,42 @@ export default function AgregarPromocion({ navigation }) {
                     <View style={styles.container}>
                         <Text style={styles.title}>Nueva Promoción</Text>
 
-                        <TextInput style={styles.input} placeholder="Código (ej. VERANO2025)" value={codigo} onChangeText={setCodigo} />
-                        <TextInput style={styles.input} placeholder="Nombre de la Promoción" value={nombre} onChangeText={setNombre} />
-                        <TextInput style={styles.inputMultiline} placeholder="Descripción (Opcional)" value={descripcion} onChangeText={setDescripcion} multiline />
+                        <Text style={localStyles.label}>Código</Text>
+                        <TextInput style={styles.input} placeholder="ej. VERANO2025" value={codigo} onChangeText={setCodigo} />
 
-                        <Text style={styles.pickerLabel}>Tipo de Descuento:</Text>
+                        <Text style={localStyles.label}>Nombre de la Promoción</Text>
+                        <TextInput style={styles.input} placeholder="Nombre descriptivo" value={nombre} onChangeText={setNombre} />
+                        
+                        <Text style={localStyles.label}>Descripción</Text>
+                        <TextInput style={styles.inputMultiline} placeholder="Descripción detallada (Opcional)" value={descripcion} onChangeText={setDescripcion} multiline />
+
+                        <Text style={localStyles.label}>Tipo de Descuento:</Text>
                         <View style={styles.pickerContainer}>
                             <Picker selectedValue={tipoDescuento} onValueChange={(itemValue) => setTipoDescuento(itemValue)} style={styles.picker}>
                                 {tiposDescuento.map((tipo) => ( <Picker.Item key={tipo.value} label={tipo.label} value={tipo.value} /> ))}
                             </Picker>
                         </View>
 
-                        <TextInput style={styles.input} placeholder="Valor (ej. 15 para 15%)" value={valorDescuento} onChangeText={setValorDescuento} keyboardType="numeric" />
+                        <Text style={localStyles.label}>Valor del Descuento</Text>
+                        <TextInput style={styles.input} placeholder="ej. 15 (para 15% o $15)" value={valorDescuento} onChangeText={setValorDescuento} keyboardType="numeric" />
                         
-                        <Text style={styles.pickerLabel}>Fecha de Inicio:</Text>
+                        <Text style={localStyles.label}>Fecha de Inicio</Text>
                         <TouchableOpacity onPress={() => setShowInicioPicker(true)} style={styles.datePickerButton}>
                             <Text style={styles.datePickerButtonText}>{fechaInicio.toLocaleDateString('es-CO')}</Text>
                         </TouchableOpacity>
                         {showInicioPicker && ( <DateTimePicker value={fechaInicio} mode={'date'} display="default" onChange={onChangeInicio} /> )}
 
-                        <Text style={styles.pickerLabel}>Fecha de Fin:</Text>
+                        <Text style={localStyles.label}>Fecha de Fin</Text>
                         <TouchableOpacity onPress={() => setShowFinPicker(true)} style={styles.datePickerButton}>
-                             <Text style={styles.datePickerButtonText}>{fechaFin.toLocaleDateString('es-CO')}</Text>
+                               <Text style={styles.datePickerButtonText}>{fechaFin.toLocaleDateString('es-CO')}</Text>
                         </TouchableOpacity>
                         {showFinPicker && ( <DateTimePicker value={fechaFin} mode={'date'} display="default" onChange={onChangeFin} /> )}
 
-                        {/* 3. CORRECCIÓN: Se actualiza el placeholder */}
-                        <TextInput style={styles.input} placeholder="Usos Máximos Totales (mínimo 1)" value={usosMaximosTotal} onChangeText={setUsosMaximosTotal} keyboardType="numeric" />
-                        <TextInput style={styles.input} placeholder="Usos Máximos por Cliente (mínimo 1)" value={usosMaximosPorCliente} onChangeText={setUsosMaximosPorCliente} keyboardType="numeric" />
+                        <Text style={localStyles.label}>Usos Máximos Totales</Text>
+                        <TextInput style={styles.input} placeholder="mínimo 1" value={usosMaximosTotal} onChangeText={setUsosMaximosTotal} keyboardType="numeric" />
+                        
+                        <Text style={localStyles.label}>Usos Máximos por Cliente</Text>
+                        <TextInput style={styles.input} placeholder="mínimo 1" value={usosMaximosPorCliente} onChangeText={setUsosMaximosPorCliente} keyboardType="numeric" />
                         
                         <View style={styles.switchContainer}><Text style={styles.switchLabel}>Activo:</Text><Switch onValueChange={setActivo} value={activo} /></View>
                         <View style={styles.switchContainer}><Text style={styles.switchLabel}>Aplica a Todos los Productos:</Text><Switch onValueChange={setAplicaATodosProductos} value={aplicaATodosProductos} /></View>

@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from "@react-native-picker/picker";
-import { crearPersonal } from "../../Src/Servicios/PersonalService"; // Asume que tienes este servicio
-import { listarUsuarios } from "../../Src/Servicios/UsuarioService"; // Ya tenemos este servicio
-import { listarSucursales } from "../../Src/Servicios/SucursalService"; // Ya tenemos este servicio
-import styles from "../../Styles/Personal/AgregarPersonalStyles"; // Asume que tienes un archivo de estilos similar
+import { crearPersonal, listarPersonal } from "../../Src/Servicios/PersonalService";
+import { listarUsuarios } from "../../Src/Servicios/UsuarioService";
+import { listarSucursales } from "../../Src/Servicios/SucursalService";
+import styles from "../../Styles/Personal/AgregarPersonalStyles";
 
 export default function AgregarPersonal({ navigation }) {
     const [usuarioId, setUsuarioId] = useState("");
     const [sucursalId, setSucursalId] = useState("");
     const [tipoPersonal, setTipoPersonal] = useState("");
     const [numeroEmpleado, setNumeroEmpleado] = useState("");
-    const [fechaContratacion, setFechaContratacion] = useState(""); // Formato 'YYYY-MM-DD'
+    const [fechaContratacion, setFechaContratacion] = useState("");
     const [activoEnEmpresa, setActivoEnEmpresa] = useState(true);
 
     const [usuarios, setUsuarios] = useState([]);
@@ -56,18 +56,31 @@ export default function AgregarPersonal({ navigation }) {
         const cargarDatosIniciales = async () => {
             setLoadingData(true);
             try {
-                const [resultUsuarios, resultSucursales] = await Promise.all([
+                // Obtenemos usuarios, sucursales y personal en paralelo
+                const [resultUsuarios, resultSucursales, resultPersonal] = await Promise.all([
                     listarUsuarios(),
                     listarSucursales(),
+                    listarPersonal(),
                 ]);
 
-                if (resultUsuarios.success) {
-                    setUsuarios(resultUsuarios.data);
-                    if (resultUsuarios.data.length > 0) {
-                        setUsuarioId(resultUsuarios.data[0].id.toString());
+                if (resultUsuarios.success && resultPersonal.success) {
+                    // Creamos un conjunto de los IDs de los usuarios que ya son personal
+                    // Convertimos los IDs a string para asegurar la consistencia del tipo de dato
+                    const personalUserIds = new Set(resultPersonal.data.map(p => p.usuario_id.toString()));
+                    
+                    // Filtramos la lista de usuarios para mostrar solo los que no son personal
+                    const availableUsers = resultUsuarios.data.filter(user => !personalUserIds.has(user.id.toString()));
+                    
+                    setUsuarios(availableUsers);
+                    if (availableUsers.length > 0) {
+                        // Establecemos el primer usuario disponible como seleccionado
+                        setUsuarioId(availableUsers[0].id.toString());
+                    } else {
+                        // Si no hay usuarios disponibles, reseteamos el ID
+                        setUsuarioId("");
                     }
                 } else {
-                    Alert.alert("Error al cargar usuarios", resultUsuarios.message || "No se pudieron cargar los usuarios.");
+                    Alert.alert("Error al cargar usuarios", resultUsuarios.message || "No se pudieron cargar los usuarios o el personal.");
                 }
 
                 if (resultSucursales.success) {
@@ -134,6 +147,7 @@ export default function AgregarPersonal({ navigation }) {
                             <ActivityIndicator size="large" color="#1976D2" style={styles.pickerLoading} />
                         ) : (
                             <>
+                                {/* Selector de usuario */}
                                 <Text style={styles.pickerLabel}>Usuario:</Text>
                                 <View style={styles.pickerContainer}>
                                     <Picker
@@ -144,7 +158,7 @@ export default function AgregarPersonal({ navigation }) {
                                     >
                                         <Picker.Item label="-- Seleccione un Usuario --" value="" />
                                         {usuarios.map((user) => (
-                                            <Picker.Item key={user.id.toString()} label={user.nombre || user.email} value={user.id.toString()} />
+                                            <Picker.Item key={user.id.toString()} label={`${user.nombre} ${user.apellido}`.trim() || user.email} value={user.id.toString()} />
                                         ))}
                                     </Picker>
                                 </View>

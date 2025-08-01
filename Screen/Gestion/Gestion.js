@@ -18,7 +18,7 @@ export default function PantallaGestion({ navigation }) {
         // { title: "Horarios Sucursales", IconComponent: MaterialIcons, iconName: "schedule", screen: "HorarioSucursalesStack", color: '#fff3e0' },
         // { title: "Música Preferencial", IconComponent: MaterialIcons, iconName: "my-library-music", screen: "MusicaPreferencialesStack", color: '#e0f2f7' },
         // Ordenes con imagen
-        { title: "Ordenes", screen: "OrdenesStack", color: '#fffde7', backgroundImage: require('../../assets/Stacks/ordenes.png') }, // Cambiado a .jpg
+        { title: "Ordenes", screen: "OrdenesStack", color: '#fffde7', backgroundImage: require('../../assets/Stacks/ordenes.png') },
         // Personal con imagen
         { title: "Personal", screen: "PersonalesStack", color: '#e8f5e9', backgroundImage: require('../../assets/Stacks/personal.jpg') },
         // Promociones con imagen
@@ -34,15 +34,15 @@ export default function PantallaGestion({ navigation }) {
     return (
         // Usamos ImageBackground como contenedor principal para la pantalla de gestión
         <ImageBackground
-            source={require('../../assets/Stacks/fondoprueba.png')} // <--- ¡RUTA VERIFICADA!
+            source={require('../../assets/Stacks/fondoprueba.png')}
             style={styles.backgroundImageContainer}
-            resizeMode="cover" // Ajusta la imagen para cubrir el área
+            resizeMode="cover"
         >
             <SafeAreaView style={styles.safeArea}>
                 <ScrollView contentContainerStyle={styles.scrollViewContent}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.headerTitle}>Gestión de Datos</Text>
-                        <Text style={styles.headerSubtitle}>Administra tu información</Text> {/* Subtítulo opcional */}
+                        <Text style={styles.headerSubtitle}>Administra tu información</Text>
                     </View>
 
                     <View style={styles.gridContainer}>
@@ -55,7 +55,7 @@ export default function PantallaGestion({ navigation }) {
                                 backgroundImage={item.backgroundImage}
                                 onPress={() => navigation.navigate(item.screen)}
                                 style={{ backgroundColor: item.color }}
-                                variant="small" // <--- PROPIEDAD PARA HACERLOS PEQUEÑOS
+                                variant="small"
                             />
                         ))}
                     </View>
@@ -73,12 +73,12 @@ const styles = StyleSheet.create({
     },
     safeArea: {
         flex: 1,
-        backgroundColor: 'transparent', // Fondo transparente para que se vea la imagen
+        backgroundColor: 'transparent',
     },
     scrollViewContent: {
         flexGrow: 1,
         paddingTop: 20,
-        paddingBottom: 60, // Reducido el padding inferior para acortar el scroll
+        paddingBottom: 60,
     },
     headerContainer: {
         alignItems: 'center',
@@ -89,18 +89,18 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 28,
         fontWeight: '700',
-        color: '#000000', // Changed to black
+        color: '#000000',
         textAlign: 'center',
-        textShadowColor: 'rgba(255, 255, 255, 0.8)', // Lighter shadow for black text
+        textShadowColor: 'rgba(255, 255, 255, 0.8)',
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 3,
     },
-    headerSubtitle: { // Nuevo estilo para el subtítulo
+    headerSubtitle: {
         fontSize: 20,
         fontWeight: '600',
-        color: '#000000', // Changed to black
+        color: '#000000',
         marginTop: 4,
-        textShadowColor: 'rgba(255, 255, 255, 0.8)', // Lighter shadow for black text
+        textShadowColor: 'rgba(255, 255, 255, 0.8)',
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 3,
     },
@@ -108,10 +108,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "center",
-        gap: 10, // Utiliza gap para espaciado uniforme
+        gap: 10,
         paddingHorizontal: 10,
     },
-    // Los estilos anteriores de 'section', 'sectionTitle', 'settingsCard', 'settingRow' ya no son necesarios
-    // si solo vas a usar el diseño de cuadrados. Si en el futuro agregas secciones de lista,
-    // puedes reincorporarlos.
 });

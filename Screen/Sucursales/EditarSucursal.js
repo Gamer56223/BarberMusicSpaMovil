@@ -116,10 +116,10 @@ export default function EditarSucursal({ navigation }) {
                     <View style={styles.container}>
                         <Text style={styles.title}>{esEdicion ? "Editar Sucursal" : "Nueva Sucursal"}</Text>
 
+                        {/* Campo de Nombre */}
+                        <Text style={styles.inputLabel}>Nombre de la Sucursal</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Nombre de la Sucursal"
-                            placeholderTextColor="#888"
                             value={nombre}
                             onChangeText={setNombre}
                         />
@@ -132,43 +132,43 @@ export default function EditarSucursal({ navigation }) {
                             <Image source={{ uri: imagenPath }} style={styles.imagePreview} />
                         )}
 
+                        {/* Campo de Teléfono de Contacto */}
+                        <Text style={styles.inputLabel}>Teléfono de Contacto</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Teléfono de Contacto"
-                            placeholderTextColor="#888"
                             value={telefonoContacto}
                             onChangeText={setTelefonoContacto}
                             keyboardType="phone-pad"
                         />
+                        {/* Campo de Email de Contacto */}
+                        <Text style={styles.inputLabel}>Email de Contacto</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Email de Contacto"
-                            placeholderTextColor="#888"
                             value={emailContacto}
                             onChangeText={setEmailContacto}
                             keyboardType="email-address"
                             autoCapitalize="none"
                         />
+                        {/* Campo de Link de Google Maps */}
+                        <Text style={styles.inputLabel}>Link de Google Maps</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Link de Google Maps"
-                            placeholderTextColor="#888"
                             value={linkMaps}
                             onChangeText={setLinkMaps}
                             autoCapitalize="none"
                         />
+                        {/* Campo de Latitud */}
+                        <Text style={styles.inputLabel}>Latitud</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Latitud"
-                            placeholderTextColor="#888"
                             value={latitud}
                             onChangeText={setLatitud}
                             keyboardType="numeric"
                         />
+                        {/* Campo de Longitud */}
+                        <Text style={styles.inputLabel}>Longitud</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Longitud"
-                            placeholderTextColor="#888"
                             value={longitud}
                             onChangeText={setLongitud}
                             keyboardType="numeric"

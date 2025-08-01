@@ -8,9 +8,9 @@ export default function DetalleServicio({ route }) {
 
     if (!servicio) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={styles.centeredContainer}>
                 <ActivityIndicator size="large" color="#007B8C" />
-                <Text>Cargando Servicio...</Text>
+                <Text style={styles.loadingText}>Cargando Servicio...</Text>
             </View>
         );
     }
@@ -23,7 +23,7 @@ export default function DetalleServicio({ route }) {
                 <Text style={styles.title}>Detalle de Servicio</Text>
                 <View style={styles.detailCard}>
                     <Text style={styles.servicioName}>{servicio.nombre || 'Nombre no disponible'}</Text>
-                    
+
                     <Image
                         source={imagenDelServicio}
                         style={styles.servicioImage}
@@ -33,7 +33,6 @@ export default function DetalleServicio({ route }) {
                     <View style={styles.detailSection}>
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>ID: </Text>{servicio.id}</Text>
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>Categoría: </Text>{servicio.nombreCategoria || 'Desconocida'}</Text>
-                        <Text style={styles.detailText}><Text style={styles.detailLabel}>Especialidad Requerida: </Text>{servicio.nombreEspecialidad || 'No requerida'}</Text>
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>Descripción: </Text>{servicio.descripcion || 'N/A'}</Text>
                         <Text style={styles.priceBaseDetailText}><Text style={styles.detailLabel}>Precio Base: </Text>${servicio.precio_base}</Text>
                         <Text style={styles.duracionMinutosDetailText}><Text style={styles.detailLabel}>Duración (minutos): </Text>{servicio.duracion_minutos}</Text>

@@ -3,8 +3,15 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import styles from '../Styles/Agendamiento/AgendamientoCardStyles';
 
-function AgendamientoCard({ agendamiento, nombreServicio, onEdit, onDelete, onDetail }) {
-    
+function AgendamientoCard({
+    agendamiento,
+    nombreServicio,
+    nombreCliente,
+    nombreSucursal,
+    onEdit,
+    onDelete,
+    onDetail
+}) {
     const formatDateTime = (dateTimeString) => {
         if (!dateTimeString) return 'No especificado';
         try {
@@ -15,22 +22,18 @@ function AgendamientoCard({ agendamiento, nombreServicio, onEdit, onDelete, onDe
             return dateTimeString;
         }
     };
-    
+
     return (
         <View style={styles.card}>
             <View style={styles.info}>
-                <Text style={styles.nombre}>{nombreServicio}</Text>
+                <Text style={styles.nombre}>{nombreCliente}</Text>
                 
-                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Inicio:</Text> {formatDateTime(agendamiento.fecha_hora_inicio)}</Text>
-                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Fin:</Text> {formatDateTime(agendamiento.fecha_hora_fin)}</Text>
-                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Precio:</Text> ${agendamiento.precio_final ? Number(agendamiento.precio_final).toLocaleString('es-CO') : 'N/A'}</Text>
-                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Estado:</Text> {agendamiento.estado}</Text>
-                
-                {/* Muestra las notas del cliente solo si existen */}
-                {agendamiento.notas_cliente && <Text style={styles.detalle}><Text style={styles.detalleLabel}>Notas Cliente:</Text> {agendamiento.notas_cliente}</Text>}
-                
-                {/* ¡CORREGIDO! Muestra las notas internas solo si existen */}
-                {agendamiento.notas_internas && <Text style={styles.detalle}><Text style={styles.detalleLabel}>Notas Internas:</Text> {agendamiento.notas_internas}</Text>}
+                <Text style={styles.detalle}><Text style={styles.detalleLabelBold}>Servicio:</Text> {nombreServicio}</Text>
+                <Text style={styles.detalle}><Text style={styles.detalleLabelBold}>Sucursal:</Text> {nombreSucursal}</Text>
+
+                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Fecha Inicio:</Text> {formatDateTime(agendamiento.fecha_hora_inicio)}</Text>
+                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Fecha Fin:</Text> {formatDateTime(agendamiento.fecha_hora_fin)}</Text>
+                <Text style={styles.detalle}><Text style={styles.detalleLabel}>Precio Final:</Text> ${agendamiento.precio_final ? Number(agendamiento.precio_final).toLocaleString('es-CO') : 'N/A'}</Text>
             </View>
 
             <View style={styles.actions}>

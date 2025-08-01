@@ -12,14 +12,32 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: '#f8f8f8',
-        alignItems: 'center',
+        alignItems: 'center', // Centra los elementos horizontalmente
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 30,
-        textAlign: 'center',
+        textAlign: 'center', // Centrar el título
+    },
+    // Estilo agregado para las etiquetas de los campos
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#555',
+        marginBottom: 8,
+        marginTop: 15,
+        alignSelf: 'flex-start', // Alinea la etiqueta a la izquierda
+    },
+    // Este estilo se ha conservado para el Picker, aunque tiene la misma lógica que `label`
+    pickerLabelActual: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#555',
+        marginBottom: 8,
+        marginTop: 15,
+        alignSelf: 'flex-start', // Alinea la etiqueta a la izquierda
     },
     input: {
         width: '100%',
@@ -31,18 +49,41 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         fontSize: 16,
         color: '#333',
-        shadowColor: '#000',
+        shadowColor: '#000', // Sombra para los inputs
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
         elevation: 2,
     },
-    pickerLabel: {
+    multilineInput: {
+        height: 120, // Altura fija para multilínea
+        textAlignVertical: 'top', // Alineación del texto al inicio
+    },
+    imagePickerButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#E3F2FD', // Color suave
+        padding: 12,
+        borderRadius: 10,
+        width: '100%',
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#BBDEFB',
+    },
+    imagePickerButtonText: {
+        marginLeft: 10,
         fontSize: 16,
-        color: '#333',
-        marginBottom: 5,
-        alignSelf: 'flex-start',
+        color: '#1976D2',
         fontWeight: 'bold',
+    },
+    imagePreview: {
+        width: '100%',
+        height: 150,
+        borderRadius: 10,
+        marginBottom: 15,
+        resizeMode: 'cover',
+        backgroundColor: '#e0e0e0', // Fondo para la imagen
     },
     pickerContainer: {
         width: '100%',
@@ -51,7 +92,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 15,
         backgroundColor: '#fff',
-        overflow: 'hidden',
+        overflow: 'hidden', // Asegura que el borde redondeado se aplique al Picker
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -70,66 +111,6 @@ const styles = StyleSheet.create({
     pickerLoading: {
         marginTop: 20,
         marginBottom: 20,
-    },
-    // Nuevos estilos para la tarjeta de detalles del servicio seleccionado
-    serviceDetailsCard: {
-        width: '100%',
-        backgroundColor: '#E0F7FA', // Un color de fondo diferente para destacar
-        borderRadius: 10,
-        padding: 15,
-        marginBottom: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: '#B2EBF2',
-    },
-    serviceDetailsTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#00796B', // Color de título para los detalles del servicio
-        marginBottom: 10,
-        textAlign: 'center',
-    },
-    serviceImagePreview: {
-        width: '90%',
-        height: 100,
-        borderRadius: 8,
-        marginVertical: 10,
-        alignSelf: 'center',
-        backgroundColor: '#CFD8DC',
-        resizeMode: 'cover',
-    },
-    noImageText: {
-        fontSize: 14,
-        color: '#7F8C8D',
-        textAlign: 'center',
-        marginVertical: 10,
-        fontStyle: 'italic',
-    },
-    detailText: {
-        fontSize: 14,
-        color: '#455A64',
-        marginBottom: 4,
-    },
-    detailLabel: {
-        fontWeight: 'bold',
-        color: '#263238',
-    },
-    switchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 20,
-        paddingHorizontal: 5,
-    },
-    switchLabel: {
-        fontSize: 16,
-        color: '#333',
-        fontWeight: 'bold',
     },
     boton: {
         width: '90%',

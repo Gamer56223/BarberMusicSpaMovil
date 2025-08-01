@@ -5,35 +5,34 @@ import ServicioCard from '../../components/ServicioCard';
 import { useNavigation } from "@react-navigation/native";
 import { listarServicios, eliminarServicio } from "../../Src/Servicios/ServicioService";
 import { listarCategorias } from "../../Src/Servicios/CategoriaService";
-import { listarEspecialidades } from "../../Src/Servicios/EspecialidadService";
 import styles from "../../Styles/Servicio/ListarServicioStyles";
 
 // --- MAPA COMPLETO DE SERVICIOS ---
 const nombreASlugMap = {
-  "SculpSure": 'sculpsure',
-  "Lipo sin Cirugía": 'lipo-sin-ciruga',
-  "Criolipolisis": 'criolipolisis',
-  "Paquete Reafirmante": 'paquete-reafirmante',
-  "Levantamiento de Glúteos": 'levantamiento-de-glteos',
-  "Eliminación de Celulitis": 'eliminacin-de-celulitis',
-  "HIFU Facial": 'hifu-facial',
-  "Radiofrecuencia Facial": 'radiofrecuencia-facial',
-  "Hidradermoabrasión": 'hidradermoabrasin',
-  "Microdermoabrasión": 'microdermoabrasin',
-  "Hollywood Peel": 'hollywood-peel',
-  "Limpieza Facial": 'limpieza-facial',
-  "Despigmentación Facial": 'despigmentacin-facial',
-  "Maderoterapia": 'maderoterapia',
-  "Masaje Relajante": 'masaje-relajante',
-  "Arreglo y Diseño de Barba": 'arreglo-y-diseo-de-barba',
-  "Corte de Cabello Masculino": 'corte-de-cabello-masculino',
-  "Coloración de Cabello": 'coloracin-de-cabello',
-  "Tratamiento Capilar": 'tratamiento-capilar',
-  "Corte de Cabello General": 'corte-de-cabello-general',
-  "Depilación Láser SHR (Sesión)": 'depilacin-lser-shr-sesin',
-  "Diseño y Delineado de Cejas": 'diseo-y-delineado-de-cejas',
-  "Perfilado de Cejas": 'perfilado-de-cejas',
-  "Eliminación de Tatuajes (Sesión)": 'eliminacin-de-tatuajes-sesin'
+    "SculpSure": 'sculpsure',
+    "Lipo sin Cirugía": 'lipo-sin-ciruga',
+    "Criolipolisis": 'criolipolisis',
+    "Paquete Reafirmante": 'paquete-reafirmante',
+    "Levantamiento de Glúteos": 'levantamiento-de-glteos',
+    "Eliminación de Celulitis": 'eliminacin-de-celulitis',
+    "HIFU Facial": 'hifu-facial',
+    "Radiofrecuencia Facial": 'radiofrecuencia-facial',
+    "Hidradermoabrasión": 'hidradermoabrasin',
+    "Microdermoabrasión": 'microdermoabrasin',
+    "Hollywood Peel": 'hollywood-peel',
+    "Limpieza Facial": 'limpieza-facial',
+    "Despigmentación Facial": 'despigmentacin-facial',
+    "Maderoterapia": 'maderoterapia',
+    "Masaje Relajante": 'masaje-relajante',
+    "Arreglo y Diseño de Barba": 'arreglo-y-diseo-de-barba',
+    "Corte de Cabello Masculino": 'corte-de-cabello-masculino',
+    "Coloración de Cabello": 'coloracin-de-cabello',
+    "Tratamiento Capilar": 'tratamiento-capilar',
+    "Corte de Cabello General": 'corte-de-cabello-general',
+    "Depilación Láser SHR (Sesión)": 'depilacin-lser-shr-sesin',
+    "Diseño y Delineado de Cejas": 'diseo-y-delineado-de-cejas',
+    "Perfilado de Cejas": 'perfilado-de-cejas',
+    "Eliminación de Tatuajes (Sesión)": 'eliminacin-de-tatuajes-sesin'
 };
 
 export default function ListarServicios (){
@@ -44,19 +43,14 @@ export default function ListarServicios (){
     const handleServicios = async () => {
         setLoading(true);
         try {
-            const [categoriasRes, especialidadesRes, serviciosRes] = await Promise.all([
+            const [categoriasRes, serviciosRes] = await Promise.all([
                 listarCategorias(),
-                listarEspecialidades(),
                 listarServicios()
             ]);
 
             let tempCategoriasMap = {};
             if (categoriasRes.success) {
                 categoriasRes.data.forEach(item => { tempCategoriasMap[item.id] = item.nombre; });
-            }
-            let tempEspecialidadesMap = {};
-            if (especialidadesRes.success) {
-                especialidadesRes.data.forEach(item => { tempEspecialidadesMap[item.id] = item.nombre; });
             }
 
             if (serviciosRes.success) {
@@ -66,7 +60,6 @@ export default function ListarServicios (){
                         ...item,
                         slug: slug,
                         nombreCategoria: tempCategoriasMap[item.categoria_id] || 'Categoría Desconocida',
-                        nombreEspecialidad: tempEspecialidadesMap[item.especialidad_requerida_id] || 'No requerida',
                     };
                 });
                 setServicios(enrichedServicios);
@@ -86,16 +79,43 @@ export default function ListarServicios (){
         return unsubscribe;
     }, [navigation]);
 
-    const handleEliminar = (id) => { /* Tu lógica de eliminar */ };
+    const handleEliminar = (id) => {
+        Alert.alert(
+            "Confirmar Eliminación",
+            "¿Estás seguro de que deseas eliminar este servicio?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Eliminar",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const result = await eliminarServicio(id);
+                            if (result.success) {
+                                Alert.alert("Éxito", result.message);
+                                handleServicios(); // Volver a cargar la lista de servicios
+                            } else {
+                                Alert.alert("Error", result.message || "No se pudo eliminar el servicio.");
+                            }
+                        } catch (error) {
+                            console.error("Error al eliminar servicio:", error);
+                            Alert.alert("Error", "Ocurrió un error inesperado al eliminar el servicio.");
+                        }
+                    },
+                },
+            ]
+        );
+    };
+
     const handleCrear = () => navigation.navigate('CrearServicio');
     const handleEditar = (servicio) => navigation.navigate("EditarServicio", { servicio });
     const HandleDetalle = (item) => navigation.navigate("DetalleServicio", { servicio: item });
 
     if (loading) {
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={styles.centeredContainer}>
                 <ActivityIndicator size="large" color="#1976D2" />
-                <Text>Cargando servicios...</Text>
+                <Text style={styles.loadingText}>Cargando servicios...</Text>
             </View>
         );
     }

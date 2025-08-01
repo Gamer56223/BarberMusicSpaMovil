@@ -1,25 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
-import { useRoute } from '@react-navigation/native';
-import { Picker } from "@react-native-picker/picker";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Switch } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { editarEspecialidad } from "../../Src/Servicios/EspecialidadService";
+// Asumimos que tienes un archivo de estilos para la edición, similar al de agregar.
+import styles from "../../Styles/Especialidad/AgregarEspecialidadStyles";
 
-import { editarEspecialidad } from "../../Src/Servicios/EspecialidadService"; // Asume que tienes este servicio
+export default function EditarEspecialidad({ route, navigation }) {
+    const { especialidad } = route.params;
 
-import styles from "../../Styles/Especialidad/EditarEspecialidadStyles"; // Asume que tienes un archivo de estilos similar
-
-export default function EditarEspecialidad({ navigation }) {
-    const route = useRoute();
-    const especialidadInicial = route.params?.especialidad;
-
-    const [nombre, setNombre] = useState(especialidadInicial?.nombre || "");
-    const [descripcion, setDescripcion] = useState(especialidadInicial?.descripcion || "");
-    const [iconoClave, setIconoClave] = useState(especialidadInicial?.icono_clave || "");
-    const [activo, setActivo] = useState(especialidadInicial?.activo ? "1" : "0");
-
+    const [nombre, setNombre] = useState(especialidad.nombre);
+    const [descripcion, setDescripcion] = useState(especialidad.descripcion);
+    const [iconoClave, setIconoClave] = useState(especialidad.icono_clave);
+    const [activo, setActivo] = useState(especialidad.activo === '1' || especialidad.activo === true);
     const [loading, setLoading] = useState(false);
-
-    const esEdicion = !!especialidadInicial;
 
     const getAlertMessage = (msg, defaultMsg) => {
         if (typeof msg === 'string') {
@@ -43,31 +36,31 @@ export default function EditarEspecialidad({ navigation }) {
 
     const handleGuardar = async () => {
         if (!nombre) {
-            Alert.alert("Campos requeridos", "Por favor, ingrese el nombre de la especialidad.");
+            Alert.alert("Campo requerido", "Por favor, ingrese el nombre de la especialidad.");
             return;
         }
 
         setLoading(true);
-        let result;
         try {
-            const dataToSave = {
-                nombre: nombre,
-                descripcion: descripcion,
-                icono_clave: iconoClave,
-                activo: activo === "1" ? true : false,
+            const especialidadData = {
+                id: especialidad.id,
+                nombre: nombre.trim(),
+                descripcion: descripcion.trim(),
+                icono_clave: iconoClave.trim(),
+                activo: activo ? '1' : '0',
             };
 
-            result = await editarEspecialidad(especialidadInicial.id, dataToSave);
+            const result = await editarEspecialidad(especialidadData);
 
             if (result.success) {
                 Alert.alert("Éxito", "Especialidad actualizada correctamente");
                 navigation.goBack();
             } else {
-                Alert.alert("Error", getAlertMessage(result.message, "No se pudo guardar la especialidad"));
+                Alert.alert("Error", getAlertMessage(result.message, "No se pudo actualizar la especialidad"));
             }
         } catch (error) {
-            console.error("Error al guardar especialidad:", error);
-            Alert.alert("Error", getAlertMessage(error.message, "Ocurrió un error inesperado al guardar la especialidad."));
+            console.error("Error al editar especialidad:", error);
+            Alert.alert("Error", getAlertMessage(error.message, "Ocurrió un error inesperado al actualizar la especialidad."));
         } finally {
             setLoading(false);
         }
@@ -81,43 +74,45 @@ export default function EditarEspecialidad({ navigation }) {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.title}>{esEdicion ? "Editar Especialidad" : "Nueva Especialidad"}</Text>
+                        <Text style={styles.title}>Editar Especialidad</Text>
 
+                        <Text style={styles.label}>Nombre de la Especialidad:</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Nombre de la Especialidad"
+                            placeholder="Ingrese el nombre"
                             placeholderTextColor="#888"
                             value={nombre}
                             onChangeText={setNombre}
                         />
+                        
+                        <Text style={styles.label}>Descripción:</Text>
                         <TextInput
                             style={[styles.input, styles.multilineInput]}
-                            placeholder="Descripción"
+                            placeholder="Descripción (Opcional)"
                             placeholderTextColor="#888"
                             value={descripcion}
                             onChangeText={setDescripcion}
                             multiline
-                            numberOfLines={4}
+                            numberOfLines={3}
                         />
+                        
+                        <Text style={styles.label}>Ícono Clave:</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Clave del Icono (ej: 'icono_barbero')"
+                            placeholder="ej. icono_estetica_avanzada"
                             placeholderTextColor="#888"
                             value={iconoClave}
                             onChangeText={setIconoClave}
                         />
-
-                        <Text style={styles.pickerLabelActual}>Estado:</Text>
-                        <View style={styles.pickerContainer}>
-                            <Picker
-                                selectedValue={activo}
-                                onValueChange={(itemValue) => setActivo(itemValue)}
-                                style={styles.picker}
-                                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-                            >
-                                <Picker.Item label="Activo" value="1" />
-                                <Picker.Item label="Inactivo" value="0" />
-                            </Picker>
+                        
+                        <View style={styles.switchContainer}>
+                            <Text style={styles.switchLabel}>Activo:</Text>
+                            <Switch
+                                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                                thumbColor={activo ? "#1976D2" : "#f4f3f4"}
+                                onValueChange={setActivo}
+                                value={activo}
+                            />
                         </View>
 
                         <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading}>
@@ -126,7 +121,7 @@ export default function EditarEspecialidad({ navigation }) {
                             ) : (
                                 <View style={styles.botonContent}>
                                     <Ionicons name="save-outline" size={22} color="#fff" style={styles.botonIcon} />
-                                    <Text style={styles.textoBoton}>{esEdicion ? "Guardar Cambios" : "Crear Especialidad"}</Text>
+                                    <Text style={styles.textoBoton}>Guardar Cambios</Text>
                                 </View>
                             )}
                         </TouchableOpacity>

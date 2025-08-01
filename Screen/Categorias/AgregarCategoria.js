@@ -4,14 +4,36 @@ import { Ionicons } from '@expo/vector-icons';
 import { crearCategoria } from "../../Src/Servicios/CategoriaService";
 import styles from "../../Styles/Categoria/AgregarCategoriaStyles";
 
+// Componente para seleccionar el tipo de categoría
+const TipoSelector = ({ selectedTipo, onSelectTipo }) => (
+    <View style={styles.tipoSelectorContainer}>
+        {/* Botón para la categoría 'SERVICIO' */}
+        <TouchableOpacity
+            style={[styles.tipoButton, selectedTipo === 'SERVICIO' && styles.tipoButtonActive]}
+            onPress={() => onSelectTipo('SERVICIO')}
+        >
+            <Text style={[styles.tipoButtonText, selectedTipo === 'SERVICIO' && styles.tipoButtonTextActive]}>Servicio</Text>
+        </TouchableOpacity>
+        {/* Botón para la categoría 'PRODUCTO' */}
+        <TouchableOpacity
+            style={[styles.tipoButton, selectedTipo === 'PRODUCTO' && styles.tipoButtonActive]}
+            onPress={() => onSelectTipo('PRODUCTO')}
+        >
+            <Text style={[styles.tipoButtonText, selectedTipo === 'PRODUCTO' && styles.tipoButtonTextActive]}>Producto</Text>
+        </TouchableOpacity>
+    </View>
+);
+
 export default function AgregarCategoria({ navigation }) {
     const [nombre, setNombre] = useState("");
     const [descripcion, setDescripcion] = useState("");
-    const [tipoCategoria, setTipoCategoria] = useState(""); 
+    // Se inicializa en null para forzar la selección de una opción
+    const [tipoCategoria, setTipoCategoria] = useState(null); 
     const [iconoClave, setIconoClave] = useState("");
     const [activo, setActivo] = useState(true);
     const [loading, setLoading] = useState(false);
 
+    // Función para formatear los mensajes de error de la API
     const getAlertMessage = (msg, defaultMsg) => {
         if (typeof msg === 'string') return msg;
         if (msg && typeof msg === 'object') {
@@ -27,8 +49,9 @@ export default function AgregarCategoria({ navigation }) {
     };
 
     const handleGuardar = async () => {
+        // Validación para asegurar que se ha seleccionado un tipo de categoría
         if (!nombre || !tipoCategoria) {
-            Alert.alert("Campos requeridos", "Por favor, ingrese el nombre y el tipo de categoría.");
+            Alert.alert("Campos requeridos", "Por favor, ingrese el nombre y seleccione el tipo de categoría.");
             return;
         }
 
@@ -37,10 +60,10 @@ export default function AgregarCategoria({ navigation }) {
             const categoriaData = {
                 nombre: nombre.trim(),
                 descripcion: descripcion.trim(),
-                tipo_categoria: tipoCategoria.trim(),
+                // Se envía el valor en mayúsculas como lo requiere la API
+                tipo_categoria: tipoCategoria, 
                 icono_clave: iconoClave.trim(),
-                // ¡CORRECCIÓN FINAL! Se envía '1' o '0' para el campo 'activo'.
-                activo: activo ? '1' : '0', 
+                activo: activo ? '1' : '0',
             };
 
             const result = await crearCategoria(categoriaData);
@@ -69,10 +92,22 @@ export default function AgregarCategoria({ navigation }) {
                     <View style={styles.container}>
                         <Text style={styles.title}>Nueva Categoría</Text>
 
-                        <TextInput style={styles.input} placeholder="Nombre de la Categoría" value={nombre} onChangeText={setNombre} />
+                        {/* Etiqueta para el campo de Nombre */}
+                        <Text style={styles.label}>Nombre de la Categoría:</Text>
+                        <TextInput style={styles.input} placeholder="Ingrese el nombre" value={nombre} onChangeText={setNombre} />
+                        
+                        {/* Etiqueta para el campo de Descripción */}
+                        <Text style={styles.label}>Descripción:</Text>
                         <TextInput style={styles.inputMultiline} placeholder="Descripción (Opcional)" value={descripcion} onChangeText={setDescripcion} multiline />
-                        <TextInput style={styles.input} placeholder="Tipo de Categoría" placeholderTextColor="#888" value={tipoCategoria} onChangeText={setTipoCategoria} autoCapitalize="sentences" />
-                        <TextInput style={styles.input} placeholder="Ícono Clave (ej. icono_estetica)" value={iconoClave} onChangeText={setIconoClave} />
+                        
+                        <Text style={styles.label}>Tipo de Categoría:</Text>
+                        <TipoSelector 
+                            selectedTipo={tipoCategoria} 
+                            onSelectTipo={setTipoCategoria}
+                        />
+                        {/* Etiqueta para el campo de Ícono */}
+                        <Text style={styles.label}>Ícono Clave:</Text>
+                        <TextInput style={styles.input} placeholder="ej. icono_estetica" value={iconoClave} onChangeText={setIconoClave} />
                         
                         <View style={styles.switchContainer}>
                             <Text style={styles.switchLabel}>Activo:</Text>
@@ -83,7 +118,7 @@ export default function AgregarCategoria({ navigation }) {
                                 value={activo}
                             />
                         </View>
-                       
+                        
                         <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading}>
                             {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textoBoton}>Crear Categoría</Text>}
                         </TouchableOpacity>

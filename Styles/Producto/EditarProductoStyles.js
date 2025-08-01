@@ -19,6 +19,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 30,
     },
+    label: {
+        fontSize: 16,
+        color: '#34495E',
+        marginBottom: 5,
+        fontWeight: 'bold',
+    },
     input: {
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
@@ -41,9 +47,9 @@ const styles = StyleSheet.create({
     },
     pickerLabel: {
         fontSize: 16,
-        color: '#555',
+        color: '#34495E',
         marginBottom: 8,
-        fontWeight: '600',
+        fontWeight: 'bold',
     },
     pickerContainer: {
         backgroundColor: '#FFFFFF',
@@ -66,7 +72,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#E3F2FD', // Fondo similar a "Ver más productos"
+        backgroundColor: '#E3F2FD',
         padding: 12,
         borderRadius: 8,
         marginBottom: 15,
@@ -89,7 +95,7 @@ const styles = StyleSheet.create({
         borderColor: '#E0E0E0',
     },
     boton: {
-        backgroundColor: '#1976D2', // Color azul consistente
+        backgroundColor: '#1976D2',
         paddingVertical: 15,
         borderRadius: 8,
         alignItems: 'center',
@@ -110,18 +116,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    backButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
-        marginTop: 15,
-    },
-    backButtonText: {
-        fontSize: 16,
-        color: '#555',
-        marginLeft: 8,
-    },
+    // El estilo backButton ha sido eliminado
 });
 
 export default styles;

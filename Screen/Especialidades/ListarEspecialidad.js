@@ -96,6 +96,9 @@ export default function ListarEspecialidades (){
                 data={especialidades}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
+                    // NOTA IMPORTANTE: Para quitar el campo "icono clave" de la lista,
+                    // necesitas editar el componente 'EspecialidadCard'.
+                    // Asegúrate de eliminar la línea de código que renderiza 'item.icono_clave'.
                     <EspecialidadCard
                         especialidad={item}
                         onEdit={() => handleEditar(item)}

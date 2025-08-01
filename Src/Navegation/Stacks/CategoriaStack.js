@@ -16,14 +16,14 @@ export default function CategoriasStack () {
                 options={{ title: "Categoria" }}
             />
             <Stack.Screen
+                name= "AgregarCategoria"
+                component={AgregarCategoria}
+                options={{ title: "Nueva Categoria" }}
+            />
+            <Stack.Screen
                 name= "EditarCategoria"
                 component={EditarCategoria}
                 options={{ title: "Editar Categoria" }}
-            />
-            <Stack.Screen
-                name= "CrearCategoria"
-                component={AgregarCategoria}
-                options={{ title: "Nueva Categoria" }}
             />
             <Stack.Screen
                 name= "DetalleCategoria"

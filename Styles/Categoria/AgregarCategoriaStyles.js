@@ -24,6 +24,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 30,
     },
+    label: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#334155',
+        marginBottom: 10,
+    },
 
     // --- Campos de Texto ---
     input: {
@@ -51,7 +57,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     
-    // --- Estilos para el Switch (opcional) ---
+    // --- Estilos para el Switch ---
     switchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -63,6 +69,32 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#334155',
+    },
+
+    // --- Estilos para el nuevo TipoSelector ---
+    tipoSelectorContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    tipoButton: {
+        flex: 1,
+        backgroundColor: '#E2E8F0',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginHorizontal: 5,
+    },
+    tipoButtonActive: {
+        backgroundColor: '#1976D2',
+    },
+    tipoButtonText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#4A5568',
+    },
+    tipoButtonTextActive: {
+        color: '#FFFFFF',
     },
 
     // --- Botones de Acción ---

@@ -21,6 +21,24 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         textAlign: 'center', // Centrar el título
     },
+    // Estilo agregado para las etiquetas de los campos
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#555',
+        marginBottom: 8,
+        marginTop: 15,
+        alignSelf: 'flex-start', // Alinea la etiqueta a la izquierda
+    },
+    // Este estilo se ha conservado para el Picker, aunque tiene la misma lógica que `label`
+    pickerLabelActual: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#555',
+        marginBottom: 8,
+        marginTop: 15,
+        alignSelf: 'flex-start', // Alinea la etiqueta a la izquierda
+    },
     input: {
         width: '100%',
         padding: 15,
@@ -66,13 +84,6 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         resizeMode: 'cover',
         backgroundColor: '#e0e0e0', // Fondo para la imagen
-    },
-    pickerLabelActual: {
-        fontSize: 16,
-        color: '#333',
-        marginBottom: 5,
-        alignSelf: 'flex-start', // Alinea la etiqueta a la izquierda
-        fontWeight: 'bold',
     },
     pickerContainer: {
         width: '100%',

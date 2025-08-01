@@ -59,20 +59,21 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 10,
     },
+    // Estilos del botón flotante ajustados para coincidir con la apariencia del botón de "Crear Servicio"
     botonCrear: {
         position: 'absolute',
-        bottom: 70,
+        bottom: 70, // Posición ajustada a un valor más alto para subir el botón
         alignSelf: 'center',
         width: '60%',
-        backgroundColor: '#007BFF',
-        borderRadius: 30,
+        backgroundColor: '#DC3545', // Color de fondo rojo
+        borderRadius: 10,
         paddingVertical: 12,
         paddingHorizontal: 25,
-        shadowColor: '#007BFF',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.4,
-        shadowRadius: 10,
-        elevation: 8,
+        shadowColor: '#DC3545', // Color de sombra rojo
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 5,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

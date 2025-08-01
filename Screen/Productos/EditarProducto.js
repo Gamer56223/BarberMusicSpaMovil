@@ -69,7 +69,7 @@ export default function EditarProducto({ route, navigation }) {
                 setLoadingDependencies(false);
             }
         };
-        
+
         cargarDatos();
     }, [productoId]);
 
@@ -144,17 +144,26 @@ export default function EditarProducto({ route, navigation }) {
                     <View style={styles.container}>
                         <Text style={styles.title}>Editar Producto</Text>
 
+                        <Text style={styles.label}>Nombre:</Text>
                         <TextInput style={styles.input} placeholder="Nombre del Producto" value={nombre} onChangeText={setNombre} />
+                        
+                        <Text style={styles.label}>Descripción:</Text>
                         <TextInput style={[styles.input, styles.multilineInput]} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
                         
+                        <Text style={styles.label}>Imagen del Producto:</Text>
                         <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
                             <Ionicons name="image-outline" size={24} color="#1976D2" />
                             <Text style={styles.imagePickerButtonText}>Cambiar Imagen</Text>
                         </TouchableOpacity>
                         {imagenPath && <Image source={{ uri: imagenPath }} style={styles.imagePreview} />}
 
+                        <Text style={styles.label}>Precio:</Text>
                         <TextInput style={styles.input} placeholder="Precio" value={precio} onChangeText={setPrecio} keyboardType="numeric" />
+                        
+                        <Text style={styles.label}>Stock:</Text>
                         <TextInput style={styles.input} placeholder="Stock" value={stock} onChangeText={setStock} keyboardType="numeric" />
+                        
+                        <Text style={styles.label}>SKU:</Text>
                         <TextInput style={styles.input} placeholder="SKU (Opcional)" value={sku} onChangeText={setSku} />
 
                         <Text style={styles.pickerLabel}>Categoría:</Text>
@@ -179,10 +188,6 @@ export default function EditarProducto({ route, navigation }) {
                             <View style={styles.botonContent}>
                                 {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textoBoton}>Guardar Cambios</Text>}
                             </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                            <Ionicons name="arrow-back-outline" size={20} color="#555" />
-                            <Text style={styles.backButtonText}>Volver</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

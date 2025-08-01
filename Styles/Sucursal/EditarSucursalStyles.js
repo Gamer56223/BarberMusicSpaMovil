@@ -21,13 +21,21 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         textAlign: 'center', // Centrar el título
     },
+    inputLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#555',
+        marginBottom: 8,
+        alignSelf: 'flex-start',
+        marginTop: 15, // Añadido para dar espacio entre campos
+    },
     input: {
         width: '100%',
         padding: 15,
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 10,
-        marginBottom: 15,
+        marginBottom: 5, // Reducido el espacio para que la etiqueta quede más cerca
         backgroundColor: '#fff',
         fontSize: 16,
         color: '#333',
@@ -69,6 +77,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         alignSelf: 'flex-start', // Alinea la etiqueta a la izquierda
         fontWeight: 'bold',
+        marginTop: 15, // Añadido para dar espacio
     },
     pickerContainer: {
         width: '100%',

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     fullScreenContainer: {
         flex: 1,
-        backgroundColor: '#F5F8FA', // Un color de fondo suave y profesional
+        backgroundColor: '#F5F8FA',
     },
     centeredContainer: {
         flex: 1,
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     flatListContent: {
         paddingHorizontal: 10,
         paddingTop: 10,
-        paddingBottom: 120, // Espacio para el botón flotante
+        paddingBottom: 100, // Espacio para el botón flotante
     },
     flatListEmpty: {
         flexGrow: 1,
@@ -61,17 +61,17 @@ const styles = StyleSheet.create({
     },
     botonCrear: {
         position: 'absolute',
-        bottom: 70,
+        bottom: 10,
         alignSelf: 'center',
-        width: '60%',
-        backgroundColor: '#007BFF',
-        borderRadius: 30,
+        width: 'auto',
+        backgroundColor: '#DC3545',
+        borderRadius: 50,
         paddingVertical: 12,
         paddingHorizontal: 25,
-        shadowColor: '#007BFF',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.4,
-        shadowRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
         elevation: 8,
         flexDirection: 'row',
         alignItems: 'center',

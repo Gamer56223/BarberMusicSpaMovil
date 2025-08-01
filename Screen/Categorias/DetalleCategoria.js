@@ -69,8 +69,7 @@ export default function DetalleCategoria({ route, navigation }) {
                 <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Tipo: </Text>{categoria.tipo_categoria}</Text>
                 <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Icono Clave: </Text>{categoria.icono_clave || 'N/A'}</Text>
                 <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Activo: </Text>{categoria.activo ? 'Sí' : 'No'}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Creado: </Text>{categoria.created_at}</Text>
-                <Text style={[styles.detailText, {color: '#5C6F7F'}]}><Text style={styles.detailLabel}>Actualizado: </Text>{categoria.updated_at}</Text>
+                {/* Campos de 'created_at' y 'updated_at' eliminados como solicitaste */}
             </View>
 
             <BotonComponent

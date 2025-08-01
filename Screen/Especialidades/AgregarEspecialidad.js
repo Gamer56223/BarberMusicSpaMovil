@@ -39,9 +39,6 @@ export default function AgregarEspecialidad({ navigation }) {
 
         setLoading(true);
         try {
-            // --- ¡CORRECCIÓN AQUÍ! ---
-            // 1. Los nombres de los campos (claves) ahora están en minúsculas (snake_case).
-            // 2. El valor de 'activo' se convierte a '1' o '0'.
             const especialidadData = {
                 nombre: nombre.trim(),
                 descripcion: descripcion.trim(),
@@ -75,15 +72,20 @@ export default function AgregarEspecialidad({ navigation }) {
                     <View style={styles.container}>
                         <Text style={styles.title}>Nueva Especialidad</Text>
 
+                        {/* Etiqueta para el campo de Nombre */}
+                        <Text style={styles.label}>Nombre de la Especialidad:</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Nombre de la Especialidad"
+                            placeholder="Ingrese el nombre"
                             placeholderTextColor="#888"
                             value={nombre}
                             onChangeText={setNombre}
                         />
+                        
+                        {/* Etiqueta para el campo de Descripción */}
+                        <Text style={styles.label}>Descripción:</Text>
                         <TextInput
-                            style={styles.inputMultiline}
+                            style={[styles.input, styles.multilineInput]} // Asegura que se aplica el estilo multilínea
                             placeholder="Descripción (Opcional)"
                             placeholderTextColor="#888"
                             value={descripcion}
@@ -91,13 +93,17 @@ export default function AgregarEspecialidad({ navigation }) {
                             multiline
                             numberOfLines={3}
                         />
+                        
+                        {/* Etiqueta para el campo de Ícono Clave */}
+                        <Text style={styles.label}>Ícono Clave:</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Ícono Clave (ej. icono_estetica_avanzada)"
+                            placeholder="ej. icono_estetica_avanzada"
                             placeholderTextColor="#888"
                             value={iconoClave}
                             onChangeText={setIconoClave}
                         />
+                        
                         <View style={styles.switchContainer}>
                             <Text style={styles.switchLabel}>Activo:</Text>
                             <Switch

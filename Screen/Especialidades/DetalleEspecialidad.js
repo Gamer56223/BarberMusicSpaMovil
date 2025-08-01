@@ -57,6 +57,8 @@ export default function DetalleEspecialidad({ route, navigation }) {
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <Text style={styles.title}>Detalle de Especialidad</Text>
                 <View style={styles.detailCard}>
+                    {/* Se ha agregado una etiqueta explícita para el nombre de la especialidad */}
+                    <Text style={styles.detailLabel}>Nombre:</Text>
                     <Text style={styles.especialidadName}>{especialidad.nombre}</Text>
                     <View style={styles.detailSection}>
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>ID:</Text> {especialidad.id}</Text>
@@ -65,7 +67,6 @@ export default function DetalleEspecialidad({ route, navigation }) {
                         <Text style={styles.detailText}><Text style={styles.detailLabel}>Activo:</Text> {especialidad.activo ? 'Sí' : 'No'}</Text>
                     </View>
                 </View>
-                {/* Botón eliminado */}
             </ScrollView>
         </SafeAreaView>
     );

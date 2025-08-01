@@ -1,166 +1,204 @@
-import { View, Text, FlatList, Alert, ActivityIndicator, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import ReseñaCard from "../../components/ReseñaCard"
-import { useNavigation } from "@react-navigation/native";
-import eliminarResena from "../../Src/Servicios/ReseñaService";
-import { listarUsuarios } from "../../Src/Servicios/UsuarioService";
-import { listarServicios } from "../../Src/Servicios/ServicioService";
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-import styles from "../../Styles/Reseña/ListarReseñaStyles";
+// Suponiendo que tienes un servicio para gestionar las reseñas
+import { listarReseñasNoAprobadas, aprobarReseña, eliminarReseña } from '../../Src/Servicios/ReseñaService';
 
-export default function ListarReseñas (){
+export default function ReseñasPendientes({ navigation }) {
     const [reseñas, setReseñas] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [usuariosMap, setUsuariosMap] = useState({});
-    const [reseñablesMap, setReseñablesMap] = useState({});
-    const navigation = useNavigation();
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const handleReseñas = async () => {
-        setLoading(true);
+    // Función para obtener las reseñas no aprobadas desde la API
+    const fetchReseñas = async () => {
         try {
-            const [usuariosRes, serviciosRes, reseñasRes] = await Promise.all([
-                listarUsuarios(),
-                listarServicios(), // Asumimos que las reseñas son de servicios por ahora
-                ResenaServiceListarResenas() // ¡Usamos el nombre renombrado aquí!
-            ]);
-
-            let tempUsuariosMap = {};
-            if (usuariosRes.success) {
-                usuariosRes.data.forEach(usuario => {
-                    tempUsuariosMap[usuario.id] = usuario.nombre || usuario.email;
-                });
-                setUsuariosMap(tempUsuariosMap);
+            setLoading(true);
+            const result = await listarReseñasNoAprobadas();
+            if (result.success) {
+                setReseñas(result.data);
             } else {
-                console.error("Error al cargar usuarios:", usuariosRes.message);
-                Alert.alert("Error de Carga", usuariosRes.message || "No se pudieron cargar los usuarios.");
-            }
-
-            let tempResenablesMap = {};
-            if (serviciosRes.success) {
-                serviciosRes.data.forEach(servicio => {
-                    // La clave incluye el tipo para manejar relaciones polimórficas
-                    tempResenablesMap[`service-${servicio.id}`] = servicio.nombre;
-                });
-                setResenablesMap(tempResenablesMap);
-            } else {
-                console.error("Error al cargar servicios:", serviciosRes.message);
-                Alert.alert("Error de Carga", serviciosRes.message || "No se pudieron cargar los servicios.");
-            }
-
-            if (resenasRes.success) {
-                const enrichedResenas = resenasRes.data.map(item => {
-                    const nombreCliente = tempUsuariosMap[item.cliente_usuario_id] || 'Cliente Desconocido';
-                    const nombreResenable = tempResenablesMap[`${item.resenable_type.toLowerCase()}-${item.resenable_id}`] || 'Elemento no encontrado';
-                    
-                    return {
-                        ...item,
-                        nombreCliente,
-                        nombreResenable
-                    };
-                });
-                setReseñas(enrichedResenas);
-            } else {
-                Alert.alert("Error", resenasRes.message || "No se pudieron cargar las reseñas");
+                Alert.alert("Error", result.message || "No se pudieron cargar las reseñas pendientes.");
             }
         } catch (error) {
-            console.error("Error general al cargar datos:", error);
-            Alert.alert("Error", "Ocurrió un error inesperado al cargar los datos.");
+            console.error("Error al listar reseñas no aprobadas:", error);
+            Alert.alert("Error", "Ocurrió un error al cargar las reseñas. " + error.message);
         } finally {
             setLoading(false);
+            setIsRefreshing(false);
         }
     };
 
+    // Función para manejar la acción de aprobar una reseña
+    const handleAprobar = async (id) => {
+        try {
+            const result = await aprobarReseña(id);
+            if (result.success) {
+                Alert.alert("Éxito", "Reseña aprobada correctamente.");
+                // Recargar la lista después de aprobar
+                fetchReseñas();
+            } else {
+                Alert.alert("Error", result.message || "No se pudo aprobar la reseña.");
+            }
+        } catch (error) {
+            console.error("Error al aprobar reseña:", error);
+            Alert.alert("Error", "Ocurrió un error inesperado.");
+        }
+    };
+
+    // Función para manejar la acción de eliminar una reseña
+    const handleEliminar = async (id) => {
+        try {
+            const result = await eliminarReseña(id);
+            if (result.success) {
+                Alert.alert("Éxito", "Reseña eliminada correctamente.");
+                // Recargar la lista después de eliminar
+                fetchReseñas();
+            } else {
+                Alert.alert("Error", result.message || "No se pudo eliminar la reseña.");
+            }
+        } catch (error) {
+            console.error("Error al eliminar reseña:", error);
+            Alert.alert("Error", "Ocurrió un error inesperado.");
+        }
+    };
+
+    // Cargar las reseñas al iniciar el componente
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', handleReseñas);
-        return unsubscribe;
-    }, [navigation]);
+        fetchReseñas();
+    }, []);
 
-    const handleEliminar = (id) => {
-        Alert.alert(
-            "Confirmar Eliminación",
-            "¿Estás seguro de que deseas eliminar esta reseña?",
-            [
-                { text: "Cancelar", style: "cancel" },
-                {
-                    text: "Eliminar",
-                    style: "destructive",
-                    onPress: async () => {
-                        try {
-                            const result = await eliminarResena(id);
-                            if (result.success) {
-                                Alert.alert("Éxito", "Reseña eliminada correctamente.");
-                                handleReseñas();
-                            } else {
-                                Alert.alert("Error", result.message || "No se pudo eliminar la reseña.");
-                            }
-                        } catch (error) {
-                            console.error("Error al eliminar reseña:", error);
-                            Alert.alert("Error", "Ocurrió un error inesperado al eliminar la reseña.");
-                        }
-                    },
-                },
-            ]
-        );
+    const onRefresh = () => {
+        setIsRefreshing(true);
+        fetchReseñas();
     };
 
-    const handleCrear = () => {
-        navigation.navigate('CrearResena'); 
-    };
-
-    const handleEditar = (resena) => {
-        navigation.navigate("EditarResena", {resena});
-    };
-
-    const HandleDetalle = (resenaId) => {
-        navigation.navigate("DetalleResena", {resenaId: resenaId});
-    };
-
-    if (loading) {
-        return (
-            <View style={styles.centeredContainer}>
-                <ActivityIndicator size="large" color="#1976D2" />
-                <Text style={styles.loadingText}>Cargando reseñas...</Text>
+    // Función para renderizar cada item de la lista
+    const renderItem = ({ item }) => (
+        <View style={styles.reviewCard}>
+            <Text style={styles.reviewText}>
+                <Text style={styles.reviewLabel}>Cliente:</Text> {item.cliente?.nombre || 'N/A'}
+            </Text>
+            <Text style={styles.reviewText}>
+                <Text style={styles.reviewLabel}>Servicio:</Text> {item.servicio?.nombre || 'N/A'}
+            </Text>
+            <Text style={styles.reviewText}>
+                <Text style={styles.reviewLabel}>Puntuación:</Text> {item.calificacion} estrellas
+            </Text>
+            <Text style={styles.reviewText}>
+                <Text style={styles.reviewLabel}>Comentario:</Text> {item.comentario || 'Sin comentario'}
+            </Text>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={[styles.button, styles.approveButton]} onPress={() => handleAprobar(item.id)}>
+                    <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+                    <Text style={styles.buttonText}>Aprobar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleEliminar(item.id)}>
+                    <Ionicons name="trash-outline" size={20} color="#fff" />
+                    <Text style={styles.buttonText}>Eliminar</Text>
+                </TouchableOpacity>
             </View>
-        );
-    }
+        </View>
+    );
 
     return (
-        <SafeAreaView style={styles.fullScreenContainer}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F8FA" />
-
-            <View style={styles.headerContainer}>
-                <Ionicons name="star-outline" size={32} color="#007BFF" style={styles.headerIcon} />
-                <Text style={styles.headerTitle}>Gestión de Reseñas</Text>
-            </View>
-
-            <FlatList
-                data={reseñas}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <ReseñaCard
-                        resena={item}
-                        onEdit={() => handleEditar(item)}
-                        onDelete={() => handleEliminar(item.id)}
-                        onDetail={() => HandleDetalle(item.id)}
-                    />
-                )}
-                ListEmptyComponent = {
-                    <View style={styles.emptyListContainer}>
-                        <Ionicons name="chatbox-ellipses-outline" size={80} color="#BDC3C7" />
-                        <Text style={styles.emptyText}>No hay reseñas registradas.</Text>
-                        <Text style={styles.emptyText}>¡Crea una nueva reseña!</Text>
-                    </View>
-                }
-                contentContainerStyle={reseñas.length === 0 ? styles.flatListEmpty : styles.flatListContent}
-            />
-
-            <TouchableOpacity style={styles.botonCrear} onPress={handleCrear} activeOpacity={0.8}>
-                <View style={styles.botonCrearContent}>
-                    <Ionicons name="add-circle-outline" size={24} color="#fff" style={styles.botonCrearIcon} />
-                    <Text style={styles.textoBotonCrear}>Nueva Reseña</Text>
-                </View>
-            </TouchableOpacity>
-        </SafeAreaView>
-    )
+        <View style={styles.container}>
+            <Text style={styles.title}>Reseñas Pendientes</Text>
+            {loading ? (
+                <ActivityIndicator size="large" color="#007bff" />
+            ) : (
+                <FlatList
+                    data={reseñas}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    onRefresh={onRefresh}
+                    refreshing={isRefreshing}
+                    ListEmptyComponent={
+                        <View style={styles.emptyContainer}>
+                            <Ionicons name="chatbox-outline" size={80} color="#ccc" />
+                            <Text style={styles.emptyText}>No hay reseñas pendientes de aprobación.</Text>
+                        </View>
+                    }
+                    contentContainerStyle={reseñas.length === 0 && styles.flatListContent}
+                />
+            )}
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f0f4f8',
+        padding: 10,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#1a202c',
+        textAlign: 'center',
+        marginVertical: 20,
+    },
+    reviewCard: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    reviewText: {
+        fontSize: 16,
+        color: '#4a5568',
+        marginBottom: 5,
+    },
+    reviewLabel: {
+        fontWeight: 'bold',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 15,
+    },
+    button: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    approveButton: {
+        backgroundColor: '#28a745',
+    },
+    deleteButton: {
+        backgroundColor: '#dc3545',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginLeft: 5,
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 50,
+    },
+    emptyText: {
+        fontSize: 18,
+        color: '#a0aec0',
+        marginTop: 10,
+        textAlign: 'center',
+    },
+    flatListContent: {
+        flex: 1,
+        justifyContent: 'center',
+    }
+});

@@ -1,49 +1,82 @@
+// Archivo: EditarAgendamiento.js
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useRoute } from '@react-navigation/native';
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from '@react-native-community/datetimepicker'; // Necesitas instalar esta librería: npm install @react-native-community/datetimepicker
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { editarAgendamiento } from "../../Src/Servicios/AgendamientoService"; // Asume que tienes este servicio
-import { listarUsuarios } from "../../Src/Servicios/UsuarioService"; // Servicio para listar clientes/usuarios
-import { listarPersonal } from "../../Src/Servicios/PersonalService"; // Servicio para listar personal
-import { listarServicios } from "../../Src/Servicios/ServicioService"; // Servicio para listar servicios
-import { listarSucursales } from "../../Src/Servicios/SucursalService"; // Servicio para listar sucursales
+// Importación de servicios (asumiendo que existen en la ruta especificada)
+import { editarAgendamiento } from "../../Src/Servicios/AgendamientoService";
+import { listarServicios } from "../../Src/Servicios/ServicioService";
+import { listarSucursales } from "../../Src/Servicios/SucursalService";
 
+// Importación de íconos para la interfaz de usuario
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import styles from "../../Styles/Agendamiento/EditarAgendamientoStyles"; // Asume que tienes un archivo de estilos similar
+// Importación de los estilos
+import styles from "../../Styles/Agendamiento/EditarAgendamientoStyles";
 
+/**
+ * Función auxiliar para formatear la fecha a un formato compatible con la API (YYYY-MM-DD HH:MM:SS)
+ * @param {Date} date - El objeto de fecha a formatear.
+ * @returns {string|null} La fecha formateada o null si no se proporciona una fecha.
+ */
+const formatDateForAPI = (date) => {
+    if (!date) return null;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+/**
+ * Componente principal para editar un agendamiento.
+ * @param {object} props - Propiedades del componente.
+ * @param {object} props.navigation - Objeto de navegación de React Navigation.
+ */
 export default function EditarAgendamiento({ navigation }) {
     const route = useRoute();
     const agendamientoInicial = route.params?.agendamiento;
 
-    const [clienteUsuarioId, setClienteUsuarioId] = useState(agendamientoInicial?.cliente_usuario_id?.toString() || "");
-    const [personalId, setPersonalId] = useState(agendamientoInicial?.personal_id?.toString() || "");
+    // Estado para los campos del formulario
+    const [clienteUsuarioId] = useState(agendamientoInicial?.cliente_usuario_id?.toString() || "");
+    const [nombreCliente, setNombreCliente] = useState('');
     const [servicioId, setServicioId] = useState(agendamientoInicial?.servicio_id?.toString() || "");
     const [sucursalId, setSucursalId] = useState(agendamientoInicial?.sucursal_id?.toString() || "");
     const [fechaHoraInicio, setFechaHoraInicio] = useState(agendamientoInicial?.fecha_hora_inicio ? new Date(agendamientoInicial.fecha_hora_inicio) : new Date());
     const [fechaHoraFin, setFechaHoraFin] = useState(agendamientoInicial?.fecha_hora_fin ? new Date(agendamientoInicial.fecha_hora_fin) : new Date());
+    const [duracion, setDuracion] = useState(0);
     const [precioFinal, setPrecioFinal] = useState(agendamientoInicial?.precio_final?.toString() || "");
     const [estado, setEstado] = useState(agendamientoInicial?.estado || "");
     const [notasCliente, setNotasCliente] = useState(agendamientoInicial?.notas_cliente || "");
     const [notasInternas, setNotasInternas] = useState(agendamientoInicial?.notas_internas || "");
 
-    const [usuarios, setUsuarios] = useState([]);
-    const [personalList, setPersonalList] = useState([]);
+    // Estados para las listas de opciones del Picker
     const [servicios, setServicios] = useState([]);
     const [sucursales, setSucursales] = useState([]);
 
-    const [loading, setLoading] = useState(false);
-    const [loadingDependencies, setLoadingDependencies] = useState(true);
+    // Estados para el manejo de la carga y la UI
+    const [loading, setLoading] = useState(false); // Carga al guardar
+    const [loadingDependencies, setLoadingDependencies] = useState(true); // Carga inicial de listas
 
+    // Estados para controlar la visibilidad de los selectores de fecha y hora
     const [showDatePickerInicio, setShowDatePickerInicio] = useState(false);
     const [showTimePickerInicio, setShowTimePickerInicio] = useState(false);
     const [showDatePickerFin, setShowDatePickerFin] = useState(false);
     const [showTimePickerFin, setShowTimePickerFin] = useState(false);
 
     const esEdicion = !!agendamientoInicial;
+    const estadosAgendamiento = ["Programado", "Confirmado", "Cancelado por Cliente", "Realizado", "No Asistió", "En Proceso"];
 
+    /**
+     * Función auxiliar para obtener un mensaje de alerta legible de un objeto de error.
+     * @param {string|object} msg - El mensaje de error o el objeto de error.
+     * @param {string} defaultMsg - El mensaje por defecto si no se puede parsear el error.
+     * @returns {string} El mensaje de alerta a mostrar.
+     */
     const getAlertMessage = (msg, defaultMsg) => {
         if (typeof msg === 'string') {
             return msg;
@@ -64,22 +97,20 @@ export default function EditarAgendamiento({ navigation }) {
         return defaultMsg;
     };
 
+    /**
+     * Hook para cargar las listas de servicios y sucursales al inicio del componente.
+     */
     useEffect(() => {
         const cargarDependencias = async () => {
             setLoadingDependencies(true);
             try {
-                const [usuariosRes, personalRes, serviciosRes, sucursalesRes] = await Promise.all([
-                    listarUsuarios(),
-                    listarPersonal(),
+                const [serviciosRes, sucursalesRes] = await Promise.all([
                     listarServicios(),
                     listarSucursales()
                 ]);
 
-                if (usuariosRes.success) setUsuarios(usuariosRes.data);
-                else Alert.alert("Error", usuariosRes.message || "No se pudieron cargar los usuarios.");
-
-                if (personalRes.success) setPersonalList(personalRes.data);
-                else Alert.alert("Error", personalRes.message || "No se pudo cargar el personal.");
+                // Asignar el nombre del cliente directamente desde agendamientoInicial
+                setNombreCliente(agendamientoInicial?.nombreCliente || 'Cliente no encontrado');
 
                 if (serviciosRes.success) setServicios(serviciosRes.data);
                 else Alert.alert("Error", serviciosRes.message || "No se pudieron cargar los servicios.");
@@ -87,22 +118,27 @@ export default function EditarAgendamiento({ navigation }) {
                 if (sucursalesRes.success) setSucursales(sucursalesRes.data);
                 else Alert.alert("Error", sucursalesRes.message || "No se pudieron cargar las sucursales.");
 
-                // Set initial values for Pickers if editing
                 if (esEdicion) {
-                    if (agendamientoInicial?.cliente_usuario_id) setClienteUsuarioId(agendamientoInicial.cliente_usuario_id.toString());
-                    if (agendamientoInicial?.personal_id) setPersonalId(agendamientoInicial.personal_id.toString());
-                    if (agendamientoInicial?.servicio_id) setServicioId(agendamientoInicial.servicio_id.toString());
-                    if (agendamientoInicial?.sucursal_id) setSucursalId(agendamientoInicial.sucursal_id.toString());
-                    if (agendamientoInicial?.estado) setEstado(agendamientoInicial.estado);
-                } else {
-                    // Set default values for new agendamiento
-                    if (usuariosRes.data.length > 0) setClienteUsuarioId(usuariosRes.data[0].id.toString());
-                    if (personalRes.data.length > 0) setPersonalId(personalRes.data[0].id.toString());
-                    if (serviciosRes.data.length > 0) setServicioId(serviciosRes.data[0].id.toString());
-                    if (sucursalesRes.data.length > 0) setSucursalId(sucursalesRes.data[0].id.toString());
-                    setEstado("Programado"); // O el estado por defecto que consideres
-                }
+                    // Convertir los IDs a string para que coincidan con los valores del Picker
+                    if (agendamientoInicial?.servicio_id) setServicioId(String(agendamientoInicial.servicio_id));
+                    if (agendamientoInicial?.sucursal_id) setSucursalId(String(agendamientoInicial.sucursal_id));
+                    
+                    if (agendamientoInicial?.estado && estadosAgendamiento.includes(agendamientoInicial.estado)) {
+                        setEstado(agendamientoInicial.estado);
+                    } else {
+                        setEstado(estadosAgendamiento[0]);
+                    }
 
+                    // Calcular la duración inicial del agendamiento para usarla en los ajustes
+                    const inicio = new Date(agendamientoInicial.fecha_hora_inicio);
+                    const fin = new Date(agendamientoInicial.fecha_hora_fin);
+                    setDuracion(fin.getTime() - inicio.getTime());
+                } else {
+                    // Configurar valores por defecto para un nuevo agendamiento
+                    if (serviciosRes.data.length > 0) setServicioId(String(serviciosRes.data[0].id));
+                    if (sucursalesRes.data.length > 0) setSucursalId(String(sucursalesRes.data[0].id));
+                    setEstado("Programado");
+                }
             } catch (error) {
                 console.error("Error al cargar dependencias de agendamiento:", error);
                 Alert.alert("Error", "Ocurrió un error inesperado al cargar las dependencias.");
@@ -113,32 +149,22 @@ export default function EditarAgendamiento({ navigation }) {
         cargarDependencias();
     }, [esEdicion, agendamientoInicial]);
 
-    const onDateChangeInicio = (event, selectedDate) => {
-        const currentDate = selectedDate || fechaHoraInicio;
-        setShowDatePickerInicio(Platform.OS === 'ios');
-        setFechaHoraInicio(currentDate);
-    };
+    /**
+     * Hook para ajustar la fecha de finalización automáticamente si se cambia la fecha de inicio o la duración.
+     */
+    useEffect(() => {
+        if (fechaHoraInicio && duracion > 0) {
+            const nuevaFechaFin = new Date(fechaHoraInicio.getTime() + duracion);
+            setFechaHoraFin(nuevaFechaFin);
+        }
+    }, [fechaHoraInicio, duracion]);
 
-    const onTimeChangeInicio = (event, selectedTime) => {
-        const currentTime = selectedTime || fechaHoraInicio;
-        setShowTimePickerInicio(Platform.OS === 'ios');
-        setFechaHoraInicio(currentTime);
-    };
-
-    const onDateChangeFin = (event, selectedDate) => {
-        const currentDate = selectedDate || fechaHoraFin;
-        setShowDatePickerFin(Platform.OS === 'ios');
-        setFechaHoraFin(currentDate);
-    };
-
-    const onTimeChangeFin = (event, selectedTime) => {
-        const currentTime = selectedTime || fechaHoraFin;
-        setShowTimePickerFin(Platform.OS === 'ios');
-        setFechaHoraFin(currentTime);
-    };
-
+    /**
+     * Maneja el evento de guardar el formulario (crear o editar agendamiento).
+     */
     const handleGuardar = async () => {
-        if (!clienteUsuarioId || !personalId || !servicioId || !sucursalId || !fechaHoraInicio || !fechaHoraFin || !precioFinal || !estado) {
+        // 1. Validación de campos obligatorios
+        if (!clienteUsuarioId || !servicioId || !sucursalId || !fechaHoraInicio || !fechaHoraFin || !precioFinal || !estado) {
             Alert.alert("Campos requeridos", "Por favor, complete todos los campos obligatorios.");
             return;
         }
@@ -149,24 +175,34 @@ export default function EditarAgendamiento({ navigation }) {
             return;
         }
 
+        // 2. Validación de fechas
+        if (fechaHoraFin <= fechaHoraInicio) {
+            Alert.alert("Error de Fechas", "La fecha y hora de finalización debe ser posterior a la de inicio.");
+            return;
+        }
+
         setLoading(true);
         let result;
         try {
+            // 3. Preparación de los datos para enviar a la API
             const dataToSave = {
                 cliente_usuario_id: parseInt(clienteUsuarioId),
-                personal_id: parseInt(personalId),
                 servicio_id: parseInt(servicioId),
                 sucursal_id: parseInt(sucursalId),
-                fecha_hora_inicio: fechaHoraInicio.toISOString(), // Formato ISO para la API
-                fecha_hora_fin: fechaHoraFin.toISOString(),     // Formato ISO para la API
+                fecha_hora_inicio: formatDateForAPI(fechaHoraInicio),
+                fecha_hora_fin: formatDateForAPI(fechaHoraFin),
                 precio_final: precioNumerico,
                 estado: estado,
                 notas_cliente: notasCliente,
                 notas_internas: notasInternas,
             };
 
+            console.log("Datos a enviar a la API:", JSON.stringify(dataToSave, null, 2));
+
+            // 4. Llamada al servicio para editar el agendamiento
             result = await editarAgendamiento(agendamientoInicial.id, dataToSave);
 
+            // 5. Manejo de la respuesta de la API
             if (result.success) {
                 Alert.alert("Éxito", "Agendamiento actualizado correctamente");
                 navigation.goBack();
@@ -181,7 +217,65 @@ export default function EditarAgendamiento({ navigation }) {
         }
     };
 
-    const estadosAgendamiento = ["Programado", "Confirmado", "Cancelado por Cliente", "Realizado", "No Asistió", "En Proceso"]; // Define tus estados
+    // Funciones para manejar los cambios en los selectores de fecha y hora de inicio
+    const handleDateChangeInicio = (event, selectedDate) => {
+        if (Platform.OS === 'android') {
+            setTimeout(() => setShowDatePickerInicio(false), 50);
+        } else {
+            setShowDatePickerInicio(false);
+        }
+        if (selectedDate) {
+            const newDate = new Date(fechaHoraInicio);
+            newDate.setFullYear(selectedDate.getFullYear());
+            newDate.setMonth(selectedDate.getMonth());
+            newDate.setDate(selectedDate.getDate());
+            setFechaHoraInicio(newDate);
+        }
+    };
+
+    const handleTimeChangeInicio = (event, selectedTime) => {
+        if (Platform.OS === 'android') {
+            setTimeout(() => setShowTimePickerInicio(false), 50);
+        } else {
+            setShowTimePickerInicio(false);
+        }
+        if (selectedTime) {
+            const newDate = new Date(fechaHoraInicio);
+            newDate.setHours(selectedTime.getHours());
+            newDate.setMinutes(selectedTime.getMinutes());
+            setFechaHoraInicio(newDate);
+        }
+    };
+
+    // Funciones para manejar los cambios en los selectores de fecha y hora de fin
+    const handleDateChangeFin = (event, selectedDate) => {
+        if (Platform.OS === 'android') {
+            setTimeout(() => setShowDatePickerFin(false), 50);
+        } else {
+            setShowDatePickerFin(false);
+        }
+        if (selectedDate) {
+            const newDate = new Date(fechaHoraFin);
+            newDate.setFullYear(selectedDate.getFullYear());
+            newDate.setMonth(selectedDate.getMonth());
+            newDate.setDate(selectedDate.getDate());
+            setFechaHoraFin(newDate);
+        }
+    };
+
+    const handleTimeChangeFin = (event, selectedTime) => {
+        if (Platform.OS === 'android') {
+            setTimeout(() => setShowTimePickerFin(false), 50);
+        } else {
+            setShowTimePickerFin(false);
+        }
+        if (selectedTime) {
+            const newDate = new Date(fechaHoraFin);
+            newDate.setHours(selectedTime.getHours());
+            newDate.setMinutes(selectedTime.getMinutes());
+            setFechaHoraFin(newDate);
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -197,36 +291,11 @@ export default function EditarAgendamiento({ navigation }) {
                             <ActivityIndicator size="large" color="#1976D2" style={styles.pickerLoading} />
                         ) : (
                             <>
+                                {/* Campo Cliente: No editable, solo se muestra el nombre */}
                                 <Text style={styles.pickerLabelActual}>Cliente:</Text>
-                                <View style={styles.pickerContainer}>
-                                    <Picker
-                                        selectedValue={clienteUsuarioId}
-                                        onValueChange={(itemValue) => setClienteUsuarioId(itemValue)}
-                                        style={styles.picker}
-                                        itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-                                    >
-                                        <Picker.Item label="-- Seleccione Cliente --" value="" />
-                                        {usuarios.map((user) => (
-                                            <Picker.Item key={user.id.toString()} label={user.nombre} value={user.id.toString()} />
-                                        ))}
-                                    </Picker>
-                                </View>
+                                <Text style={styles.pickerDisplay}>{nombreCliente}</Text>
 
-                                <Text style={styles.pickerLabelActual}>Personal Asignado:</Text>
-                                <View style={styles.pickerContainer}>
-                                    <Picker
-                                        selectedValue={personalId}
-                                        onValueChange={(itemValue) => setPersonalId(itemValue)}
-                                        style={styles.picker}
-                                        itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-                                    >
-                                        <Picker.Item label="-- Seleccione Personal --" value="" />
-                                        {personalList.map((personal) => (
-                                            <Picker.Item key={personal.id.toString()} label={personal.tipo_personal} value={personal.id.toString()} />
-                                        ))}
-                                    </Picker>
-                                </View>
-
+                                {/* Campo Servicio: Selector de servicio */}
                                 <Text style={styles.pickerLabelActual}>Servicio:</Text>
                                 <View style={styles.pickerContainer}>
                                     <Picker
@@ -237,11 +306,12 @@ export default function EditarAgendamiento({ navigation }) {
                                     >
                                         <Picker.Item label="-- Seleccione Servicio --" value="" />
                                         {servicios.map((service) => (
-                                            <Picker.Item key={service.id.toString()} label={service.nombre} value={service.id.toString()} />
+                                            <Picker.Item key={String(service.id)} label={service.nombre} value={String(service.id)} />
                                         ))}
                                     </Picker>
                                 </View>
 
+                                {/* Campo Sucursal: Selector de sucursal */}
                                 <Text style={styles.pickerLabelActual}>Sucursal:</Text>
                                 <View style={styles.pickerContainer}>
                                     <Picker
@@ -252,75 +322,85 @@ export default function EditarAgendamiento({ navigation }) {
                                     >
                                         <Picker.Item label="-- Seleccione Sucursal --" value="" />
                                         {sucursales.map((sucursal) => (
-                                            <Picker.Item key={sucursal.id.toString()} label={sucursal.nombre} value={sucursal.id.toString()} />
+                                            <Picker.Item key={String(sucursal.id)} label={sucursal.nombre} value={String(sucursal.id)} />
                                         ))}
                                     </Picker>
                                 </View>
                             </>
                         )}
 
-                        <Text style={styles.label}>Fecha y Hora de Inicio:</Text>
+                        {/* Campo Fecha de Inicio: Botón para abrir el selector de fecha */}
+                        <Text style={styles.label}>Fecha de Inicio:</Text>
                         <TouchableOpacity onPress={() => setShowDatePickerInicio(true)} style={styles.datePickerButton}>
-                            <Text style={styles.datePickerButtonText}>{fechaHoraInicio.toLocaleString()}</Text>
+                            <Text style={styles.datePickerButtonText}>{fechaHoraInicio.toLocaleDateString()}</Text>
                         </TouchableOpacity>
                         {showDatePickerInicio && (
                             <DateTimePicker
-                                testID="dateTimePickerInicio"
+                                testID="datePickerInicio"
                                 value={fechaHoraInicio}
                                 mode="date"
                                 display="default"
-                                onChange={onDateChangeInicio}
+                                onChange={handleDateChangeInicio}
                             />
                         )}
+
+                        {/* Campo Hora de Inicio: Botón para abrir el selector de hora */}
+                        <Text style={styles.label}>Hora de Inicio:</Text>
+                        <TouchableOpacity onPress={() => setShowTimePickerInicio(true)} style={styles.datePickerButton}>
+                            <Text style={styles.datePickerButtonText}>{fechaHoraInicio.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                        </TouchableOpacity>
                         {showTimePickerInicio && (
                             <DateTimePicker
                                 testID="timePickerInicio"
                                 value={fechaHoraInicio}
                                 mode="time"
                                 display="default"
-                                onChange={onTimeChangeInicio}
+                                onChange={handleTimeChangeInicio}
                             />
                         )}
-                         <TouchableOpacity onPress={() => setShowTimePickerInicio(true)} style={styles.datePickerButton}>
-                            <Text style={styles.datePickerButtonText}>Seleccionar Hora de Inicio</Text>
-                        </TouchableOpacity>
 
-
-                        <Text style={styles.label}>Fecha y Hora de Fin:</Text>
+                        {/* Campo Fecha de Fin: Botón para abrir el selector de fecha */}
+                        <Text style={styles.label}>Fecha de Fin:</Text>
                         <TouchableOpacity onPress={() => setShowDatePickerFin(true)} style={styles.datePickerButton}>
-                            <Text style={styles.datePickerButtonText}>{fechaHoraFin.toLocaleString()}</Text>
+                            <Text style={styles.datePickerButtonText}>{fechaHoraFin.toLocaleDateString()}</Text>
                         </TouchableOpacity>
                         {showDatePickerFin && (
                             <DateTimePicker
-                                testID="dateTimePickerFin"
+                                testID="datePickerFin"
                                 value={fechaHoraFin}
                                 mode="date"
                                 display="default"
-                                onChange={onDateChangeFin}
+                                onChange={handleDateChangeFin}
                             />
                         )}
+
+                        {/* Campo Hora de Fin: Botón para abrir el selector de hora */}
+                        <Text style={styles.label}>Hora de Fin:</Text>
+                        <TouchableOpacity onPress={() => setShowTimePickerFin(true)} style={styles.datePickerButton}>
+                            <Text style={styles.datePickerButtonText}>{fechaHoraFin.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                        </TouchableOpacity>
                         {showTimePickerFin && (
                             <DateTimePicker
                                 testID="timePickerFin"
                                 value={fechaHoraFin}
                                 mode="time"
                                 display="default"
-                                onChange={onTimeChangeFin}
+                                onChange={handleTimeChangeFin}
                             />
                         )}
-                         <TouchableOpacity onPress={() => setShowTimePickerFin(true)} style={styles.datePickerButton}>
-                            <Text style={styles.datePickerButtonText}>Seleccionar Hora de Fin</Text>
-                        </TouchableOpacity>
 
+                        {/* Campo Precio Final: Campo de entrada de texto numérico */}
+                        <Text style={styles.label}>Precio Final:</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Precio Final"
+                            placeholder="Ingrese el precio final"
                             placeholderTextColor="#888"
                             value={precioFinal}
                             onChangeText={setPrecioFinal}
                             keyboardType="numeric"
                         />
 
+                        {/* Campo Estado: Selector de estado */}
                         <Text style={styles.pickerLabelActual}>Estado:</Text>
                         <View style={styles.pickerContainer}>
                             <Picker
@@ -336,9 +416,11 @@ export default function EditarAgendamiento({ navigation }) {
                             </Picker>
                         </View>
 
+                        {/* Campo Notas del Cliente: Campo de texto multilínea */}
+                        <Text style={styles.label}>Notas del Cliente:</Text>
                         <TextInput
                             style={[styles.input, styles.multilineInput]}
-                            placeholder="Notas del Cliente"
+                            placeholder="Ingrese notas del cliente"
                             placeholderTextColor="#888"
                             value={notasCliente}
                             onChangeText={setNotasCliente}
@@ -346,9 +428,11 @@ export default function EditarAgendamiento({ navigation }) {
                             numberOfLines={4}
                         />
 
+                        {/* Campo Notas Internas: Campo de texto multilínea */}
+                        <Text style={styles.label}>Notas Internas:</Text>
                         <TextInput
                             style={[styles.input, styles.multilineInput]}
-                            placeholder="Notas Internas"
+                            placeholder="Ingrese notas internas"
                             placeholderTextColor="#888"
                             value={notasInternas}
                             onChangeText={setNotasInternas}
@@ -356,6 +440,7 @@ export default function EditarAgendamiento({ navigation }) {
                             numberOfLines={4}
                         />
 
+                        {/* Botón para Guardar los cambios */}
                         <TouchableOpacity style={styles.boton} onPress={handleGuardar} disabled={loading || loadingDependencies}>
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
@@ -366,6 +451,8 @@ export default function EditarAgendamiento({ navigation }) {
                                 </View>
                             )}
                         </TouchableOpacity>
+
+                        {/* Botón para Volver a la pantalla anterior */}
                         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                             <Ionicons name="arrow-back-circle-outline" size={24} color="#555" />
                             <Text style={styles.backButtonText}>Volver</Text>
